@@ -10,7 +10,7 @@ module.exports = {
           title: "Session 1",
           description: "Description for session 1",
           start_time: new Date(),
-          end_time: new Date(new Date().getTime() + 60 * 60 * 1000), // 1 hour later
+          end_time: new Date(new Date().getTime() + 60 * 60 * 1000),
           available_seats: 10,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -19,7 +19,7 @@ module.exports = {
           title: "Session 2",
           description: "Description for session 2",
           start_time: new Date(),
-          end_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), // 2 hours later
+          end_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
           available_seats: 20,
           createdAt: new Date(),
           updatedAt: new Date(),
