@@ -1,4 +1,5 @@
 const { Feedback, Session, SessionRegistration, User } = require("../models");
+const { Op } = require("sequelize");
 
 exports.getAllSessions = async (_req, res) => {
   try {
@@ -66,6 +67,25 @@ exports.registerForSession = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Already registered for this session" });
+    }
+
+    const overlappingRegistration = await SessionRegistration.findOne({
+      where: { user_id: userId },
+      include: [
+        {
+          model: Session,
+          where: {
+            start_time: { [Op.lte]: session.end_time },
+            end_time: { [Op.gte]: session.start_time },
+          },
+        },
+      ],
+    });
+
+    if (overlappingRegistration) {
+      return res.status(400).json({
+        message: "Already registered for another session in this time period",
+      });
     }
 
     await SessionRegistration.create({
