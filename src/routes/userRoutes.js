@@ -6,7 +6,7 @@ const {
 const { authMiddleware } = require("../middlewares/authMiddleware.js");
 const {
   updateUserValidationSchema,
-} = require("../validations/userValidationSchema.js");
+} = require("../validations/createUserValidationSchema.js");
 const { checkSchema } = require("express-validator");
 
 const router = Router();
@@ -17,7 +17,6 @@ router.patch(
   checkSchema(updateUserValidationSchema),
   editProfile
 );
-
 router.get("/profile/:id", authMiddleware, viewProfile);
 
 module.exports = router;

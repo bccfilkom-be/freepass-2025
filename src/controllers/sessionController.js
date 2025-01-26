@@ -1,4 +1,4 @@
-const { Feedback, Session, User } = require("../models");
+const { Feedback, Session, SessionRegistration, User } = require("../models");
 
 exports.getAllSessions = async (_req, res) => {
   try {
@@ -40,5 +40,44 @@ exports.leaveFeedback = async (req, res) => {
       .json({ message: "Feedback successfully subbmitted", newFeedback });
   } catch (err) {
     res.status(500).json({ message: "Failed to leave feedback" });
+  }
+};
+
+exports.registerForSession = async (req, res) => {
+  const sessionId = req.params.id;
+  const {
+    body: { userId },
+  } = req;
+
+  try {
+    const session = await Session.findByPk(sessionId);
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    if (session.available_seats <= 0) {
+      return res.status(400).json({ message: "No seats available" });
+    }
+
+    const existingRegistration = await SessionRegistration.findOne({
+      where: { user_id: userId, session_id: sessionId },
+    });
+    if (existingRegistration) {
+      return res
+        .status(400)
+        .json({ message: "Already registered for this session" });
+    }
+
+    await SessionRegistration.create({
+      user_id: userId,
+      session_id: sessionId,
+    });
+    session.available_seats -= 1;
+    await session.save();
+
+    res.status(201).json({ message: "Registration successful" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to register for session" });
   }
 };
