@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	config := config.NewConfig()
+	config := config.GetConfig()
 	gin.SetMode(config.GetString("gin-mode"))
 
 	api.NewHTTPServer()

@@ -9,7 +9,7 @@ import (
 )
 
 func NewHTTPServer() {
-	config := config.NewConfig()
+	config := config.GetConfig()
 	router := gin.Default()
 
 	host := config.GetString("host")
