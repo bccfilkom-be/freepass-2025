@@ -22,54 +22,6 @@ App.get('/', (req, res)=>{
             angkatan: 2024,
             kontak: "https://wa.me/6289607810680"
         },
-        API: {
-            headers: {
-                "x-api-key": "freepast-2025"
-            },
-            Authorization: "Barrier Token"
-        },
-        endPoint: {
-            register: {
-                method: "post",
-                url: "/register",
-                params: ["user_email", "user_password", "user_confirmPassword"]
-            },
-            login: {
-                method: "post",
-                url: "/login",
-                params: ["user_email", "user_password"]
-            },
-            updateProfile: {
-                method: "post",
-                url: "/login",
-                params: ["user_nama", "user_username"]
-            },
-            searchProfile: {
-                method: "get",
-                url: "/login",
-                params: ["user_id", "user_username"]
-            }
-        },
-        system: [
-            "New users can register accounts in the system ✔️ (done)",
-            "Users can log in to the system ✔️ (done)",
-            "Users can edit their profile accounts ✔️ (done)",
-            "Users can view all conference sessions ✔️ (done)",
-            "Users can leave feedback on sessions ✔️ (done)",
-            "Users can view other users' profiles ✔️ (done)",
-            "Users can register for sessions during the conference registration period if seats are available ✔️ (done)",
-            "Users can only register for one session within a time period ✔️ (done)",
-            "Users can create, edit, and delete their session proposals ✔️ (done)",
-            "Users can only create one session proposal within a time period ✔️ (done)",
-            "Users can edit and delete their sessions ✔️ (done)",
-            "Event Coordinators can view all session proposals ✔️ (done)",
-            "Event Coordinators can accept or reject user session proposals ✔️ (done)",
-            "Event Coordinators can remove sessions ✔️ (done)",
-            "Event Coordinators can remove user feedback ✔️ (done)",
-            "Admins can add new event coordinators ✔️ (done)",
-            "Admins can remove users or event coordinators ✔️ (done)",
-        ]
-        
     })
 })
 
