@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type ProposalUsecase struct {
@@ -21,7 +22,7 @@ func NewProposalUsecase(sessionRepo session.SessionRepository) proposal.Proposal
 	return &ProposalUsecase{sessionRepo}
 }
 
-func (u *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalRequest) error {
+func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalRequest) error {
 	registrationStarDate, err := helper.StringISOToDateTime(req.RegistrationStartDate)
 	if err != nil {
 		return err
@@ -55,7 +56,22 @@ func (u *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 	}
 
 	if sessionStartDate.After(sessionEndDate) {
-		return errors.New("Session start date should be before the session start date!")
+		return errors.New("Session start date should be before the session end date!")
+	}
+
+	checkSession, err := v.sessionRepo.GetAllBetwenDate(sessionStartDate, sessionEndDate, session.SessionFilter{
+		Status: constant.STATUS_SESSION_PENDING,
+		UserID: userId,
+	})
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("Session already exist in that date range!")
+		}
+	}
+
+	if len(checkSession) > 0 {
+		return errors.New("Session already exist in that date range!")
 	}
 
 	data := domain.Session{
@@ -70,7 +86,7 @@ func (u *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 		MaxSeat:          req.MaxSeat,
 	}
 
-	return u.sessionRepo.Create(data)
+	return v.sessionRepo.Create(data)
 }
 
 func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposalResponse, error) {

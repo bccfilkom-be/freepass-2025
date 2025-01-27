@@ -3,6 +3,7 @@ package repository
 import (
 	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
 	"jevvonn/bcc-be-freepass-2025/internal/services/session"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -29,6 +30,23 @@ func (v *SessionRepository) GetAll(filter session.SessionFilter) ([]domain.Sessi
 	if filter.Status != "" {
 		query = query.Where("status = ?", filter.Status)
 	}
+
+	err := query.Preload("User").Find(&data).Error
+	return data, err
+}
+
+func (v *SessionRepository) GetAllBetwenDate(startDate, endDate time.Time, filter session.SessionFilter) ([]domain.Session, error) {
+	var data []domain.Session
+	query := v.db.Model(&domain.Session{})
+	if filter.UserID != 0 {
+		query = query.Where("user_id = ?", filter.UserID)
+	}
+
+	if filter.Status != "" {
+		query = query.Where("status = ?", filter.Status)
+	}
+
+	query = query.Where("session_start_date >= ? AND session_end_date <= ?", startDate, endDate)
 
 	err := query.Preload("User").Find(&data).Error
 	return data, err
