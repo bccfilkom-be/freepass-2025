@@ -204,7 +204,7 @@ Buka browser atau gunakan API client
 - **Authorization**: `Bearer <token>`
 - **x-api-key**: `freepast-2025`
 
-| Endpoint    | Method | Query Parameters |
+| Endpoint    | Method | Query |
 |-------------|--------|----------------------|
 | `/` | `GET` |  |
 | `/register` | `POST` | `user_email`, `user_password`, `user_confirmPassword` |
@@ -222,7 +222,7 @@ Buka browser atau gunakan API client
 | `/user/feedback` | `POST` | `conference_id`, `feedback_rating`, `feedback_message` |
 | `/admin/user` | `POST` |  `user_email`, `user_role` |
 | `/admin/user` | `DELETE` |  `user_id` |
-| `/coordinator/feedback` | `DELETE` |  `user_id` |
+| `/coordinator/feedback` | `GET` |  `conference_id`, `feedback_rating` |
 | `/coordinator/feedback` | `DELETE` |  `user_id` |
 
 ## **📞** Contact
