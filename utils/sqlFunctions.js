@@ -2,7 +2,6 @@ const { Pool } = require('pg')
 const config = require("../db/config")
 const pool = new Pool(config)
 
-
 const createTable = (schema) => {
   return new Promise((resolve, reject) => {
     pool.query(schema, (err, results) => {
@@ -46,9 +45,39 @@ const insertRecord = (tableName, record) => {
   })
 }
 
+const updateRecord = (tableName, column, value, updatedData) => {
+  return new Promise((resolve, reject) => {
+    const setClause = Object.keys(updatedData).map((key, index) => `${key} = $${index + 2}`).join(', ')
+    const values = [value, ...Object.values(updatedData)]
+
+    const query = `UPDATE ${tableName} SET ${setClause} WHERE ${column} = $1 RETURNING *`
+    pool.query(query, values, (err, results) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(results.rows[0])
+      }
+    })
+  })
+}
+
+const getRecordById = (tableName, column, value) => {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT * FROM ${tableName} WHERE ${column} = $1`
+    pool.query(query, [value], (err, results) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(results.rows[0])
+      }
+    })
+  })
+}
 
 module.exports = {
   createTable,
   checkRecordExists,
   insertRecord,
+  updateRecord,
+  getRecordById,
 }
