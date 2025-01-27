@@ -9,6 +9,7 @@ import (
 func main() {
 	db := database.NewDatabase()
 	tables := []interface{}{
+		&domain.Session{},
 		&domain.User{},
 	}
 
