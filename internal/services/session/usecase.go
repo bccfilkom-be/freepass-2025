@@ -1,9 +1,7 @@
 package session
 
-import (
-	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
-)
+import "jevvonn/bcc-be-freepass-2025/internal/models/dto"
 
 type SessionUsecase interface {
-	GetAllSession() ([]domain.Session, error)
+	GetAllSession() ([]dto.GetAllSessionResponse, error)
 }

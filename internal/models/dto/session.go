@@ -11,7 +11,8 @@ type GetAllSessionResponse struct {
 	SessionStartDate string `json:"session_start_date"`
 	SessionEndDate   string `json:"session_end_date"`
 
-	MaxSeat int `json:"max_seat"`
+	MaxSeat int                   `json:"max_seat"`
+	User    GetUserDetailResponse `json:"user"`
 
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`

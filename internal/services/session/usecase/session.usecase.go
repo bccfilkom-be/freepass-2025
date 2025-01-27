@@ -2,8 +2,9 @@ package usecase
 
 import (
 	"jevvonn/bcc-be-freepass-2025/internal/constant"
-	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
+	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/session"
+	"time"
 )
 
 type SessionUsecase struct {
@@ -14,7 +15,7 @@ func NewSessionUsecase(sessionRepo session.SessionRepository) session.SessionUse
 	return &SessionUsecase{sessionRepo}
 }
 
-func (u *SessionUsecase) GetAllSession() ([]domain.Session, error) {
+func (v *SessionUsecase) GetAllSession() ([]dto.GetAllSessionResponse, error) {
 	// userId := ctx.Query("userId")
 	// status := ctx.Query("status")
 
@@ -29,7 +30,38 @@ func (u *SessionUsecase) GetAllSession() ([]domain.Session, error) {
 	// 	filter.Status = status
 	// }
 
-	return u.sessionRepo.GetAll(session.SessionFilter{
+	results, err := v.sessionRepo.GetAll(session.SessionFilter{
 		Status: constant.STATUS_SESSION_ACCEPTED,
 	})
+
+	if err != nil {
+		return []dto.GetAllSessionResponse{}, err
+	}
+
+	var sessions []dto.GetAllSessionResponse
+	for _, session := range results {
+		sessions = append(sessions, dto.GetAllSessionResponse{
+			ID:                    session.ID,
+			Title:                 session.Title,
+			Description:           session.Description,
+			RegistrationStartDate: session.RegistrationStartDate.Format(time.RFC3339),
+			RegistrationEndDate:   session.RegistrationEndDate.Format(time.RFC3339),
+
+			SessionStartDate: session.SessionStartDate.Format(time.RFC3339),
+			SessionEndDate:   session.SessionEndDate.Format(time.RFC3339),
+
+			MaxSeat: session.MaxSeat,
+
+			User: dto.GetUserDetailResponse{
+				ID:    session.User.ID,
+				Name:  session.User.Name,
+				Email: session.User.Email,
+			},
+
+			CreatedAt: session.CreatedAt.Format(time.RFC3339),
+			UpdatedAt: session.UpdatedAt.Format(time.RFC3339),
+		})
+	}
+
+	return sessions, nil
 }
