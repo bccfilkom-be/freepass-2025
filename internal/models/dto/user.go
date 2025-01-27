@@ -23,5 +23,5 @@ type GetUserProfileResponse struct {
 
 type UpdateUserProfileRequest struct {
 	Name string `json:"name" validate:"required"`
-	Bio  string `json:"bio" validate:"required"`
+	Bio  string `json:"bio"`
 }
