@@ -30,5 +30,11 @@ func NewSessionDelivery(
 }
 
 func (v *SessionDelivery) GetAllSession(ctx *gin.Context) {
-	ctx.JSON(200, "All Good!")
+	res, err := v.sessionUsecase.GetAllSession()
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, res, "Sessions found!", 200)
 }

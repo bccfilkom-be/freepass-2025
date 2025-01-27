@@ -2,12 +2,15 @@ package usecase
 
 import (
 	"errors"
+	"jevvonn/bcc-be-freepass-2025/internal/constant"
 	"jevvonn/bcc-be-freepass-2025/internal/helper"
 	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/proposal"
 	"jevvonn/bcc-be-freepass-2025/internal/services/session"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ProposalUsecase struct {
@@ -68,4 +71,50 @@ func (u *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 	}
 
 	return u.sessionRepo.Create(data)
+}
+
+func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposalResponse, error) {
+	filter := session.SessionFilter{
+		Status: constant.STATUS_SESSION_PENDING,
+	}
+
+	role := ctx.GetString("role")
+
+	if role == constant.ROLE_USER {
+		filter.UserID = ctx.GetUint("userId")
+	}
+
+	sessions, err := u.sessionRepo.GetAll(filter)
+	if err != nil {
+		return []dto.GetAllProposalResponse{}, err
+	}
+
+	var proposals []dto.GetAllProposalResponse
+	for _, session := range sessions {
+		proposals = append(proposals, dto.GetAllProposalResponse{
+			ID:                    session.ID,
+			Title:                 session.Title,
+			Description:           session.Description,
+			RegistrationStartDate: session.RegistrationStartDate.Format(time.RFC3339),
+			RegistrationEndDate:   session.RegistrationEndDate.Format(time.RFC3339),
+
+			SessionStartDate: session.SessionStartDate.Format(time.RFC3339),
+			SessionEndDate:   session.SessionEndDate.Format(time.RFC3339),
+
+			MaxSeat:         session.MaxSeat,
+			Status:          session.Status,
+			RejectedMessage: session.RejectedMessage,
+
+			User: dto.GetUserDetailResponse{
+				ID:    session.User.ID,
+				Name:  session.User.Name,
+				Email: session.User.Email,
+			},
+
+			CreatedAt: session.CreatedAt.Format(time.RFC3339),
+			UpdatedAt: session.UpdatedAt.Format(time.RFC3339),
+		})
+	}
+
+	return proposals, nil
 }

@@ -29,6 +29,7 @@ func NewProposalDelivery(
 
 	proposalRouter := router.Group("/proposal")
 	proposalRouter.POST("/", middleware.RequireAuth, handler.CreateSession)
+	proposalRouter.GET("/", middleware.RequireAuth, handler.GetAllProposal)
 }
 
 func (v *ProposalDelivery) CreateSession(ctx *gin.Context) {
@@ -52,4 +53,14 @@ func (v *ProposalDelivery) CreateSession(ctx *gin.Context) {
 	}
 
 	v.response.OK(ctx, nil, "Session Proposal created!", 200)
+}
+
+func (v *ProposalDelivery) GetAllProposal(ctx *gin.Context) {
+	res, err := v.proposalUsecase.GetAllProposal(ctx)
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, res, "Proposal found!", 200)
 }
