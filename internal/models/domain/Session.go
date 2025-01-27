@@ -15,8 +15,8 @@ type Session struct {
 	RegistrationStartDate time.Time `gorm:"not null;colum:registration_start_date"`
 	RegistrationEndDate   time.Time `gorm:"not null;colum:registration_end_date"`
 
-	SesionStartDate time.Time `gorm:"not null;colum:sesion_start_date"`
-	SesionEndDate   time.Time `gorm:"not null;colum:sesion_end_date"`
+	SessionStartDate time.Time `gorm:"not null;colum:session_start_date"`
+	SessionEndDate   time.Time `gorm:"not null;colum:session_end_date"`
 
 	MaxSeat         int    `gorm:"not null"`
 	Status          string `gorm:"type:enum('ACCEPTED','REJECTED', 'PENDING');not null;default:'PENDING'"`

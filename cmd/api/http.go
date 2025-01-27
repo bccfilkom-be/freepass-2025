@@ -7,11 +7,14 @@ import (
 	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
 	auth_delivery "jevvonn/bcc-be-freepass-2025/internal/services/auth/delivery"
+	session_delivery "jevvonn/bcc-be-freepass-2025/internal/services/session/delivery"
 	user_delivery "jevvonn/bcc-be-freepass-2025/internal/services/user/delivery"
 
 	auth_usecase "jevvonn/bcc-be-freepass-2025/internal/services/auth/usecase"
+	session_usecase "jevvonn/bcc-be-freepass-2025/internal/services/session/usecase"
 	user_usecase "jevvonn/bcc-be-freepass-2025/internal/services/user/usecase"
 
+	session_repository "jevvonn/bcc-be-freepass-2025/internal/services/session/repository"
 	user_repository "jevvonn/bcc-be-freepass-2025/internal/services/user/repository"
 
 	"github.com/gin-gonic/gin"
@@ -30,14 +33,17 @@ func NewHTTPServer() {
 
 	// Repository
 	userRepo := user_repository.NewUserRepository(db)
+	sessionRepo := session_repository.NewSessionRepository(db)
 
 	// Usecase
 	authUsecase := auth_usecase.NewAuthUsecase(userRepo)
 	userUsecase := user_usecase.NewUserUsecase(userRepo)
+	sessionUsecase := session_usecase.NewSessionUsecase(sessionRepo)
 
 	// Delivery
 	auth_delivery.NewAuthDelivery(router, authUsecase, response, validator)
 	user_delivery.NewUserDelivery(router, userUsecase, response, validator)
+	session_delivery.NewSessionDelivery(router, sessionUsecase, response, validator)
 
 	router.NoRoute(func(ctx *gin.Context) {
 		response.NotFound(ctx)

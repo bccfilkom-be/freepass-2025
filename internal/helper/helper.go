@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"time"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -15,4 +17,8 @@ func ComparePassword(hashedPassword string, password string) bool {
 	} else {
 		return true
 	}
+}
+
+func StringISOToDateTime(dateString string) (time.Time, error) {
+	return time.Parse(time.RFC3339, dateString)
 }
