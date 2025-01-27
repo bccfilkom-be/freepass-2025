@@ -34,5 +34,8 @@ func NewHTTPServer() {
 	// Delivery
 	auth_delivery.NewAuthDelivery(router, authUsecase, response, validator)
 
+	router.NoRoute(func(ctx *gin.Context) {
+		response.NotFound(ctx)
+	})
 	router.Run(fmt.Sprintf("%s:%s", host, port))
 }

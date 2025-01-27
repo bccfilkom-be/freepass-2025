@@ -1,6 +1,7 @@
 package response
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,8 @@ import (
 type ResponseHandler interface {
 	OK(ctx *gin.Context, data interface{}, message string, code int)
 	BadRequest(ctx *gin.Context, data interface{}, message string)
+	NotFound(ctx *gin.Context)
+	Forbidden(ctx *gin.Context, message string)
 }
 
 type JSONResponseModel struct {
@@ -34,5 +37,17 @@ func (r *JSONResponseModel) BadRequest(ctx *gin.Context, data interface{}, messa
 		Message: message,
 		Success: false,
 		Data:    data,
+	})
+}
+
+func (r *JSONResponseModel) Forbidden(ctx *gin.Context, message string) {
+	ctx.JSON(http.StatusForbidden, JSONResponseModel{
+		Message: fmt.Sprintf("Forbidden: %s", message),
+	})
+}
+
+func (r *JSONResponseModel) NotFound(ctx *gin.Context) {
+	ctx.JSON(http.StatusNotFound, JSONResponseModel{
+		Message: "Not Found!",
 	})
 }
