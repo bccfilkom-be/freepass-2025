@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
 	"jevvonn/bcc-be-freepass-2025/internal/services/user"
 
@@ -29,4 +30,22 @@ func (v *UserRepository) GetByEmail(userEmail string) (*domain.User, error) {
 	var user *domain.User
 	err := v.db.Where("email = ?", userEmail).First(&user).Error
 	return user, err
+}
+
+func (v *UserRepository) Update(data domain.User) error {
+	if data.ID == 0 {
+		return errors.New("User id not found!")
+	}
+
+	err := v.db.Updates(data).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("User not found!")
+		} else {
+			return err
+		}
+	}
+
+	return nil
 }

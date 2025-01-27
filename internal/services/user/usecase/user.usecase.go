@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/user"
 
@@ -57,4 +58,14 @@ func (v *UserUsecase) GetUserDetail(userId uint) (dto.GetUserDetailResponse, err
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}, nil
+}
+
+func (v *UserUsecase) UpdateUserProfile(userId uint, data *dto.UpdateUserProfileRequest) error {
+	err := v.userRepository.Update(domain.User{
+		ID:   userId,
+		Name: data.Name,
+		Bio:  data.Bio,
+	})
+
+	return err
 }

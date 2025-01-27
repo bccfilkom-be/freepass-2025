@@ -4,7 +4,9 @@ import (
 	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
 	"jevvonn/bcc-be-freepass-2025/internal/middleware"
+	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/user"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -28,8 +30,8 @@ func NewUserDelivery(
 	}
 
 	// Profile Routing
-	profileRouter := router.Group("/profile")
-	profileRouter.GET("/", middleware.RequireAuth, handler.GetUserProfile)
+	router.GET("/profile", middleware.RequireAuth, handler.GetUserProfile)
+	router.PATCH("/profile", middleware.RequireAuth, handler.UpdateUserProfile)
 
 	// User Routing
 	userRouter := router.Group("/user")
@@ -62,4 +64,28 @@ func (v *UserDelivery) GetUserDetail(ctx *gin.Context) {
 	}
 
 	v.response.OK(ctx, response, "User detail found!", 200)
+}
+
+func (v *UserDelivery) UpdateUserProfile(ctx *gin.Context) {
+	var req *dto.UpdateUserProfileRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	if errorsData, err := v.validator.Validate(req); err != nil {
+		v.response.BadRequest(ctx, errorsData, "Validation error!")
+		return
+	}
+
+	userId, _ := ctx.Get("userId")
+	err := v.userUsecase.UpdateUserProfile(userId.(uint), req)
+	if err != nil {
+		log.Fatal(err)
+
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, nil, "User profile updated!", 200)
 }

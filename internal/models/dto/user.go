@@ -20,3 +20,8 @@ type GetUserProfileResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type UpdateUserProfileRequest struct {
+	Name string `json:"name" validate:"required"`
+	Bio  string `json:"bio" validate:"required"`
+}
