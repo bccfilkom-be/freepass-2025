@@ -6,6 +6,7 @@ const createTable = (schema) => {
   return new Promise((resolve, reject) => {
     pool.query(schema, (err, results) => {
       if (err) {
+        console.error("Error creating table:", err)
         reject(err)
       } else {
         resolve(results)
@@ -20,6 +21,7 @@ const checkRecordExists = (tableName, column, value) => {
 
     pool.query(query, [value], (err, results) => {
       if (err) {
+        console.error("Error checking record existence:", err)
         reject(err)
       } else {
         resolve(results.rows.length ? results.rows[0] : null)
@@ -37,6 +39,7 @@ const insertRecord = (tableName, record) => {
     const query = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders}) RETURNING *`
     pool.query(query, values, (err, results) => {
       if (err) {
+        console.error("Error inserting record:", err)
         reject(err)
       } else {
         resolve(results.rows[0])
@@ -53,6 +56,7 @@ const updateRecord = (tableName, column, value, updatedData) => {
     const query = `UPDATE ${tableName} SET ${setClause} WHERE ${column} = $1 RETURNING *`
     pool.query(query, values, (err, results) => {
       if (err) {
+        console.error("Error updating record:", err)
         reject(err)
       } else {
         resolve(results.rows[0])
@@ -66,9 +70,87 @@ const getRecordById = (tableName, column, value) => {
     const query = `SELECT * FROM ${tableName} WHERE ${column} = $1`
     pool.query(query, [value], (err, results) => {
       if (err) {
+        console.error("Error getting record by ID:", err)
         reject(err)
       } else {
         resolve(results.rows[0])
+      }
+    })
+  })
+}
+
+const deleteRecord = (tableName, column, value) => {
+  return new Promise((resolve, reject) => {
+    const query = `DELETE FROM ${tableName} WHERE ${column} = $1`
+    pool.query(query, [value], (err, results) => {
+      if (err) {
+        console.error("Error deleting record:", err)
+        reject(err)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+const getAllRecords = (tableName) => {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT * FROM ${tableName}`
+    pool.query(query, (err, results) => {
+      if (err) {
+        console.error("Error getting all records:", err)
+        reject(err)
+      } else {
+        resolve(results.rows)
+      }
+    })
+  })
+}
+
+const checkSessionAvailability = (sessionid) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT s.max_seats, COALESCE(COUNT(sr.sessionid), 0) as registration_count
+      FROM sessions s
+      LEFT JOIN session_registrations sr ON sr.sessionid = s.sessionid
+      WHERE s.sessionid = $1
+      GROUP BY s.max_seats
+    `
+    pool.query(query, [sessionid], (err, results) => {
+      if (err) {
+        console.error("Error checking session availability:", err)
+        reject(err)
+      } else {
+        if (results.rows.length > 0) {
+          const { registration_count, max_seats } = results.rows[0]
+          console.log(`Session ID: ${sessionid}, Registration Count: ${registration_count}, Max Seats: ${max_seats}`)
+          resolve(registration_count >= max_seats)
+        } else {
+          console.log(`Session ID: ${sessionid}, Registration Count: 0, Max Seats: 0`)
+          resolve(false)
+        }
+      }
+    })
+  })
+}
+
+const checkOverlappingRegistrations = (userid, sessionid) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 1
+      FROM session_registrations sr
+      JOIN sessions s1 ON sr.sessionid = s1.sessionid
+      JOIN sessions s2 ON s2.sessionid = $1
+      WHERE sr.userid = $2
+      AND s1.start_time < s2.end_time
+      AND s1.end_time > s2.start_time
+    `
+    pool.query(query, [sessionid, userid], (err, results) => {
+      if (err) {
+        console.error("Error checking overlapping registrations:", err)
+        reject(err)
+      } else {
+        resolve(results.rows.length > 0)
       }
     })
   })
@@ -80,4 +162,8 @@ module.exports = {
   insertRecord,
   updateRecord,
   getRecordById,
+  deleteRecord,
+  getAllRecords,
+  checkSessionAvailability,
+  checkOverlappingRegistrations,
 }
