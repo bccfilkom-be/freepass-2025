@@ -12,6 +12,7 @@ type ResponseHandler interface {
 	BadRequest(ctx *gin.Context, data interface{}, message string)
 	NotFound(ctx *gin.Context)
 	Forbidden(ctx *gin.Context, message string)
+	InternalServerError(ctx *gin.Context, message string)
 }
 
 type JSONResponseModel struct {
@@ -37,6 +38,12 @@ func (r *JSONResponseModel) BadRequest(ctx *gin.Context, data interface{}, messa
 		Message: message,
 		Success: false,
 		Data:    data,
+	})
+}
+
+func (r *JSONResponseModel) InternalServerError(ctx *gin.Context, message string) {
+	ctx.JSON(http.StatusInternalServerError, JSONResponseModel{
+		Message: fmt.Sprintf("Internal Server Error: %s", message),
 	})
 }
 
