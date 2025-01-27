@@ -169,6 +169,61 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 
 > Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
 
+
+## Installation
+
+Clone repository dari GitHub menggunakan perintah berikut:
+```bash
+  git clone https://github.com/rawhx/freepass-2025.git
+```
+Perintah ini akan membuat salinan dari repository. Setelah selesai, pindah ke direktori project:
+```bash
+  cd freepass-2025
+```
+Salin file .env.example menjadi .env agar konfigurasi environment dapat digunakan:
+```bash
+  cp .env.example .env
+```
+Setelah berada di direktori project, install semua dependency menggunakan perintah:
+```bash
+  npm install
+```
+Setelah semua terinstal dan konfigurasi selesai, jalankan aplikasi menggunakan perintah:
+```bash
+  npm start
+```
+Buka browser atau gunakan API client
+```http
+  http://localhost:4000/
+```
+
+## API Reference
+
+**Authentication :**
+- **Authorization**: `Bearer <token>`
+- **x-api-key**: `freepast-2025`
+
+| Endpoint    | Method | Query Parameters |
+|-------------|--------|----------------------|
+| `/` | `GET` |  |
+| `/register` | `POST` | `user_email`, `user_password`, `user_confirmPassword` |
+| `/login` | `POST` | `user_email`, `user_password` |
+| `/profile` | `PATCH` | `user_nama`, `user_username` |
+| `/search` | `GET` | `user_id`, `user_username` |
+| `/conference` | `GET` | `conference_id`, `conferece_kapasitas`, `conferece_status` |
+| `/conference` | `POST` | `conference_nama`, `conference_kapasitas`, `conference_start`, `conference_end` |
+| `/conference` | `PATCH` | `conference_id`,  `conference_nama`, `conferece_kapasitas`, `conferece_status`, `conference_start`, `conference_end` |
+| `/conference` | `DELETE` | `conference_id` |
+| `/user/join` | `GET` |  |
+| `/user/join` | `POST` | `conference_id` |
+| `/user/join` | `DELETE` | `conferencejoinuser_id` |
+| `/user/feedback` | `GET` | `conference_id`, `feedback_rating` |
+| `/user/feedback` | `POST` | `conference_id`, `feedback_rating`, `feedback_message` |
+| `/admin/user` | `POST` |  `user_email`, `user_role` |
+| `/admin/user` | `DELETE` |  `user_id` |
+| `/coordinator/feedback` | `DELETE` |  `user_id` |
+| `/coordinator/feedback` | `DELETE` |  `user_id` |
+
 ## **📞** Contact
 
 Have any questions? You can contact either [Tyo](https://www.instagram.com/nandanatyo/) or [Ilham](https://www.instagram.com/iilham_akbar/).
