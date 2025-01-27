@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid")
 const response = require("../response")
-const { updateRecord, getRecordById, getAllRecords, insertRecord } = require("../utils/sqlFunctions")
+const { updateRecord, getRecordById, getAllRecords, insertRecord, checkRecordExists } = require("../utils/sqlFunctions")
 
 const updateUserProfile = async (req, res) => {
   const { userid } = req.user
@@ -49,9 +49,25 @@ const leaveFeedback = async (req, res) => {
   }
 }
 
+const viewUserInfoByUsername = async (req, res) => {
+  const { username } = req.params
+
+  try {
+    const user = await checkRecordExists("users", "username", username)
+    if (user) {
+      response(200, user, "User information fetched successfully", res)
+    } else {
+      response(404, "", "User not found", res)
+    }
+  } catch (error) {
+    response(500, "", error, res)
+  }
+}
+
 module.exports = {
   updateUserProfile,
   getUserProfile,
   viewAllSessions,
   leaveFeedback,
+  viewUserInfoByUsername,
 }
