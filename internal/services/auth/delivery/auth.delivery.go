@@ -1,6 +1,8 @@
 package delivery
 
 import (
+	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
+	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/auth"
 	"net/http"
@@ -10,41 +12,39 @@ import (
 
 type AuthDelivery struct {
 	router      *gin.Engine
+	response    response.ResponseHandler
 	authUsecase auth.AuthUsecase
+	validator   validator.ValidationService
 }
 
-func NewAuthDelivery(router *gin.Engine, authUsecase auth.AuthUsecase) {
-	v := AuthDelivery{
+func NewAuthDelivery(router *gin.Engine, authUsecase auth.AuthUsecase, response response.ResponseHandler, validator validator.ValidationService) {
+	handler := AuthDelivery{
 		router,
+		response,
 		authUsecase,
+		validator,
 	}
 
 	authRouter := router.Group("/auth")
-	authRouter.POST("/sign-up", v.SignUp)
+	authRouter.POST("/sign-up", handler.SignUp)
 }
 
 func (v *AuthDelivery) SignUp(ctx *gin.Context) {
 	var req *dto.SignUpRequest
-	if err := ctx.Bind(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
 		return
 	}
 
-	err := v.authUsecase.SignUp(req)
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
+	if errorsData, err := v.validator.Validate(req); err != nil {
+		v.response.BadRequest(ctx, errorsData, err.Error())
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{
-		"success": true,
-		"message": "User Created",
-	})
+	if err := v.authUsecase.SignUp(req); err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, nil, "User Created", http.StatusCreated)
 }
