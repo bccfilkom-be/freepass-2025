@@ -28,6 +28,7 @@ func NewFeedbackDelivery(
 	}
 
 	sessionRoute := handler.router.Group("/session")
+	sessionRoute.GET("/:sessionId/feedback", middleware.RequireAuth, handler.GetAllSessionFeedback)
 	sessionRoute.POST("/:sessionId/feedback", middleware.RequireAuth, handler.CreateFeedback)
 }
 
@@ -50,4 +51,14 @@ func (v *FeedbackDelivery) CreateFeedback(ctx *gin.Context) {
 	}
 
 	v.response.OK(ctx, nil, "Feedback Created!", 201)
+}
+
+func (v *FeedbackDelivery) GetAllSessionFeedback(ctx *gin.Context) {
+	res, err := v.feedbackUsecase.GetAllSessionFeedback(ctx)
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, res, "Session feedback found!", 200)
 }

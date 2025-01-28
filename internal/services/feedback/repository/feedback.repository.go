@@ -15,6 +15,12 @@ func NewFeedbackRepository(db *gorm.DB) feedback.FeedbackRepository {
 	return &FeedbackRepository{db}
 }
 
+func (r *FeedbackRepository) GetAllBySessionId(sessionId uint) ([]domain.SessionFeedback, error) {
+	var feedbacks []domain.SessionFeedback
+	err := r.db.Preload("User").Where("session_id = ?", sessionId).Find(&feedbacks).Error
+	return feedbacks, err
+}
+
 func (r *FeedbackRepository) Create(data domain.SessionFeedback) error {
 	return r.db.Create(&data).Error
 }

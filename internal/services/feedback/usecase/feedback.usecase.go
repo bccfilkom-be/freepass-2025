@@ -24,6 +24,48 @@ func NewFeedbackUsecase(registrationRepo registration.RegistrationRepository, se
 	return &FeedbackUsecase{registrationRepo, sessionRepo, feedbackRepo}
 }
 
+func (u *FeedbackUsecase) GetAllSessionFeedback(ctx *gin.Context) ([]dto.GetFeedbackResponse, error) {
+	param := ctx.Param("sessionId")
+
+	sessionId, err := helper.StringToUint(param)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = u.sessionRepo.GetById(sessionId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("Session not found! Either session is not exist or already deleted")
+		} else {
+			return nil, err
+		}
+	}
+
+	feedbacks, err := u.feedbackRepo.GetAllBySessionId(sessionId)
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []dto.GetFeedbackResponse
+	for _, feedback := range feedbacks {
+		responses = append(responses, dto.GetFeedbackResponse{
+			ID:        feedback.ID,
+			Content:   feedback.Content,
+			Rating:    feedback.Rating,
+			CreatedAt: feedback.CreatedAt.Format(time.RFC3339),
+			UpdatedAt: feedback.UpdatedAt.Format(time.RFC3339),
+			User: dto.GetUserDetailResponse{
+				ID:    feedback.User.ID,
+				Name:  feedback.User.Name,
+				Email: feedback.User.Email,
+				Bio:   feedback.User.Bio,
+			},
+		})
+	}
+
+	return responses, nil
+}
+
 func (u *FeedbackUsecase) CreateFeedback(ctx *gin.Context, req *dto.CreateFeedbackRequest) error {
 	userId := ctx.GetUint("userId")
 	param := ctx.Param("sessionId")
