@@ -49,3 +49,7 @@ func (v *UserRepository) Update(data domain.User) error {
 
 	return nil
 }
+
+func (v *UserRepository) Delete(userId uint) error {
+	return v.db.Unscoped().Delete(&domain.User{}, userId).Error
+}

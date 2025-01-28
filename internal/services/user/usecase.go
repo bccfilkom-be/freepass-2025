@@ -7,3 +7,8 @@ type UserUsecase interface {
 	GetUserProfile(userId uint) (dto.GetUserProfileResponse, error)
 	UpdateUserProfile(userId uint, data *dto.UpdateUserProfileRequest) error
 }
+
+type AdminUsecase interface {
+	DeleteUser(userId uint) error
+	UpdateRole(userId uint, data *dto.UpdateUserRoleRequest) error
+}

@@ -52,6 +52,7 @@ func NewHTTPServer() {
 	proposalUsecase := proposal_usecase.NewProposalUsecase(sessionRepo)
 	registrationUsecase := registration_usecase.NewRegistrationUsecase(registrationRepo, sessionRepo)
 	feedbackUsecase := feedback_usecase.NewFeedbackUsecase(registrationRepo, sessionRepo, feedbackRepo)
+	adminUsecase := user_usecase.NewAdminUsecase(userRepo)
 
 	// Delivery
 	auth_delivery.NewAuthDelivery(router, authUsecase, response, validator)
@@ -60,6 +61,7 @@ func NewHTTPServer() {
 	proposal_delivery.NewProposalDelivery(router, proposalUsecase, response, validator)
 	registration_delivery.NewRegistrationDelivery(router, response, registrationUsecase, validator)
 	feedback_delivery.NewFeedbackDelivery(router, response, feedbackUsecase, validator)
+	user_delivery.NewAdminDelivery(router, adminUsecase, response, validator)
 
 	router.NoRoute(func(ctx *gin.Context) {
 		response.NotFound(ctx)

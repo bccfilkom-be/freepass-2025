@@ -25,3 +25,7 @@ type UpdateUserProfileRequest struct {
 	Name string `json:"name" validate:"required"`
 	Bio  string `json:"bio"`
 }
+
+type UpdateUserRoleRequest struct {
+	Role string `json:"role" validate:"required,oneof=ADMIN COORDINATOR USER"`
+}
