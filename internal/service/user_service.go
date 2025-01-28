@@ -2,14 +2,16 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/litegral/freepass-2025/internal/lib"
 	"github.com/litegral/freepass-2025/internal/lib/db"
-	"github.com/litegral/freepass-2025/internal/model"
-	"errors"
-	"golang.org/x/crypto/bcrypt"
+	c "github.com/litegral/freepass-2025/internal/lib/config"
 	"github.com/litegral/freepass-2025/internal/lib/jwt"
+	"github.com/litegral/freepass-2025/internal/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // UserService is a service for user operations
@@ -112,18 +114,18 @@ func (s *UserService) Login(ctx context.Context, params model.UserLogin) (model.
 	// Get user by email
 	user, err := s.queries.GetUserByEmail(ctx, params.Email)
 	if err != nil {
-		return model.UserLoginResponse{}, errors.New("invalid email or password")
+		return model.UserLoginResponse{}, errors.New(c.ErrInvalidEmailOrPassword)
 	}
 
 	// Verify password
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(params.Password))
 	if err != nil {
-		return model.UserLoginResponse{}, errors.New("invalid email or password")
+		return model.UserLoginResponse{}, errors.New(c.ErrInvalidEmailOrPassword)
 	}
 
 	// Check if email is verified
 	if !user.IsVerified {
-		return model.UserLoginResponse{}, errors.New("email not verified")
+		return model.UserLoginResponse{}, errors.New(c.ErrEmailNotVerified)
 	}
 
 	// Convert DB user to model user
@@ -148,5 +150,53 @@ func (s *UserService) Login(ctx context.Context, params model.UserLogin) (model.
 	return model.UserLoginResponse{
 		User:  modelUser,
 		Token: token,
+	}, nil
+}
+
+// UpdateProfile updates a user's profile
+func (s *UserService) UpdateProfile(ctx context.Context, userID int32, params model.UserProfileUpdate) (model.User, error) {
+	// Update user profile
+	user, err := s.queries.UpdateUser(ctx, db.UpdateUserParams{
+		ID:          userID,
+		FullName:    pgtype.Text{String: params.FullName, Valid: true},
+		Affiliation: pgtype.Text{String: params.Affiliation, Valid: true},
+	})
+	if err != nil {
+		return model.User{}, err
+	}
+
+	return model.User{
+		ID:          int(user.ID),
+		Email:       user.Email,
+		Role:        string(user.Role),
+		FullName:    user.FullName.String,
+		Affiliation: user.Affiliation.String,
+		IsVerified:  user.IsVerified,
+		VerifiedAt:  user.VerifiedAt.Time,
+		CreatedAt:   user.CreatedAt.Time,
+		UpdatedAt:   user.UpdatedAt.Time,
+	}, nil
+}
+
+// GetProfile retrieves a user's profile by ID
+func (s *UserService) GetProfile(ctx context.Context, userID int32) (model.User, error) {
+	user, err := s.queries.GetUserByID(ctx, userID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return model.User{}, errors.New(c.ErrUserNotFound)
+		}
+		return model.User{}, err 
+	}
+
+	return model.User{
+		ID:          int(user.ID),
+		Email:       user.Email,
+		Role:        string(user.Role),
+		FullName:    user.FullName.String,
+		Affiliation: user.Affiliation.String,
+		IsVerified:  user.IsVerified,
+		VerifiedAt:  user.VerifiedAt.Time,
+		CreatedAt:   user.CreatedAt.Time,
+		UpdatedAt:   user.UpdatedAt.Time,
 	}, nil
 }

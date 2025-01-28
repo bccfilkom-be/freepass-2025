@@ -13,6 +13,8 @@ const (
 	TokenExpiry = 24 * time.Hour
 )
 
+var ClaimsContextKey = "user_claims"
+
 type Claims struct {
 	UserID int    `json:"user_id"`
 	Email  string `json:"email"`

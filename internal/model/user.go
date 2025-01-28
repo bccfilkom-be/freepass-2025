@@ -30,3 +30,8 @@ type UserLoginResponse struct {
 	User  User   `json:"user"`
 	Token string `json:"token"`
 }
+
+type UserProfileUpdate struct {
+	FullName    string `json:"full_name" validate:"required" example:"Dimas Andrian"`
+	Affiliation string `json:"affiliation" validate:"required" example:"BCC"`
+}

@@ -12,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/litegral/freepass-2025/internal/controller"
 	"github.com/litegral/freepass-2025/internal/lib/db"
+	"github.com/litegral/freepass-2025/internal/middleware"
 	"github.com/litegral/freepass-2025/internal/service"
 )
 
@@ -59,6 +60,32 @@ func main() {
 		option.Query("email", "Email for email verification", param.Required()),
 	)
 	fuego.Post(v1, "/login", userController.Login)
+
+	// Protected routes group
+	protected := fuego.Group(v1, "")
+	fuego.Use(protected, middleware.AuthMiddleware)
+
+	fuego.Put(protected, "/profile", userController.UpdateProfile,
+		option.Header("Authorization", "Bearer token", param.Required()),
+		option.Description("Update user profile"),
+		option.Summary("Update Profile"),
+		option.Tags("User"),
+	)
+
+	fuego.Get(protected, "/profile", userController.GetProfile,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Get current user's profile"),
+		option.Summary("Get Profile"),
+		option.Tags("User"),
+	)
+
+	fuego.Get(protected, "/users/{id}", userController.GetUserProfile,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Get user profile by ID"),
+		option.Summary("Get User Profile"),
+		option.Tags("User"),
+		option.Path("id", "User ID", param.Required()),
+	)
 
 	s.Run()
 }

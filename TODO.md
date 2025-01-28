@@ -4,8 +4,8 @@
 2. User (Attendee/Presenter)
    Account Management
    ✔️ Login to the system (DONE)
-   ✔️ Edit their profile
-   ✔️ View other users’ profiles
+   ✔️ Edit their profile (DONE)
+   ✔️ View other users’ profiles (DONE)
 
    Session Interaction
    ✔️ View all conference sessions
