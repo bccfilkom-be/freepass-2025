@@ -1,13 +1,13 @@
 package delivery
 
 import (
+	"jevvonn/bcc-be-freepass-2025/internal/helper"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
 	"jevvonn/bcc-be-freepass-2025/internal/middleware"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/user"
 	"log"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -51,9 +51,10 @@ func (v *UserDelivery) GetUserProfile(ctx *gin.Context) {
 }
 
 func (v *UserDelivery) GetUserDetail(ctx *gin.Context) {
-	userId, err := strconv.ParseInt(ctx.Param("id"), 10, 32)
+	param := ctx.Param("id")
+	userId, err := helper.StringToUint(param)
 	if err != nil {
-		v.response.InternalServerError(ctx, "Invalid type of userId!")
+		v.response.InternalServerError(ctx, err.Error())
 		return
 	}
 

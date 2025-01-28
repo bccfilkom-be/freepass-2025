@@ -2,12 +2,12 @@ package delivery
 
 import (
 	"jevvonn/bcc-be-freepass-2025/internal/constant"
+	"jevvonn/bcc-be-freepass-2025/internal/helper"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
 	"jevvonn/bcc-be-freepass-2025/internal/middleware"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/proposal"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -70,9 +70,9 @@ func (v *ProposalDelivery) UpdateSessionProposal(ctx *gin.Context) {
 	userId, _ := ctx.Get("userId")
 	param := ctx.Param("sessionId")
 
-	sessionId, err := strconv.ParseInt(param, 10, 64)
+	sessionId, err := helper.StringToUint(param)
 	if err != nil {
-		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		v.response.InternalServerError(ctx, err.Error())
 		return
 	}
 
@@ -109,9 +109,9 @@ func (v *ProposalDelivery) GetAllProposal(ctx *gin.Context) {
 func (v *ProposalDelivery) GetProposalDetail(ctx *gin.Context) {
 	param := ctx.Param("sessionId")
 
-	sessionId, err := strconv.ParseInt(param, 10, 64)
+	sessionId, err := helper.StringToUint(param)
 	if err != nil {
-		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		v.response.InternalServerError(ctx, err.Error())
 		return
 	}
 
@@ -127,9 +127,9 @@ func (v *ProposalDelivery) GetProposalDetail(ctx *gin.Context) {
 func (v *ProposalDelivery) DeleteProposal(ctx *gin.Context) {
 	param := ctx.Param("sessionId")
 
-	sessionId, err := strconv.ParseInt(param, 10, 64)
+	sessionId, err := helper.StringToUint(param)
 	if err != nil {
-		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		v.response.InternalServerError(ctx, err.Error())
 		return
 	}
 
@@ -145,9 +145,9 @@ func (v *ProposalDelivery) DeleteProposal(ctx *gin.Context) {
 func (v *ProposalDelivery) ApproveProposal(ctx *gin.Context) {
 	param := ctx.Param("sessionId")
 
-	sessionId, err := strconv.ParseInt(param, 10, 64)
+	sessionId, err := helper.StringToUint(param)
 	if err != nil {
-		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		v.response.InternalServerError(ctx, err.Error())
 		return
 	}
 
@@ -163,9 +163,9 @@ func (v *ProposalDelivery) ApproveProposal(ctx *gin.Context) {
 func (v *ProposalDelivery) DeclineProposal(ctx *gin.Context) {
 	param := ctx.Param("sessionId")
 
-	sessionId, err := strconv.ParseInt(param, 10, 64)
+	sessionId, err := helper.StringToUint(param)
 	if err != nil {
-		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		v.response.InternalServerError(ctx, err.Error())
 		return
 	}
 

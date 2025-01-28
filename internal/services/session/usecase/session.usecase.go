@@ -2,9 +2,12 @@ package usecase
 
 import (
 	"jevvonn/bcc-be-freepass-2025/internal/constant"
+	"jevvonn/bcc-be-freepass-2025/internal/helper"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/session"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type SessionUsecase struct {
@@ -15,10 +18,22 @@ func NewSessionUsecase(sessionRepo session.SessionRepository) session.SessionUse
 	return &SessionUsecase{sessionRepo}
 }
 
-func (v *SessionUsecase) GetAllSession() ([]dto.GetAllSessionResponse, error) {
-	results, err := v.sessionRepo.GetAll(session.SessionFilter{
+func (v *SessionUsecase) GetAllSession(ctx *gin.Context) ([]dto.GetAllSessionResponse, error) {
+	filter := session.SessionFilter{
 		Status: []string{constant.STATUS_SESSION_ACCEPTED},
-	})
+	}
+
+	userIdQuery := ctx.Query("userId")
+	if userIdQuery != "" {
+		userId, err := helper.StringToUint(userIdQuery)
+		if err != nil {
+			return []dto.GetAllSessionResponse{}, err
+		}
+
+		filter.UserID = userId
+	}
+
+	results, err := v.sessionRepo.GetAll(filter)
 
 	if err != nil {
 		return []dto.GetAllSessionResponse{}, err

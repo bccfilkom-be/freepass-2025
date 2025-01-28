@@ -30,7 +30,7 @@ func NewSessionDelivery(
 }
 
 func (v *SessionDelivery) GetAllSession(ctx *gin.Context) {
-	res, err := v.sessionUsecase.GetAllSession()
+	res, err := v.sessionUsecase.GetAllSession(ctx)
 	if err != nil {
 		v.response.BadRequest(ctx, nil, err.Error())
 		return

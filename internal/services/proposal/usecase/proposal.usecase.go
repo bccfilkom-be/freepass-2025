@@ -70,14 +70,14 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 	sessionExist, err := v.sessionRepo.GetById(sessionId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("Session not found!")
+			return errors.New("Proposal not found!")
 		} else {
 			return err
 		}
 	}
 
 	if sessionExist.UserID != userId {
-		return errors.New("You are not authorized to update this session!")
+		return errors.New("You are not authorized to update this proposal!")
 	}
 
 	dates, err := parseDatesFromRequest(

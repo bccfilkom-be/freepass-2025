@@ -1,7 +1,11 @@
 package session
 
-import "jevvonn/bcc-be-freepass-2025/internal/models/dto"
+import (
+	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
+
+	"github.com/gin-gonic/gin"
+)
 
 type SessionUsecase interface {
-	GetAllSession() ([]dto.GetAllSessionResponse, error)
+	GetAllSession(ctx *gin.Context) ([]dto.GetAllSessionResponse, error)
 }
