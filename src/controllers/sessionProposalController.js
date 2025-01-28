@@ -33,7 +33,7 @@ exports.createProposal = async (req, res) => {
     res
       .status(201)
       .json({ message: "Proposal created successfully", newProposal });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to create proposal" });
   }
 };
@@ -66,7 +66,7 @@ exports.editProposal = async (req, res) => {
     res
       .status(200)
       .json({ message: "Proposal updated successfully", proposal });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to edit proposal" });
   }
 };
@@ -92,7 +92,7 @@ exports.deleteProposal = async (req, res) => {
 
     await proposal.destroy();
     res.status(200).json({ message: "Proposal deleted successfully" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to delete proposal" });
   }
 };
@@ -103,7 +103,7 @@ exports.getAllProposals = async (_req, res) => {
       attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     res.status(200).json(proposals);
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to retrieve proposals" });
   }
 };
@@ -134,7 +134,7 @@ exports.acceptProposal = async (req, res) => {
     res
       .status(200)
       .json({ message: "Proposal accepted and session created", newSession });
-  } catch (err) {
+  } catch {
     res
       .status(500)
       .json({ message: "Failed to accept proposal and create session" });
@@ -156,7 +156,7 @@ exports.rejectProposal = async (req, res) => {
     await proposal.update({ status: "rejected" });
 
     res.status(200).json({ message: "Proposal rejected", proposal });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to reject proposal" });
   }
 };

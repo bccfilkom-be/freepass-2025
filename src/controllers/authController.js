@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
         role: user.role,
       },
     });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -68,7 +68,7 @@ exports.login = async (req, res) => {
     );
 
     res.status(200).json({ message: "Login successful", token });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Internal server error" });
   }
 };

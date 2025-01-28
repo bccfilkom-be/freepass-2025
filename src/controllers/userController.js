@@ -31,7 +31,7 @@ exports.editProfile = async (req, res) => {
 
     await user.save();
     res.status(200).json({ message: "Profile updated successfully", user });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -50,7 +50,7 @@ exports.viewProfile = async (req, res) => {
     }
 
     res.status(200).json({ user });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Error retrieving user profile" });
   }
 };

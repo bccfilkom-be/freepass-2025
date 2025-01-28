@@ -23,7 +23,7 @@ exports.addEventCoordinator = async (req, res) => {
     });
 
     res.status(200).json({ message: "User is now an event coordinator", user });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to update user role" });
   }
 };
@@ -48,7 +48,7 @@ exports.deleteUser = async (req, res) => {
     await user.destroy();
 
     res.status(200).json({ message: "User deleted successfully" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to delete user" });
   }
 };

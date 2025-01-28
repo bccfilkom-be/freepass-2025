@@ -8,7 +8,7 @@ exports.getAllSessions = async (_req, res) => {
     });
 
     res.status(200).json(sessions);
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to retrieve sessions" });
   }
 };
@@ -39,7 +39,7 @@ exports.leaveFeedback = async (req, res) => {
     res
       .status(201)
       .json({ message: "Feedback successfully subbmitted", newFeedback });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to leave feedback" });
   }
 };
@@ -70,7 +70,7 @@ exports.deleteFeedback = async (req, res) => {
 
     await feedback.destroy();
     res.status(200).json({ message: "Feedback deleted successfully" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to delete feedback" });
   }
 };
@@ -127,8 +127,7 @@ exports.registerForSession = async (req, res) => {
     await session.save();
 
     res.status(201).json({ message: "Registration successful" });
-  } catch (err) {
-    console.error(err);
+  } catch {
     res.status(500).json({ message: "Failed to register for session" });
   }
 };
@@ -160,7 +159,7 @@ exports.editSession = async (req, res) => {
       available_seats: availableSeats,
     });
     res.status(200).json({ message: "Session updated successfully" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to edit session" });
   }
 };
@@ -191,7 +190,7 @@ exports.deleteSession = async (req, res) => {
 
     await session.destroy();
     res.status(200).json({ message: "Session deleted successfully" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Failed to delete session" });
   }
 };
