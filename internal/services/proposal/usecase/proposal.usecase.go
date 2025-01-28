@@ -217,8 +217,8 @@ func (v *ProposalUsecase) DeleteProposal(ctx *gin.Context, sessionId uint) error
 		return errors.New("You are not authorized to delete this proposal!")
 	}
 
-	if session.Status != constant.STATUS_SESSION_PENDING {
-		return errors.New("Proposal not found!")
+	if session.Status == constant.STATUS_SESSION_ACCEPTED {
+		return errors.New("Proposal not found! proposal might be already accepted.")
 	}
 
 	return v.sessionRepo.Delete(sessionId)

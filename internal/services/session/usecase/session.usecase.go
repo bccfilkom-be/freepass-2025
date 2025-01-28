@@ -132,3 +132,23 @@ func (v *SessionUsecase) UpdateSession(ctx *gin.Context, req *dto.UpdateSessionR
 
 	return v.sessionRepo.Update(data)
 }
+
+func (v *SessionUsecase) DeleteSession(ctx *gin.Context, sessionId uint) error {
+	userId := ctx.GetUint("userId")
+	role := ctx.GetString("role")
+
+	session, err := v.sessionRepo.GetById(sessionId)
+	if err != nil {
+		return err
+	}
+
+	if session.UserID != userId && role != constant.ROLE_COORDINATOR {
+		return errors.New("You are not authorized to delete this session!")
+	}
+
+	if session.Status != constant.STATUS_SESSION_ACCEPTED {
+		return errors.New("Session not found! Either the session is not accepted or deleted.")
+	}
+
+	return v.sessionRepo.Delete(sessionId)
+}
