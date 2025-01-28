@@ -39,10 +39,12 @@ func main() {
 	}
 	userService := service.NewUserService(queries, emailService)
 	sessionService := service.NewSessionService(queries)
+	coordinatorService := service.NewCoordinatorService(queries)
 
 	// Initialize controllers
 	userController := controller.NewUserController(userService)
 	sessionController := controller.NewSessionController(sessionService)
+	coordinatorController := controller.NewCoordinatorController(coordinatorService)
 
 	// Initialize router with custom error handler
 	s := fuego.NewServer(
@@ -142,6 +144,37 @@ func main() {
 		option.Summary("Create Feedback"),
 		option.Tags("Sessions"),
 		option.Path("id", "Session ID", param.Required()),
+	)
+
+	// Coordinator routes
+	coordinator := fuego.Group(v1, "/coordinator")
+	fuego.Use(coordinator, middleware.AuthMiddleware(queries), middleware.RequireRole("event_coordinator"))
+
+	fuego.Get(coordinator, "/proposals", coordinatorController.ListProposals,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("List all session proposals"),
+		option.Summary("List Proposals"),
+	)
+
+	fuego.Put(coordinator, "/proposals/{id}/status", coordinatorController.UpdateProposalStatus,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Update proposal status (accept/reject)"),
+		option.Summary("Update Proposal Status"),
+		option.Path("id", "Session ID", param.Required()),
+	)
+
+	fuego.Delete(coordinator, "/sessions/{id}", coordinatorController.RemoveSession,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Remove a session"),
+		option.Summary("Remove Session"),
+		option.Path("id", "Session ID", param.Required()),
+	)
+
+	fuego.Delete(coordinator, "/feedback/{id}", coordinatorController.RemoveFeedback,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Remove inappropriate feedback"),
+		option.Summary("Remove Feedback"),
+		option.Path("id", "Feedback ID", param.Required()),
 	)
 
 	s.Run()

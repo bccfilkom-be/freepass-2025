@@ -140,3 +140,26 @@ UPDATE sessions
 SET status = $2
 WHERE id = $1
 RETURNING *;
+
+-- name: ListSessionProposals :many
+SELECT s.*, u.full_name AS proposer_name, u.affiliation AS proposer_affiliation
+FROM sessions s
+JOIN users u ON s.proposer_id = u.id
+WHERE s.status = 'pending' AND s.is_deleted = FALSE
+ORDER BY s.created_at DESC;
+
+-- name: UpdateSessionStatusByCoordinator :one
+UPDATE sessions
+SET status = $2, updated_at = NOW()
+WHERE id = $1 AND status = 'pending' AND is_deleted = FALSE
+RETURNING *;
+
+-- name: SoftDeleteSessionByCoordinator :exec
+UPDATE sessions
+SET is_deleted = TRUE, updated_at = NOW()
+WHERE id = $1 AND is_deleted = FALSE;
+
+-- name: SoftDeleteFeedbackByCoordinator :exec
+UPDATE feedback
+SET is_deleted = TRUE
+WHERE id = $1 AND is_deleted = FALSE;

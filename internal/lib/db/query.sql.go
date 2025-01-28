@@ -11,6 +11,21 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countPendingProposalsByUser = `-- name: CountPendingProposalsByUser :one
+SELECT COUNT(*) 
+FROM sessions 
+WHERE proposer_id = $1 
+AND status = 'pending' 
+AND is_deleted = FALSE
+`
+
+func (q *Queries) CountPendingProposalsByUser(ctx context.Context, proposerID pgtype.Int4) (int64, error) {
+	row := q.db.QueryRow(ctx, countPendingProposalsByUser, proposerID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const countSessionRegistrations = `-- name: CountSessionRegistrations :one
 SELECT COUNT(*) FROM session_registrations
 WHERE session_id = $1
@@ -411,6 +426,66 @@ func (q *Queries) ListSessionFeedback(ctx context.Context, sessionID int32) ([]L
 	return items, nil
 }
 
+const listSessionProposals = `-- name: ListSessionProposals :many
+SELECT s.id, s.title, s.description, s.start_time, s.end_time, s.room, s.status, s.seating_capacity, s.proposer_id, s.created_at, s.updated_at, s.is_deleted, u.full_name AS proposer_name, u.affiliation AS proposer_affiliation
+FROM sessions s
+JOIN users u ON s.proposer_id = u.id
+WHERE s.status = 'pending' AND s.is_deleted = FALSE
+ORDER BY s.created_at DESC
+`
+
+type ListSessionProposalsRow struct {
+	ID                  int32
+	Title               string
+	Description         pgtype.Text
+	StartTime           pgtype.Timestamptz
+	EndTime             pgtype.Timestamptz
+	Room                pgtype.Text
+	Status              SessionStatus
+	SeatingCapacity     int32
+	ProposerID          pgtype.Int4
+	CreatedAt           pgtype.Timestamptz
+	UpdatedAt           pgtype.Timestamptz
+	IsDeleted           pgtype.Bool
+	ProposerName        pgtype.Text
+	ProposerAffiliation pgtype.Text
+}
+
+func (q *Queries) ListSessionProposals(ctx context.Context) ([]ListSessionProposalsRow, error) {
+	rows, err := q.db.Query(ctx, listSessionProposals)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListSessionProposalsRow
+	for rows.Next() {
+		var i ListSessionProposalsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.StartTime,
+			&i.EndTime,
+			&i.Room,
+			&i.Status,
+			&i.SeatingCapacity,
+			&i.ProposerID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.IsDeleted,
+			&i.ProposerName,
+			&i.ProposerAffiliation,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listSessions = `-- name: ListSessions :many
 SELECT id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted FROM sessions
 ORDER BY start_time
@@ -523,6 +598,17 @@ func (q *Queries) SoftDeleteFeedback(ctx context.Context, id int32) error {
 	return err
 }
 
+const softDeleteFeedbackByCoordinator = `-- name: SoftDeleteFeedbackByCoordinator :exec
+UPDATE feedback
+SET is_deleted = TRUE
+WHERE id = $1 AND is_deleted = FALSE
+`
+
+func (q *Queries) SoftDeleteFeedbackByCoordinator(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, softDeleteFeedbackByCoordinator, id)
+	return err
+}
+
 const softDeleteSession = `-- name: SoftDeleteSession :exec
 UPDATE sessions
 SET is_deleted = TRUE
@@ -531,6 +617,17 @@ WHERE id = $1
 
 func (q *Queries) SoftDeleteSession(ctx context.Context, id int32) error {
 	_, err := q.db.Exec(ctx, softDeleteSession, id)
+	return err
+}
+
+const softDeleteSessionByCoordinator = `-- name: SoftDeleteSessionByCoordinator :exec
+UPDATE sessions
+SET is_deleted = TRUE, updated_at = NOW()
+WHERE id = $1 AND is_deleted = FALSE
+`
+
+func (q *Queries) SoftDeleteSessionByCoordinator(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, softDeleteSessionByCoordinator, id)
 	return err
 }
 
@@ -630,6 +727,38 @@ type UpdateSessionStatusParams struct {
 
 func (q *Queries) UpdateSessionStatus(ctx context.Context, arg UpdateSessionStatusParams) (Session, error) {
 	row := q.db.QueryRow(ctx, updateSessionStatus, arg.ID, arg.Status)
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.StartTime,
+		&i.EndTime,
+		&i.Room,
+		&i.Status,
+		&i.SeatingCapacity,
+		&i.ProposerID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.IsDeleted,
+	)
+	return i, err
+}
+
+const updateSessionStatusByCoordinator = `-- name: UpdateSessionStatusByCoordinator :one
+UPDATE sessions
+SET status = $2, updated_at = NOW()
+WHERE id = $1 AND status = 'pending' AND is_deleted = FALSE
+RETURNING id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted
+`
+
+type UpdateSessionStatusByCoordinatorParams struct {
+	ID     int32
+	Status SessionStatus
+}
+
+func (q *Queries) UpdateSessionStatusByCoordinator(ctx context.Context, arg UpdateSessionStatusByCoordinatorParams) (Session, error) {
+	row := q.db.QueryRow(ctx, updateSessionStatusByCoordinator, arg.ID, arg.Status)
 	var i Session
 	err := row.Scan(
 		&i.ID,
