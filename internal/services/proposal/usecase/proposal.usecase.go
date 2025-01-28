@@ -18,48 +18,34 @@ type ProposalUsecase struct {
 	sessionRepo session.SessionRepository
 }
 
+type SessionDates struct {
+	RegistrationStart time.Time
+	RegistrationEnd   time.Time
+	SessionStart      time.Time
+	SessionEnd        time.Time
+}
+
 func NewProposalUsecase(sessionRepo session.SessionRepository) proposal.ProposalUsecase {
 	return &ProposalUsecase{sessionRepo}
 }
 
 func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalRequest) error {
-	registrationStarDate, err := helper.StringISOToDateTime(req.RegistrationStartDate)
+	dates, err := parseDatesFromRequest(
+		req.RegistrationStartDate,
+		req.RegistrationEndDate,
+		req.SessionStartDate,
+		req.SessionEndDate,
+	)
+
 	if err != nil {
 		return err
 	}
 
-	registrationEndDate, err := helper.StringISOToDateTime(req.RegistrationEndDate)
-	if err != nil {
+	if err := validateDates(dates); err != nil {
 		return err
 	}
 
-	sessionStartDate, err := helper.StringISOToDateTime(req.SessionStartDate)
-	if err != nil {
-		return err
-	}
-
-	sessionEndDate, err := helper.StringISOToDateTime(req.SessionEndDate)
-	if err != nil {
-		return err
-	}
-
-	if registrationStarDate.Before(time.Now()) {
-		return errors.New("Registration start date should be after today!")
-	}
-
-	if registrationStarDate.After(registrationEndDate) {
-		return errors.New("Registration start date should be before the registration end date!")
-	}
-
-	if sessionStartDate.Before(registrationEndDate) {
-		return errors.New("Session start date should be after the registration end date!")
-	}
-
-	if sessionStartDate.After(sessionEndDate) {
-		return errors.New("Session start date should be before the session end date!")
-	}
-
-	if err := v.sessionRepo.DateInBetweenSession(sessionStartDate, sessionEndDate, session.SessionFilter{
+	if err := v.sessionRepo.DateInBetweenSession(dates.SessionStart, dates.SessionEnd, session.SessionFilter{
 		Status: constant.STATUS_SESSION_PENDING,
 		UserID: userId,
 	}); err != nil {
@@ -70,11 +56,11 @@ func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 		UserID:                userId,
 		Title:                 req.Title,
 		Description:           req.Description,
-		RegistrationStartDate: registrationStarDate,
-		RegistrationEndDate:   registrationEndDate,
+		RegistrationStartDate: dates.RegistrationStart,
+		RegistrationEndDate:   dates.RegistrationEnd,
 
-		SessionStartDate: sessionStartDate,
-		SessionEndDate:   sessionEndDate,
+		SessionStartDate: dates.SessionStart,
+		SessionEndDate:   dates.SessionEnd,
 		MaxSeat:          req.MaxSeat,
 	}
 
@@ -95,46 +81,25 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 		return errors.New("You are not authorized to update this session!")
 	}
 
-	registrationStarDate, err := helper.StringISOToDateTime(req.RegistrationStartDate)
+	dates, err := parseDatesFromRequest(
+		req.RegistrationStartDate,
+		req.RegistrationEndDate,
+		req.SessionStartDate,
+		req.SessionEndDate,
+	)
+
 	if err != nil {
 		return err
 	}
 
-	registrationEndDate, err := helper.StringISOToDateTime(req.RegistrationEndDate)
-	if err != nil {
+	if err := validateDates(dates); err != nil {
 		return err
 	}
 
-	sessionStartDate, err := helper.StringISOToDateTime(req.SessionStartDate)
-	if err != nil {
-		return err
-	}
-
-	sessionEndDate, err := helper.StringISOToDateTime(req.SessionEndDate)
-	if err != nil {
-		return err
-	}
-
-	if registrationStarDate.Before(time.Now()) {
-		return errors.New("Registration start date should be after today!")
-	}
-
-	if registrationStarDate.After(registrationEndDate) {
-		return errors.New("Registration start date should be before the registration end date!")
-	}
-
-	if sessionStartDate.Before(registrationEndDate) {
-		return errors.New("Session start date should be after the registration end date!")
-	}
-
-	if sessionStartDate.After(sessionEndDate) {
-		return errors.New("Session start date should be before the session end date!")
-	}
-
-	if err := v.sessionRepo.DateInBetweenSession(sessionStartDate, sessionEndDate, session.SessionFilter{
+	if err := v.sessionRepo.DateInBetweenSession(dates.SessionStart, dates.SessionEnd, session.SessionFilter{
 		Status:    constant.STATUS_SESSION_PENDING,
 		UserID:    userId,
-		ExcludeID: []uint{sessionId, 2},
+		ExcludeID: []uint{sessionId},
 	}); err != nil {
 		return err
 	}
@@ -143,11 +108,11 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 		ID:                    sessionId,
 		Title:                 req.Title,
 		Description:           req.Description,
-		RegistrationStartDate: registrationStarDate,
-		RegistrationEndDate:   registrationEndDate,
+		RegistrationStartDate: dates.RegistrationStart,
+		RegistrationEndDate:   dates.RegistrationEnd,
 
-		SessionStartDate: sessionStartDate,
-		SessionEndDate:   sessionEndDate,
+		SessionStartDate: dates.SessionStart,
+		SessionEndDate:   dates.SessionEnd,
 		MaxSeat:          req.MaxSeat,
 	}
 
@@ -261,4 +226,55 @@ func (v *ProposalUsecase) DeleteProposal(ctx *gin.Context, sessionId uint) error
 	}
 
 	return v.sessionRepo.Delete(sessionId)
+}
+
+func validateDates(dates SessionDates) error {
+	if dates.RegistrationStart.Before(time.Now()) {
+		return errors.New("registration start date should be after today")
+	}
+
+	if dates.RegistrationStart.After(dates.RegistrationEnd) {
+		return errors.New("registration start date should be before the registration end date")
+	}
+
+	if dates.SessionStart.Before(dates.RegistrationEnd) {
+		return errors.New("session start date should be after the registration end date")
+	}
+
+	if dates.SessionStart.After(dates.SessionEnd) {
+		return errors.New("session start date should be before the session end date")
+	}
+
+	return nil
+}
+
+func parseDatesFromRequest(
+	RegistrationStarts, RegistrationEnds, SessionStarts, SessionEnds string,
+) (SessionDates, error) {
+	registrationStart, err := helper.StringISOToDateTime(RegistrationStarts)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	registrationEnd, err := helper.StringISOToDateTime(RegistrationEnds)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	sessionStart, err := helper.StringISOToDateTime(SessionStarts)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	sessionEnd, err := helper.StringISOToDateTime(SessionEnds)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	return SessionDates{
+		RegistrationStart: registrationStart,
+		RegistrationEnd:   registrationEnd,
+		SessionStart:      sessionStart,
+		SessionEnd:        sessionEnd,
+	}, nil
 }

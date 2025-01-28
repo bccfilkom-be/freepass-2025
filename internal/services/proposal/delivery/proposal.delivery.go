@@ -29,10 +29,11 @@ func NewProposalDelivery(
 	}
 
 	proposalRouter := router.Group("/proposal")
-	proposalRouter.POST("/", middleware.RequireAuth, handler.CreateSessionProposal)
 	proposalRouter.GET("/", middleware.RequireAuth, handler.GetAllProposal)
-	proposalRouter.PATCH("/:sessionId", middleware.RequireAuth, handler.UpdateSessionProposal)
+	proposalRouter.POST("/", middleware.RequireAuth, handler.CreateSessionProposal)
+
 	proposalRouter.GET("/:sessionId", middleware.RequireAuth, handler.GetProposalDetail)
+	proposalRouter.PATCH("/:sessionId", middleware.RequireAuth, handler.UpdateSessionProposal)
 	proposalRouter.DELETE("/:sessionId", middleware.RequireAuth, handler.DeleteProposal)
 }
 
