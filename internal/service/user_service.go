@@ -7,6 +7,9 @@ import (
 	"github.com/litegral/freepass-2025/internal/lib"
 	"github.com/litegral/freepass-2025/internal/lib/db"
 	"github.com/litegral/freepass-2025/internal/model"
+	"errors"
+	"golang.org/x/crypto/bcrypt"
+	"github.com/litegral/freepass-2025/internal/lib/jwt"
 )
 
 // UserService is a service for user operations
@@ -102,4 +105,48 @@ func (s *UserService) VerifyEmail(ctx context.Context, token string, email strin
 	}
 
 	return nil
+}
+
+// Login authenticates a user and returns a JWT token
+func (s *UserService) Login(ctx context.Context, params model.UserLogin) (model.UserLoginResponse, error) {
+	// Get user by email
+	user, err := s.queries.GetUserByEmail(ctx, params.Email)
+	if err != nil {
+		return model.UserLoginResponse{}, errors.New("invalid email or password")
+	}
+
+	// Verify password
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(params.Password))
+	if err != nil {
+		return model.UserLoginResponse{}, errors.New("invalid email or password")
+	}
+
+	// Check if email is verified
+	if !user.IsVerified {
+		return model.UserLoginResponse{}, errors.New("email not verified")
+	}
+
+	// Convert DB user to model user
+	modelUser := model.User{
+		ID:          int(user.ID),
+		Email:       user.Email,
+		Role:        string(user.Role),
+		FullName:    user.FullName.String,
+		Affiliation: user.Affiliation.String,
+		IsVerified:  user.IsVerified,
+		VerifiedAt:  user.VerifiedAt.Time,
+		CreatedAt:   user.CreatedAt.Time,
+		UpdatedAt:   user.UpdatedAt.Time,
+	}
+
+	// Generate JWT token
+	token, err := jwt.GenerateToken(modelUser)
+	if err != nil {
+		return model.UserLoginResponse{}, err
+	}
+
+	return model.UserLoginResponse{
+		User:  modelUser,
+		Token: token,
+	}, nil
 }

@@ -58,6 +58,7 @@ func main() {
 		option.Query("token", "Token for email verification", param.Required()),
 		option.Query("email", "Email for email verification", param.Required()),
 	)
+	fuego.Post(v1, "/login", userController.Login)
 
 	s.Run()
 }

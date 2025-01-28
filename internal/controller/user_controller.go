@@ -55,3 +55,18 @@ func (c *UserController) VerifyEmail(ctx fuego.ContextNoBody) (fuego.HTML, error
 
 	return fuego.HTML("Email verified successfully! You can now login to your account."), nil
 }
+
+// Login handles user login request
+func (c *UserController) Login(ctx fuego.ContextWithBody[model.UserLogin]) (model.UserLoginResponse, error) {
+	body, err := ctx.Body()
+	if err != nil {
+		return model.UserLoginResponse{}, err
+	}
+
+	response, err := c.userService.Login(ctx.Context(), body)
+	if err != nil {
+		return model.UserLoginResponse{}, fuego.UnauthorizedError{Title: err.Error()}
+	}
+
+	return response, nil
+}

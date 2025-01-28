@@ -20,3 +20,13 @@ type UserCreate struct {
 	FullName    string `json:"full_name" validate:"required" example:"John Doe"`
 	Affiliation string `json:"affiliation" validate:"required" example:"RAION"`
 }
+
+type UserLogin struct {
+	Email    string `json:"email" validate:"required,email" example:"rchronicler@gmail.com"`
+	Password string `json:"password" validate:"required" example:"password123"`
+}
+
+type UserLoginResponse struct {
+	User  User   `json:"user"`
+	Token string `json:"token"`
+}
