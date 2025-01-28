@@ -2,11 +2,12 @@ package controller
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/go-fuego/fuego"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/litegral/freepass-2025/internal/lib/jwt"
 	"github.com/litegral/freepass-2025/internal/lib/config"
+	"github.com/litegral/freepass-2025/internal/lib/jwt"
 	"github.com/litegral/freepass-2025/internal/model"
 	"github.com/litegral/freepass-2025/internal/service"
 )
@@ -115,9 +116,14 @@ func (c *UserController) GetProfile(ctx fuego.ContextNoBody) (model.User, error)
 
 // GetUserProfile handles fetching a user's profile by ID
 func (c *UserController) GetUserProfile(ctx fuego.ContextNoBody) (model.User, error) {
-	userID := ctx.QueryParamInt("id")
+	// Get user ID from path and convert to int
+	userIDInt, err := strconv.Atoi(ctx.PathParam("id"))
+	if err != nil {
+		return model.User{}, fuego.BadRequestError{Title: "Invalid user ID"}
+	}
 
-	user, err := c.userService.GetProfile(ctx.Context(), int32(userID))
+	// Get user profile
+	user, err := c.userService.GetProfile(ctx.Context(), int32(userIDInt))
 	if err != nil {
 		if err.Error() == config.ErrUserNotFound {
 			return model.User{}, fuego.NotFoundError{Title: "User not found"}

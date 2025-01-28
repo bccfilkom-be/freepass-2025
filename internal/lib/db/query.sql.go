@@ -43,7 +43,7 @@ INSERT INTO sessions (
     title, description, start_time, end_time, 
     room, seating_capacity, proposer_id
 ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at
+RETURNING id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted
 `
 
 type CreateSessionProposalParams struct {
@@ -80,6 +80,7 @@ func (q *Queries) CreateSessionProposal(ctx context.Context, arg CreateSessionPr
 		&i.ProposerID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IsDeleted,
 	)
 	return i, err
 }
@@ -202,7 +203,7 @@ func (q *Queries) GetRegistration(ctx context.Context, arg GetRegistrationParams
 }
 
 const getSessionByID = `-- name: GetSessionByID :one
-SELECT s.id, s.title, s.description, s.start_time, s.end_time, s.room, s.status, s.seating_capacity, s.proposer_id, s.created_at, s.updated_at, u.full_name AS proposer_name, u.affiliation AS proposer_affiliation
+SELECT s.id, s.title, s.description, s.start_time, s.end_time, s.room, s.status, s.seating_capacity, s.proposer_id, s.created_at, s.updated_at, s.is_deleted, u.full_name AS proposer_name, u.affiliation AS proposer_affiliation
 FROM sessions s
 JOIN users u ON s.proposer_id = u.id
 WHERE s.id = $1
@@ -220,6 +221,7 @@ type GetSessionByIDRow struct {
 	ProposerID          pgtype.Int4
 	CreatedAt           pgtype.Timestamptz
 	UpdatedAt           pgtype.Timestamptz
+	IsDeleted           pgtype.Bool
 	ProposerName        pgtype.Text
 	ProposerAffiliation pgtype.Text
 }
@@ -239,6 +241,7 @@ func (q *Queries) GetSessionByID(ctx context.Context, id int32) (GetSessionByIDR
 		&i.ProposerID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IsDeleted,
 		&i.ProposerName,
 		&i.ProposerAffiliation,
 	)
@@ -310,7 +313,7 @@ func (q *Queries) GetVerificationToken(ctx context.Context, token pgtype.UUID) (
 }
 
 const listPendingProposals = `-- name: ListPendingProposals :many
-SELECT id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at FROM sessions
+SELECT id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted FROM sessions
 WHERE status = 'pending'
 ORDER BY created_at
 `
@@ -337,6 +340,7 @@ func (q *Queries) ListPendingProposals(ctx context.Context) ([]Session, error) {
 			&i.ProposerID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.IsDeleted,
 		); err != nil {
 			return nil, err
 		}
@@ -396,7 +400,7 @@ func (q *Queries) ListSessionFeedback(ctx context.Context, sessionID int32) ([]L
 }
 
 const listSessions = `-- name: ListSessions :many
-SELECT id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at FROM sessions
+SELECT id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted FROM sessions
 ORDER BY start_time
 `
 
@@ -421,6 +425,7 @@ func (q *Queries) ListSessions(ctx context.Context) ([]Session, error) {
 			&i.ProposerID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.IsDeleted,
 		); err != nil {
 			return nil, err
 		}
@@ -433,7 +438,7 @@ func (q *Queries) ListSessions(ctx context.Context) ([]Session, error) {
 }
 
 const listUserRegistrations = `-- name: ListUserRegistrations :many
-SELECT s.id, s.title, s.description, s.start_time, s.end_time, s.room, s.status, s.seating_capacity, s.proposer_id, s.created_at, s.updated_at FROM sessions s
+SELECT s.id, s.title, s.description, s.start_time, s.end_time, s.room, s.status, s.seating_capacity, s.proposer_id, s.created_at, s.updated_at, s.is_deleted FROM sessions s
 JOIN session_registrations sr ON s.id = sr.session_id
 WHERE sr.user_id = $1
 `
@@ -459,6 +464,7 @@ func (q *Queries) ListUserRegistrations(ctx context.Context, userID int32) ([]Se
 			&i.ProposerID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.IsDeleted,
 		); err != nil {
 			return nil, err
 		}
@@ -505,6 +511,17 @@ func (q *Queries) SoftDeleteFeedback(ctx context.Context, id int32) error {
 	return err
 }
 
+const softDeleteSession = `-- name: SoftDeleteSession :exec
+UPDATE sessions
+SET is_deleted = TRUE
+WHERE id = $1
+`
+
+func (q *Queries) SoftDeleteSession(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, softDeleteSession, id)
+	return err
+}
+
 const updateConferenceConfig = `-- name: UpdateConferenceConfig :one
 INSERT INTO conference_config (
     registration_start, registration_end,
@@ -544,7 +561,7 @@ SET title = $2, description = $3, start_time = $4,
     end_time = $5, room = $6, seating_capacity = $7,
     status = $8, updated_at = NOW()
 WHERE id = $1
-RETURNING id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at
+RETURNING id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted
 `
 
 type UpdateSessionParams struct {
@@ -582,6 +599,7 @@ func (q *Queries) UpdateSession(ctx context.Context, arg UpdateSessionParams) (S
 		&i.ProposerID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IsDeleted,
 	)
 	return i, err
 }
@@ -590,7 +608,7 @@ const updateSessionStatus = `-- name: UpdateSessionStatus :one
 UPDATE sessions
 SET status = $2
 WHERE id = $1
-RETURNING id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at
+RETURNING id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted
 `
 
 type UpdateSessionStatusParams struct {
@@ -613,6 +631,7 @@ func (q *Queries) UpdateSessionStatus(ctx context.Context, arg UpdateSessionStat
 		&i.ProposerID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IsDeleted,
 	)
 	return i, err
 }

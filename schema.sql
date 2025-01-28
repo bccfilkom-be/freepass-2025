@@ -36,7 +36,8 @@ CREATE TABLE sessions (
     proposer_id INT REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
-    CHECK (end_time > start_time)
+    CHECK (end_time > start_time),
+    is_deleted BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE session_registrations (

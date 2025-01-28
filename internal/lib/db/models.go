@@ -134,6 +134,7 @@ type Session struct {
 	ProposerID      pgtype.Int4
 	CreatedAt       pgtype.Timestamptz
 	UpdatedAt       pgtype.Timestamptz
+	IsDeleted       pgtype.Bool
 }
 
 type SessionRegistration struct {

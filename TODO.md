@@ -14,8 +14,8 @@
        - Seats are available.
        - No overlapping time slots (one session per time period).
    Session Proposals
-   ✔️ Create, edit, or delete their session proposals
-   ✔️ Submit only one proposal within a specific time period.
+   ✔️ Create, edit, or delete their session proposals (DONE)
+   ✔️ Submit only one proposal within a specific time period. (DONE)
 
 3. Event Coordinator
    Session Management
@@ -39,7 +39,7 @@ Session Registration:
 - Registration is only allowed during the conference’s open enrollment period.
 
 Session Proposals:
-- Users may submit only one proposal per designated time window (e.g., per conference cycle).
+- Users may submit only one proposal per designated time window (e.g., per conference cycle). (DONE)
 
 Permissions:
 - Only Admins can assign/revoke Event Coordinator roles.

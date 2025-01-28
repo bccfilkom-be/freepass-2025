@@ -38,9 +38,11 @@ func main() {
 		log.Fatalf("Unable to initialize email service: %v\n", err)
 	}
 	userService := service.NewUserService(queries, emailService)
+	sessionService := service.NewSessionService(queries)
 
 	// Initialize controllers
 	userController := controller.NewUserController(userService)
+	sessionController := controller.NewSessionController(sessionService)
 
 	// Initialize router with custom error handler
 	s := fuego.NewServer(
@@ -53,20 +55,21 @@ func main() {
 
 	v1 := fuego.Group(s, "/v1")
 
-	fuego.Post(v1, "/users", userController.CreateUser)
+	fuego.Post(v1, "/users", userController.CreateUser, option.Tags("Auth"))
 	fuego.Get(v1, "/verify-email",
 		userController.VerifyEmail,
 		option.Query("token", "Token for email verification", param.Required()),
 		option.Query("email", "Email for email verification", param.Required()),
+		option.Tags("Auth"),
 	)
-	fuego.Post(v1, "/login", userController.Login)
+	fuego.Post(v1, "/login", userController.Login, option.Tags("Auth"))
 
 	// Protected routes group
 	protected := fuego.Group(v1, "")
-	fuego.Use(protected, middleware.AuthMiddleware)
+	fuego.Use(protected, middleware.AuthMiddleware(queries))
 
 	fuego.Put(protected, "/profile", userController.UpdateProfile,
-		option.Header("Authorization", "Bearer token", param.Required()),
+		option.Header("Authorization", "Bearer <token>", param.Required()),
 		option.Description("Update user profile"),
 		option.Summary("Update Profile"),
 		option.Tags("User"),
@@ -85,6 +88,28 @@ func main() {
 		option.Summary("Get User Profile"),
 		option.Tags("User"),
 		option.Path("id", "User ID", param.Required()),
+	)
+
+	// Session proposal routes
+	fuego.Post(protected, "/sessions", sessionController.CreateProposal,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Create a new session proposal"),
+		option.Summary("Create Session Proposal"),
+		option.Tags("Sessions"),
+	)
+
+	fuego.Put(protected, "/sessions/{id}", sessionController.UpdateProposal,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Update a session proposal"),
+		option.Summary("Update Session Proposal"),
+		option.Tags("Sessions"),
+	)
+
+	fuego.Delete(protected, "/sessions/{id}", sessionController.DeleteProposal,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Delete a session proposal"),
+		option.Summary("Delete Session Proposal"),
+		option.Tags("Sessions"),
 	)
 
 	s.Run()

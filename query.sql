@@ -42,6 +42,11 @@ WHERE s.id = $1;
 SELECT * FROM sessions
 ORDER BY start_time;
 
+-- name: SoftDeleteSession :exec
+UPDATE sessions
+SET is_deleted = TRUE
+WHERE id = $1;
+
 -- Registration Management
 -- name: RegisterForSession :one
 INSERT INTO session_registrations (user_id, session_id)
