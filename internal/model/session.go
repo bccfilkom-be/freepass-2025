@@ -32,4 +32,27 @@ type SessionUpdate struct {
 	EndTime         time.Time `json:"end_time" validate:"required,gtfield=StartTime"`
 	Room            string    `json:"room" validate:"required"`
 	SeatingCapacity int       `json:"seating_capacity" validate:"required,min=1"`
+}
+
+type SessionFeedback struct {
+	Comment string `json:"comment" validate:"required"`
+}
+
+type SessionFeedbackResponse struct {
+	ID          int       `json:"id"`
+	UserID      int       `json:"user_id"`
+	SessionID   int       `json:"session_id"`
+	Comment     string    `json:"comment"`
+	CreatedAt   time.Time `json:"created_at"`
+	UserName    string    `json:"user_name"`
+	Affiliation string    `json:"affiliation"`
+}
+
+type SessionWithDetails struct {
+	Session
+	ProposerName      string                  `json:"proposer_name"`
+	ProposerAffiliation string                `json:"proposer_affiliation"`
+	Feedback         []SessionFeedbackResponse `json:"feedback,omitempty"`
+	IsRegistered     bool                      `json:"is_registered"`
+	AvailableSeats   int                       `json:"available_seats"`
 } 

@@ -11,6 +11,18 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countSessionRegistrations = `-- name: CountSessionRegistrations :one
+SELECT COUNT(*) FROM session_registrations
+WHERE session_id = $1
+`
+
+func (q *Queries) CountSessionRegistrations(ctx context.Context, sessionID int32) (int64, error) {
+	row := q.db.QueryRow(ctx, countSessionRegistrations, sessionID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createFeedback = `-- name: CreateFeedback :one
 INSERT INTO feedback (user_id, session_id, comment)
 VALUES ($1, $2, $3)

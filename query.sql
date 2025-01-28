@@ -62,6 +62,10 @@ SELECT s.* FROM sessions s
 JOIN session_registrations sr ON s.id = sr.session_id
 WHERE sr.user_id = $1;
 
+-- name: CountSessionRegistrations :one
+SELECT COUNT(*) FROM session_registrations
+WHERE session_id = $1;
+
 -- Feedback Management
 -- name: CreateFeedback :one
 INSERT INTO feedback (user_id, session_id, comment)

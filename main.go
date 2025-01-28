@@ -95,21 +95,53 @@ func main() {
 		option.Header("Authorization", "Bearer <token>", param.Required()),
 		option.Description("Create a new session proposal"),
 		option.Summary("Create Session Proposal"),
-		option.Tags("Sessions"),
+		option.Tags("Session Proposal"),
 	)
 
 	fuego.Put(protected, "/sessions/{id}", sessionController.UpdateProposal,
 		option.Header("Authorization", "Bearer <token>", param.Required()),
 		option.Description("Update a session proposal"),
 		option.Summary("Update Session Proposal"),
-		option.Tags("Sessions"),
+		option.Tags("Session Proposal"),
 	)
 
 	fuego.Delete(protected, "/sessions/{id}", sessionController.DeleteProposal,
 		option.Header("Authorization", "Bearer <token>", param.Required()),
 		option.Description("Delete a session proposal"),
 		option.Summary("Delete Session Proposal"),
+		option.Tags("Session Proposal"),
+	)
+
+	// Session routes
+	fuego.Get(protected, "/sessions", sessionController.ListSessions,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("List all conference sessions"),
+		option.Summary("List Sessions"),
 		option.Tags("Sessions"),
+	)
+
+	fuego.Get(protected, "/sessions/{id}", sessionController.GetSession,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Get session details by ID"),
+		option.Summary("Get Session"),
+		option.Tags("Sessions"),
+		option.Path("id", "Session ID", param.Required()),
+	)
+
+	fuego.Post(protected, "/sessions/{id}/register", sessionController.RegisterForSession,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Register for a session"),
+		option.Summary("Register for Session"),
+		option.Tags("Sessions"),
+		option.Path("id", "Session ID", param.Required()),
+	)
+
+	fuego.Post(protected, "/sessions/{id}/feedback", sessionController.CreateFeedback,
+		option.Header("Authorization", "Bearer <token>", param.Required()),
+		option.Description("Leave feedback for a session"),
+		option.Summary("Create Feedback"),
+		option.Tags("Sessions"),
+		option.Path("id", "Session ID", param.Required()),
 	)
 
 	s.Run()

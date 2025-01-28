@@ -8,9 +8,9 @@
    ✔️ View other users’ profiles (DONE)
 
    Session Interaction
-   ✔️ View all conference sessions
-   ✔️ Leave feedback on sessions
-   ✔️ Register for sessions only if:
+   ✔️ View all conference sessions (DONE)
+   ✔️ Leave feedback on sessions (DONE)
+   ✔️ Register for sessions only if: (DONE)
        - Seats are available.
        - No overlapping time slots (one session per time period).
    Session Proposals
