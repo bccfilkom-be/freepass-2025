@@ -33,6 +33,7 @@ func NewProposalDelivery(
 	proposalRouter.GET("/", middleware.RequireAuth, handler.GetAllProposal)
 	proposalRouter.PATCH("/:sessionId", middleware.RequireAuth, handler.UpdateSessionProposal)
 	proposalRouter.GET("/:sessionId", middleware.RequireAuth, handler.GetProposalDetail)
+	proposalRouter.DELETE("/:sessionId", middleware.RequireAuth, handler.DeleteProposal)
 }
 
 func (v *ProposalDelivery) CreateSessionProposal(ctx *gin.Context) {
@@ -114,4 +115,22 @@ func (v *ProposalDelivery) GetProposalDetail(ctx *gin.Context) {
 	}
 
 	v.response.OK(ctx, res, "Proposal found!", 200)
+}
+
+func (v *ProposalDelivery) DeleteProposal(ctx *gin.Context) {
+	param := ctx.Param("sessionId")
+
+	sessionId, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		return
+	}
+
+	err = v.proposalUsecase.DeleteProposal(ctx, uint(sessionId))
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, nil, "Proposal deleted!", 200)
 }

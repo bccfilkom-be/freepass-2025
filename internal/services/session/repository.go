@@ -19,4 +19,5 @@ type SessionRepository interface {
 	Update(data domain.Session) error
 	GetById(id uint) (domain.Session, error)
 	DateInBetweenSession(startDate, endDate time.Time, filter SessionFilter) error
+	Delete(id uint) error
 }

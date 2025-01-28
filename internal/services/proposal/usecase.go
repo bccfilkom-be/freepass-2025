@@ -11,4 +11,5 @@ type ProposalUsecase interface {
 	GetAllProposal(ctx *gin.Context) ([]dto.GetProposalResponse, error)
 	UpdateProposal(sessionId, userId uint, req *dto.UpdateProposalRequest) error
 	GetProposalDetail(ctx *gin.Context, sessionId uint) (dto.GetProposalResponse, error)
+	DeleteProposal(ctx *gin.Context, sessionId uint) error
 }

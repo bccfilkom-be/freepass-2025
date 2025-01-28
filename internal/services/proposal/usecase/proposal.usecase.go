@@ -154,7 +154,7 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 	return v.sessionRepo.Update(data)
 }
 
-func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetProposalResponse, error) {
+func (v *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetProposalResponse, error) {
 	filter := session.SessionFilter{
 		Status: constant.STATUS_SESSION_PENDING,
 	}
@@ -165,7 +165,7 @@ func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetProposalRes
 		filter.UserID = ctx.GetUint("userId")
 	}
 
-	sessions, err := u.sessionRepo.GetAll(filter)
+	sessions, err := v.sessionRepo.GetAll(filter)
 	if err != nil {
 		return []dto.GetProposalResponse{}, err
 	}
@@ -200,16 +200,16 @@ func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetProposalRes
 	return proposals, nil
 }
 
-func (u *ProposalUsecase) GetProposalDetail(ctx *gin.Context, sessionId uint) (dto.GetProposalResponse, error) {
+func (v *ProposalUsecase) GetProposalDetail(ctx *gin.Context, sessionId uint) (dto.GetProposalResponse, error) {
 	userId := ctx.GetUint("userId")
 	role := ctx.GetString("role")
 
-	session, err := u.sessionRepo.GetById(sessionId)
+	session, err := v.sessionRepo.GetById(sessionId)
 	if err != nil {
 		return dto.GetProposalResponse{}, err
 	}
 
-	if session.UserID != userId && role != constant.ROLE_ADMIN {
+	if session.UserID != userId && role != constant.ROLE_COORDINATOR {
 		return dto.GetProposalResponse{}, errors.New("You are not authorized to view this proposal!")
 	}
 
@@ -242,4 +242,23 @@ func (u *ProposalUsecase) GetProposalDetail(ctx *gin.Context, sessionId uint) (d
 	}
 
 	return proposal, nil
+}
+
+func (v *ProposalUsecase) DeleteProposal(ctx *gin.Context, sessionId uint) error {
+	userId := ctx.GetUint("userId")
+
+	session, err := v.sessionRepo.GetById(sessionId)
+	if err != nil {
+		return err
+	}
+
+	if session.UserID != userId {
+		return errors.New("You are not authorized to delete this proposal!")
+	}
+
+	if session.Status != constant.STATUS_SESSION_PENDING {
+		return errors.New("Proposal not found!")
+	}
+
+	return v.sessionRepo.Delete(sessionId)
 }

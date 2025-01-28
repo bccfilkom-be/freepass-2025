@@ -104,3 +104,7 @@ func (v *SessionRepository) GetAllBetwenDate(startDate, endDate time.Time, filte
 	err := query.Preload("User").Find(&data).Error
 	return data, err
 }
+
+func (v *SessionRepository) Delete(id uint) error {
+	return v.db.Delete(&domain.Session{}, id).Error
+}
