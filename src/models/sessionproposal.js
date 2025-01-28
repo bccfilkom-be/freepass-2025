@@ -38,6 +38,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
       },
+      status: {
+        type: DataTypes.ENUM("pending", "accepted", "rejected"),
+        allowNull: false,
+        defaultValue: "pending",
+      },
+      available_seats: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 20,
+      },
     },
     {
       sequelize,

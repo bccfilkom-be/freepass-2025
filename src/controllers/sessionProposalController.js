@@ -1,4 +1,4 @@
-const { SessionProposal } = require("../models");
+const { Session, SessionProposal } = require("../models");
 const { Op } = require("sequelize");
 
 exports.createProposal = async (req, res) => {
@@ -105,5 +105,58 @@ exports.getAllProposals = async (_req, res) => {
     res.status(200).json(proposals);
   } catch (err) {
     res.status(500).json({ message: "Failed to retrieve proposals" });
+  }
+};
+
+exports.acceptProposal = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+
+  try {
+    const proposal = await SessionProposal.findByPk(id);
+
+    if (!proposal) {
+      return res.status(404).json({ message: "Proposal not found" });
+    }
+
+    await proposal.update({ status: "accepted" });
+
+    const newSession = await Session.create({
+      title: proposal.title,
+      description: proposal.description,
+      start_time: proposal.start_time,
+      end_time: proposal.end_time,
+      available_seats: proposal.available_seats || 20,
+      user_id: proposal.user_id,
+    });
+
+    res
+      .status(200)
+      .json({ message: "Proposal accepted and session created", newSession });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to accept proposal and create session" });
+  }
+};
+
+exports.rejectProposal = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+
+  try {
+    const proposal = await SessionProposal.findByPk(id);
+
+    if (!proposal) {
+      return res.status(404).json({ message: "Proposal not found" });
+    }
+
+    await proposal.update({ status: "rejected" });
+
+    res.status(200).json({ message: "Proposal rejected", proposal });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to reject proposal" });
   }
 };

@@ -35,6 +35,16 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      status: {
+        type: Sequelize.ENUM("pending", "accepted", "rejected"),
+        allowNull: false,
+        defaultValue: "pending",
+      },
+      available_seats: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 20,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
