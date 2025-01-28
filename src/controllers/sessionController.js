@@ -101,3 +101,61 @@ exports.registerForSession = async (req, res) => {
     res.status(500).json({ message: "Failed to register for session" });
   }
 };
+
+exports.editSession = async (req, res) => {
+  const {
+    params: { id },
+    body: { userId, title, description, startTime, endTime, availableSeats },
+  } = req;
+
+  try {
+    const session = await Session.findByPk(id);
+
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    if (session.user_id !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to edit this session" });
+    }
+
+    await session.update({
+      title,
+      description,
+      start_time: startTime,
+      end_time: endTime,
+      available_seats: availableSeats,
+    });
+    res.status(200).json({ message: "Session updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to edit session" });
+  }
+};
+
+exports.deleteSession = async (req, res) => {
+  const sessionId = req.params.id;
+  const {
+    body: { userId },
+  } = req;
+
+  try {
+    const session = await Session.findByPk(sessionId);
+
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    if (session.user_id !== userId) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this session" });
+    }
+
+    await session.destroy();
+    res.status(200).json({ message: "Session deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete session" });
+  }
+};

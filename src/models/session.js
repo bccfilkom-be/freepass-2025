@@ -3,7 +3,7 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Session extends Model {
     static associate(models) {
-      // define association here
+      this.belongsTo(models.User, { foreignKey: "user_id" });
     }
   }
   Session.init(
@@ -33,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
       available_seats: {
         type: DataTypes.INTEGER,
         allowNull: false,
+      },
+      user_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,

@@ -7,7 +7,7 @@ module.exports = {
       "Sessions",
       [
         {
-          user_id: "93f6dae0-eaf9-4d12-af3d-4a2e0c87f39b",
+          user_id: "d597d69f-bea7-4951-9ba9-0bc330fd16cd",
           title: "Session 1",
           description: "Description for session 1",
           start_time: new Date(),
@@ -17,7 +17,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          user_id: "93f6dae0-eaf9-4d12-af3d-4a2e0c87f39b",
+          user_id: "8013964b-07f9-43b8-87cc-4b6b748313af",
           title: "Session 2",
           description: "Description for session 2",
           start_time: new Date(),
