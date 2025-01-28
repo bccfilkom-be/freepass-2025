@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
@@ -31,4 +32,64 @@ func StringToUint(value string) (uint, error) {
 	}
 
 	return uint(result), nil
+}
+
+// HELPER FOR SESSION AND PROPOSAL USECASE
+
+type SessionDates struct {
+	RegistrationStart time.Time
+	RegistrationEnd   time.Time
+	SessionStart      time.Time
+	SessionEnd        time.Time
+}
+
+func ValidateDates(dates SessionDates) error {
+	if dates.RegistrationStart.Before(time.Now()) {
+		return errors.New("registration start date should be after today")
+	}
+
+	if dates.RegistrationStart.After(dates.RegistrationEnd) {
+		return errors.New("registration start date should be before the registration end date")
+	}
+
+	if dates.SessionStart.Before(dates.RegistrationEnd) {
+		return errors.New("session start date should be after the registration end date")
+	}
+
+	if dates.SessionStart.After(dates.SessionEnd) {
+		return errors.New("session start date should be before the session end date")
+	}
+
+	return nil
+}
+
+func ParseDatesFromRequest(
+	RegistrationStarts, RegistrationEnds, SessionStarts, SessionEnds string,
+) (SessionDates, error) {
+	registrationStart, err := StringISOToDateTime(RegistrationStarts)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	registrationEnd, err := StringISOToDateTime(RegistrationEnds)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	sessionStart, err := StringISOToDateTime(SessionStarts)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	sessionEnd, err := StringISOToDateTime(SessionEnds)
+	if err != nil {
+		return SessionDates{}, err
+	}
+
+	return SessionDates{
+		RegistrationStart: registrationStart,
+		RegistrationEnd:   registrationEnd,
+		SessionStart:      sessionStart,
+		SessionEnd:        sessionEnd,
+	}, nil
 }

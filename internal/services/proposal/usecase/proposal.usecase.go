@@ -18,19 +18,12 @@ type ProposalUsecase struct {
 	sessionRepo session.SessionRepository
 }
 
-type SessionDates struct {
-	RegistrationStart time.Time
-	RegistrationEnd   time.Time
-	SessionStart      time.Time
-	SessionEnd        time.Time
-}
-
 func NewProposalUsecase(sessionRepo session.SessionRepository) proposal.ProposalUsecase {
 	return &ProposalUsecase{sessionRepo}
 }
 
 func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalRequest) error {
-	dates, err := parseDatesFromRequest(
+	dates, err := helper.ParseDatesFromRequest(
 		req.RegistrationStartDate,
 		req.RegistrationEndDate,
 		req.SessionStartDate,
@@ -41,7 +34,7 @@ func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 		return err
 	}
 
-	if err := validateDates(dates); err != nil {
+	if err := helper.ValidateDates(dates); err != nil {
 		return err
 	}
 
@@ -80,7 +73,7 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 		return errors.New("You are not authorized to update this proposal!")
 	}
 
-	dates, err := parseDatesFromRequest(
+	dates, err := helper.ParseDatesFromRequest(
 		req.RegistrationStartDate,
 		req.RegistrationEndDate,
 		req.SessionStartDate,
@@ -91,7 +84,7 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 		return err
 	}
 
-	if err := validateDates(dates); err != nil {
+	if err := helper.ValidateDates(dates); err != nil {
 		return err
 	}
 
@@ -266,56 +259,4 @@ func (v *ProposalUsecase) DeclineProposal(sessionId uint, req *dto.DecliendPropo
 		Status:          constant.STATUS_SESSION_REJECTED,
 		RejectedMessage: req.RejectedMessage,
 	})
-}
-
-// Helper
-func validateDates(dates SessionDates) error {
-	if dates.RegistrationStart.Before(time.Now()) {
-		return errors.New("registration start date should be after today")
-	}
-
-	if dates.RegistrationStart.After(dates.RegistrationEnd) {
-		return errors.New("registration start date should be before the registration end date")
-	}
-
-	if dates.SessionStart.Before(dates.RegistrationEnd) {
-		return errors.New("session start date should be after the registration end date")
-	}
-
-	if dates.SessionStart.After(dates.SessionEnd) {
-		return errors.New("session start date should be before the session end date")
-	}
-
-	return nil
-}
-
-func parseDatesFromRequest(
-	RegistrationStarts, RegistrationEnds, SessionStarts, SessionEnds string,
-) (SessionDates, error) {
-	registrationStart, err := helper.StringISOToDateTime(RegistrationStarts)
-	if err != nil {
-		return SessionDates{}, err
-	}
-
-	registrationEnd, err := helper.StringISOToDateTime(RegistrationEnds)
-	if err != nil {
-		return SessionDates{}, err
-	}
-
-	sessionStart, err := helper.StringISOToDateTime(SessionStarts)
-	if err != nil {
-		return SessionDates{}, err
-	}
-
-	sessionEnd, err := helper.StringISOToDateTime(SessionEnds)
-	if err != nil {
-		return SessionDates{}, err
-	}
-
-	return SessionDates{
-		RegistrationStart: registrationStart,
-		RegistrationEnd:   registrationEnd,
-		SessionStart:      sessionStart,
-		SessionEnd:        sessionEnd,
-	}, nil
 }
