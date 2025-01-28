@@ -10,12 +10,13 @@ const {
   insertRecord,
 } = require("../utils/sqlFunctions")
 
+
 const generateAccessToken = (userid) => {
   return jwt.sign({ userid }, process.env.JWT_SECRET, { expiresIn: "7d" })
 }
 
 const register = async (req, res) => {
-  const { username, email, password } = req.body 
+  const { username, email, password} = req.body 
   if (!email || !password) {
     response(400, "", "email or password field cant be empty", res)
     return
@@ -56,7 +57,6 @@ const login = async (req, res) => {
   }
 
   try {
-    await createTable(userSchema)
     const existingUser = await checkRecordExists("users", "email", email) 
 
     if (existingUser) {
@@ -88,12 +88,12 @@ const login = async (req, res) => {
   }
 }
 
-const logout = async  (req, res) => {
+const logout = async  (req, res)=>{
   try {
-    res.clearCookie("token")
-    res.redirect("/login")
+      res.clearCookie("token")
+      res.redirect("/login")
   } catch (error) {
-    response(400, "", error, res)
+      response(400, "", error, res)
   }
 }
 

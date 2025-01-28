@@ -1,7 +1,6 @@
 const { v4: uuidv4 } = require("uuid")
 const response = require("../response")
-const { insertRecord, updateRecord, deleteRecord, getRecordById, checkRecordExists, createTable } = require("../utils/sqlFunctions")
-const sessionProposalSchema = require("../schemas/sessionProposalSchema")
+const { insertRecord, updateRecord, deleteRecord, getRecordById, checkRecordExists } = require("../utils/sqlFunctions")
 
 const createProposal = async (req, res) => {
   const proposalData = {
@@ -12,7 +11,6 @@ const createProposal = async (req, res) => {
   }
 
   try {
-    await createTable(sessionProposalSchema)
     const existingProposal = await checkRecordExists(
       "session_proposals",
       "userid",
@@ -34,7 +32,6 @@ const getProposal = async (req, res) => {
   const { proposalid } = req.params
 
   try {
-    await createTable(sessionProposalSchema)
     const proposal = await getRecordById("session_proposals", "proposalid", proposalid)
     if (proposal.userid !== req.user.userid) {
       response(403, "", "You can only view your own session proposals", res)
@@ -51,7 +48,6 @@ const updateProposal = async (req, res) => {
   const updatedData = req.body
 
   try {
-    await createTable(sessionProposalSchema)
     const proposal = await getRecordById("session_proposals", "proposalid", proposalid)
     if (proposal.userid !== req.user.userid) {
       response(403, "", "You can only update your own session proposals", res)
@@ -69,7 +65,6 @@ const deleteProposal = async (req, res) => {
   const { proposalid } = req.params
 
   try {
-    await createTable(sessionProposalSchema)
     const proposal = await getRecordById("session_proposals", "proposalid", proposalid)
     if (proposal.userid !== req.user.userid) {
       response(403, "", "You can only delete your own session proposals", res)
