@@ -19,6 +19,12 @@ func NewRegistrationRepository(db *gorm.DB, sessionRepo session.SessionRepositor
 	return &RegistrationRepository{db, sessionRepo}
 }
 
+func (v *RegistrationRepository) GetAllRegisteredSession(userId uint) ([]domain.SessionRegistration, error) {
+	var data []domain.SessionRegistration
+	err := v.db.Preload("Session").Where("user_id = ?", userId).Find(&data).Error
+	return data, err
+}
+
 func (v *RegistrationRepository) Create(userId, sessionId uint) error {
 	return v.db.Create(&domain.SessionRegistration{
 		UserID:    userId,

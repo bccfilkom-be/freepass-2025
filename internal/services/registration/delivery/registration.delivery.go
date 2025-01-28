@@ -28,7 +28,20 @@ func NewRegistrationDelivery(
 	}
 
 	sessionRouter := router.Group("/session")
+	sessionRouter.GET("/registered", middleware.RequireAuth, handler.GetAllRegisteredSession)
 	sessionRouter.POST("/:sessionId/register", middleware.RequireAuth, handler.RegisterSession)
+}
+
+func (v *RegistrationDelivery) GetAllRegisteredSession(ctx *gin.Context) {
+	userId := ctx.GetUint("userId")
+
+	sessions, err := v.registrationUsecase.GetAllRegisteredSession(userId)
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, sessions, "Registered sessions", 200)
 }
 
 func (v *RegistrationDelivery) RegisterSession(ctx *gin.Context) {
