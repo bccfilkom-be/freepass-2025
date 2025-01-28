@@ -110,10 +110,10 @@ const getAllRecords = (tableName) => {
 const checkSessionAvailability = (sessionid) => {
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT COUNT(*) as registration_count, s.max_seats
-      FROM session_registrations sr
-      JOIN sessions s ON sr.sessionid = s.sessionid
-      WHERE sr.sessionid = $1
+      SELECT s.max_seats, COALESCE(COUNT(sr.sessionid), 0) as registration_count
+      FROM sessions s
+      LEFT JOIN session_registrations sr ON sr.sessionid = s.sessionid
+      WHERE s.sessionid = $1
       GROUP BY s.max_seats
     `
     pool.query(query, [sessionid], (err, results) => {
@@ -121,8 +121,12 @@ const checkSessionAvailability = (sessionid) => {
         console.error("Error checking session availability:", err)
         reject(err)
       } else {
-        const { registration_count, max_seats } = results.rows[0] || { registration_count: 0, max_seats: 0 }
-        resolve(registration_count >= max_seats)
+        if (results.rows.length > 0) {
+          const { registration_count, max_seats } = results.rows[0]
+          resolve(registration_count >= max_seats)
+        } else {
+          resolve(false)
+        }
       }
     })
   })
