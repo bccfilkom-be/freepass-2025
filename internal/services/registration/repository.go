@@ -9,4 +9,5 @@ type RegistrationRepository interface {
 	Create(userId, sessionId uint) error
 	GetBySessionId(sessionId uint) (domain.SessionRegistration, error)
 	RegisteredSessionBeetweenDate(userId, sessionId uint) (domain.SessionRegistration, error)
+	CountRegisteredSeat(sessionId uint) (int, error)
 }

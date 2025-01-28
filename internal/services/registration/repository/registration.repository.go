@@ -74,3 +74,9 @@ func (v *RegistrationRepository) RegisteredSessionBeetweenDate(userId, sessionId
 	}
 	return registration, err
 }
+
+func (v *RegistrationRepository) CountRegisteredSeat(sessionId uint) (int, error) {
+	var count int64
+	err := v.db.Model(&domain.SessionRegistration{}).Where("session_id = ?", sessionId).Count(&count).Error
+	return int(count), err
+}
