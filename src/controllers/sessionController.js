@@ -44,6 +44,37 @@ exports.leaveFeedback = async (req, res) => {
   }
 };
 
+exports.deleteFeedback = async (req, res) => {
+  const {
+    params: { feedbackId },
+    user: { role, id },
+  } = req;
+
+  try {
+    const feedback = await Feedback.findByPk(feedbackId);
+
+    if (!feedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+    if (role === "coordinator") {
+      await feedback.destroy();
+      return res.status(200).json({ message: "Feedback deleted successfully" });
+    }
+
+    if (feedback.user_id !== id) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this feedback" });
+    }
+
+    await feedback.destroy();
+    res.status(200).json({ message: "Feedback deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete feedback" });
+  }
+};
+
 exports.registerForSession = async (req, res) => {
   const sessionId = req.params.id;
   const {
@@ -137,7 +168,7 @@ exports.editSession = async (req, res) => {
 exports.deleteSession = async (req, res) => {
   const sessionId = req.params.id;
   const {
-    body: { userId },
+    user: { role, id },
   } = req;
 
   try {
@@ -147,7 +178,12 @@ exports.deleteSession = async (req, res) => {
       return res.status(404).json({ message: "Session not found" });
     }
 
-    if (session.user_id !== userId) {
+    if (role === "coordinator") {
+      await session.destroy();
+      return res.status(200).json({ message: "Session deleted successfully" });
+    }
+
+    if (session.user_id !== id) {
       return res
         .status(403)
         .json({ message: "You are not authorized to delete this session" });
