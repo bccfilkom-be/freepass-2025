@@ -3,6 +3,8 @@ package delivery
 import (
 	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
+	"jevvonn/bcc-be-freepass-2025/internal/middleware"
+	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/session"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +28,8 @@ func NewSessionDelivery(
 	}
 
 	sessionRouter := router.Group("/session")
-	sessionRouter.GET("/", handler.GetAllSession)
+	sessionRouter.GET("/", middleware.RequireAuth, handler.GetAllSession)
+	sessionRouter.PATCH("/:sessionId", middleware.RequireAuth, handler.UpdateSession)
 }
 
 func (v *SessionDelivery) GetAllSession(ctx *gin.Context) {
@@ -37,4 +40,25 @@ func (v *SessionDelivery) GetAllSession(ctx *gin.Context) {
 	}
 
 	v.response.OK(ctx, res, "Sessions found!", 200)
+}
+
+func (v *SessionDelivery) UpdateSession(ctx *gin.Context) {
+	var req *dto.UpdateSessionRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	if errorsData, err := v.validator.Validate(req); err != nil {
+		v.response.BadRequest(ctx, errorsData, err.Error())
+		return
+	}
+
+	if err := v.sessionUsecase.UpdateSession(ctx, req); err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, nil, "Session updated!", 200)
 }

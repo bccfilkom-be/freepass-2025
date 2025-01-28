@@ -1,13 +1,16 @@
 package usecase
 
 import (
+	"errors"
 	"jevvonn/bcc-be-freepass-2025/internal/constant"
 	"jevvonn/bcc-be-freepass-2025/internal/helper"
+	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/session"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type SessionUsecase struct {
@@ -65,4 +68,67 @@ func (v *SessionUsecase) GetAllSession(ctx *gin.Context) ([]dto.GetAllSessionRes
 	}
 
 	return sessions, nil
+}
+
+func (v *SessionUsecase) UpdateSession(ctx *gin.Context, req *dto.UpdateSessionRequest) error {
+	param := ctx.Param("sessionId")
+	userId := ctx.GetUint("userId")
+
+	sessionId, err := helper.StringToUint(param)
+	if err != nil {
+		return err
+	}
+
+	sessionExist, err := v.sessionRepo.GetById(sessionId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("Session not found!")
+		} else {
+			return err
+		}
+	}
+
+	if sessionExist.Status != constant.STATUS_SESSION_ACCEPTED {
+		return errors.New("Session not found! Either the session is not accepted or already deleted.")
+	}
+
+	if sessionExist.UserID != userId {
+		return errors.New("You are not authorized to update this session!")
+	}
+
+	dates, err := helper.ParseDatesFromRequest(
+		req.RegistrationStartDate,
+		req.RegistrationEndDate,
+		req.SessionStartDate,
+		req.SessionEndDate,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if err := helper.ValidateDates(dates); err != nil {
+		return err
+	}
+
+	if err := v.sessionRepo.DateInBetweenSession(dates.SessionStart, dates.SessionEnd, session.SessionFilter{
+		UserID:    userId,
+		ExcludeID: []uint{sessionId},
+	}); err != nil {
+		return err
+	}
+
+	data := domain.Session{
+		ID:                    sessionId,
+		Title:                 req.Title,
+		Description:           req.Description,
+		RegistrationStartDate: dates.RegistrationStart,
+		RegistrationEndDate:   dates.RegistrationEnd,
+
+		SessionStartDate: dates.SessionStart,
+		SessionEndDate:   dates.SessionEnd,
+		MaxSeat:          req.MaxSeat,
+	}
+
+	return v.sessionRepo.Update(data)
 }

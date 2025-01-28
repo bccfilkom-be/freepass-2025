@@ -75,7 +75,7 @@ func (v *UserDelivery) UpdateUserProfile(ctx *gin.Context) {
 	}
 
 	if errorsData, err := v.validator.Validate(req); err != nil {
-		v.response.BadRequest(ctx, errorsData, "Validation error!")
+		v.response.BadRequest(ctx, errorsData, err.Error())
 		return
 	}
 

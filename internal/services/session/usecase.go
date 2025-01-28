@@ -8,4 +8,5 @@ import (
 
 type SessionUsecase interface {
 	GetAllSession(ctx *gin.Context) ([]dto.GetAllSessionResponse, error)
+	UpdateSession(ctx *gin.Context, req *dto.UpdateSessionRequest) error
 }

@@ -69,6 +69,10 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 		}
 	}
 
+	if sessionExist.Status == constant.STATUS_SESSION_ACCEPTED {
+		return errors.New("Proposal not found! Either the proposal is already accepted or deleted.")
+	}
+
 	if sessionExist.UserID != userId {
 		return errors.New("You are not authorized to update this proposal!")
 	}
