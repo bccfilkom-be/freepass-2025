@@ -9,4 +9,5 @@ import (
 type ProposalUsecase interface {
 	CreateProposal(userId uint, req *dto.CreateProposalRequest) error
 	GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposalResponse, error)
+	UpdateProposal(sessionId, userId uint, req *dto.UpdateProposalRequest) error
 }

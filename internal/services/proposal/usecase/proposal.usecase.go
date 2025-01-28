@@ -59,19 +59,11 @@ func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 		return errors.New("Session start date should be before the session end date!")
 	}
 
-	checkSession, err := v.sessionRepo.GetAllBetwenDate(sessionStartDate, sessionEndDate, session.SessionFilter{
+	if err := v.sessionRepo.DateInBetweenSession(sessionStartDate, sessionEndDate, session.SessionFilter{
 		Status: constant.STATUS_SESSION_PENDING,
 		UserID: userId,
-	})
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("Session already exist in that date range!")
-		}
-	}
-
-	if len(checkSession) > 0 {
-		return errors.New("Session already exist in that date range!")
+	}); err != nil {
+		return err
 	}
 
 	data := domain.Session{
@@ -87,6 +79,79 @@ func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 	}
 
 	return v.sessionRepo.Create(data)
+}
+
+func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.UpdateProposalRequest) error {
+	sessionExist, err := v.sessionRepo.GetById(sessionId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("Session not found!")
+		} else {
+			return err
+		}
+	}
+
+	if sessionExist.UserID != userId {
+		return errors.New("You are not authorized to update this session!")
+	}
+
+	registrationStarDate, err := helper.StringISOToDateTime(req.RegistrationStartDate)
+	if err != nil {
+		return err
+	}
+
+	registrationEndDate, err := helper.StringISOToDateTime(req.RegistrationEndDate)
+	if err != nil {
+		return err
+	}
+
+	sessionStartDate, err := helper.StringISOToDateTime(req.SessionStartDate)
+	if err != nil {
+		return err
+	}
+
+	sessionEndDate, err := helper.StringISOToDateTime(req.SessionEndDate)
+	if err != nil {
+		return err
+	}
+
+	if registrationStarDate.Before(time.Now()) {
+		return errors.New("Registration start date should be after today!")
+	}
+
+	if registrationStarDate.After(registrationEndDate) {
+		return errors.New("Registration start date should be before the registration end date!")
+	}
+
+	if sessionStartDate.Before(registrationEndDate) {
+		return errors.New("Session start date should be after the registration end date!")
+	}
+
+	if sessionStartDate.After(sessionEndDate) {
+		return errors.New("Session start date should be before the session end date!")
+	}
+
+	if err := v.sessionRepo.DateInBetweenSession(sessionStartDate, sessionEndDate, session.SessionFilter{
+		Status:    constant.STATUS_SESSION_PENDING,
+		UserID:    userId,
+		ExcludeID: []uint{sessionId, 2},
+	}); err != nil {
+		return err
+	}
+
+	data := domain.Session{
+		ID:                    sessionId,
+		Title:                 req.Title,
+		Description:           req.Description,
+		RegistrationStartDate: registrationStarDate,
+		RegistrationEndDate:   registrationEndDate,
+
+		SessionStartDate: sessionStartDate,
+		SessionEndDate:   sessionEndDate,
+		MaxSeat:          req.MaxSeat,
+	}
+
+	return v.sessionRepo.Update(data)
 }
 
 func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposalResponse, error) {
