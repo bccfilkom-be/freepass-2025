@@ -98,13 +98,23 @@ $$ LANGUAGE plpgsql;
 -- Check if a user has already submitted a proposal for the current conference period
 CREATE OR REPLACE FUNCTION check_proposal_limit()
 RETURNS TRIGGER AS $$
+DECLARE
+    current_config conference_config%ROWTYPE; -- %ROWTYPE declares a variable that matches the entire row structure of the conference_config table
 BEGIN
+    -- Get the most recent conference config
+    SELECT *
+    INTO current_config
+    FROM conference_config
+    ORDER BY id DESC
+    LIMIT 1;
+
     IF EXISTS (
         SELECT 1
         FROM sessions
         WHERE proposer_id = NEW.proposer_id
-        AND created_at >= (SELECT session_proposal_start FROM conference_config)
-        AND created_at <= (SELECT session_proposal_end FROM conference_config)
+        AND is_deleted = FALSE
+        AND created_at >= current_config.session_proposal_start
+        AND created_at <= current_config.session_proposal_end
     ) THEN
         RAISE EXCEPTION 'User can only submit one proposal per conference period';
     END IF;
