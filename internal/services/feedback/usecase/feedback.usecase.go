@@ -95,6 +95,10 @@ func (u *FeedbackUsecase) CreateFeedback(ctx *gin.Context, req *dto.CreateFeedba
 		}
 	}
 
+	if session.Status != constant.STATUS_SESSION_ACCEPTED {
+		return errors.New("Session not found! Either session is not exist or already deleted")
+	}
+
 	if time.Now().Before(session.SessionStartDate) {
 		return errors.New("Session hasn't started yet")
 	}
