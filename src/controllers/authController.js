@@ -11,7 +11,7 @@ exports.register = async (req, res) => {
   }
 
   const {
-    body: { username, email, password },
+    body: { username, email, password, role },
   } = req;
 
   try {
@@ -21,11 +21,17 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      role: role || "user",
     });
 
     res.status(201).json({
       message: "User registered successfully",
-      user: { id: user.id, username: user.username, email: user.email },
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
