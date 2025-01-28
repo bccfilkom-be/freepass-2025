@@ -24,7 +24,7 @@ type UpdateProposalRequest struct {
 	MaxSeat int `json:"max_seat" validate:"required"`
 }
 
-type GetAllProposalResponse struct {
+type GetProposalResponse struct {
 	ID                    uint   `json:"id"`
 	Title                 string `json:"title"`
 	Description           string `json:"description"`

@@ -32,6 +32,7 @@ func NewProposalDelivery(
 	proposalRouter.POST("/", middleware.RequireAuth, handler.CreateSessionProposal)
 	proposalRouter.GET("/", middleware.RequireAuth, handler.GetAllProposal)
 	proposalRouter.PATCH("/:sessionId", middleware.RequireAuth, handler.UpdateSessionProposal)
+	proposalRouter.GET("/:sessionId", middleware.RequireAuth, handler.GetProposalDetail)
 }
 
 func (v *ProposalDelivery) CreateSessionProposal(ctx *gin.Context) {
@@ -63,7 +64,7 @@ func (v *ProposalDelivery) UpdateSessionProposal(ctx *gin.Context) {
 
 	sessionId, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		v.response.InternalServerError(ctx, "Invalid type of userId!")
+		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
 		return
 	}
 
@@ -89,6 +90,24 @@ func (v *ProposalDelivery) UpdateSessionProposal(ctx *gin.Context) {
 
 func (v *ProposalDelivery) GetAllProposal(ctx *gin.Context) {
 	res, err := v.proposalUsecase.GetAllProposal(ctx)
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, res, "Proposal found!", 200)
+}
+
+func (v *ProposalDelivery) GetProposalDetail(ctx *gin.Context) {
+	param := ctx.Param("sessionId")
+
+	sessionId, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		return
+	}
+
+	res, err := v.proposalUsecase.GetProposalDetail(ctx, uint(sessionId))
 	if err != nil {
 		v.response.BadRequest(ctx, nil, err.Error())
 		return

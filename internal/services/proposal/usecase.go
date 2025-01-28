@@ -8,6 +8,7 @@ import (
 
 type ProposalUsecase interface {
 	CreateProposal(userId uint, req *dto.CreateProposalRequest) error
-	GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposalResponse, error)
+	GetAllProposal(ctx *gin.Context) ([]dto.GetProposalResponse, error)
 	UpdateProposal(sessionId, userId uint, req *dto.UpdateProposalRequest) error
+	GetProposalDetail(ctx *gin.Context, sessionId uint) (dto.GetProposalResponse, error)
 }

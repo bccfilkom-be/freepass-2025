@@ -154,7 +154,7 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 	return v.sessionRepo.Update(data)
 }
 
-func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposalResponse, error) {
+func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetProposalResponse, error) {
 	filter := session.SessionFilter{
 		Status: constant.STATUS_SESSION_PENDING,
 	}
@@ -167,12 +167,12 @@ func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposal
 
 	sessions, err := u.sessionRepo.GetAll(filter)
 	if err != nil {
-		return []dto.GetAllProposalResponse{}, err
+		return []dto.GetProposalResponse{}, err
 	}
 
-	var proposals []dto.GetAllProposalResponse
+	var proposals []dto.GetProposalResponse
 	for _, session := range sessions {
-		proposals = append(proposals, dto.GetAllProposalResponse{
+		proposals = append(proposals, dto.GetProposalResponse{
 			ID:                    session.ID,
 			Title:                 session.Title,
 			Description:           session.Description,
@@ -198,4 +198,48 @@ func (u *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetAllProposal
 	}
 
 	return proposals, nil
+}
+
+func (u *ProposalUsecase) GetProposalDetail(ctx *gin.Context, sessionId uint) (dto.GetProposalResponse, error) {
+	userId := ctx.GetUint("userId")
+	role := ctx.GetString("role")
+
+	session, err := u.sessionRepo.GetById(sessionId)
+	if err != nil {
+		return dto.GetProposalResponse{}, err
+	}
+
+	if session.UserID != userId && role != constant.ROLE_ADMIN {
+		return dto.GetProposalResponse{}, errors.New("You are not authorized to view this proposal!")
+	}
+
+	if session.Status != constant.STATUS_SESSION_PENDING {
+		return dto.GetProposalResponse{}, errors.New("Proposal not found!")
+	}
+
+	proposal := dto.GetProposalResponse{
+		ID:                    session.ID,
+		Title:                 session.Title,
+		Description:           session.Description,
+		RegistrationStartDate: session.RegistrationStartDate.Format(time.RFC3339),
+		RegistrationEndDate:   session.RegistrationEndDate.Format(time.RFC3339),
+
+		SessionStartDate: session.SessionStartDate.Format(time.RFC3339),
+		SessionEndDate:   session.SessionEndDate.Format(time.RFC3339),
+
+		MaxSeat:         session.MaxSeat,
+		Status:          session.Status,
+		RejectedMessage: session.RejectedMessage,
+
+		User: dto.GetUserDetailResponse{
+			ID:    session.User.ID,
+			Name:  session.User.Name,
+			Email: session.User.Email,
+		},
+
+		CreatedAt: session.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: session.UpdatedAt.Format(time.RFC3339),
+	}
+
+	return proposal, nil
 }
