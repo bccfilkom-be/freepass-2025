@@ -9,8 +9,10 @@ import (
 func main() {
 	db := database.NewDatabase()
 	tables := []interface{}{
-		&domain.Session{},
 		&domain.User{},
+		&domain.Session{},
+		&domain.SessionRegistration{},
+		&domain.SessionFeedback{},
 	}
 
 	fmt.Println("Setting Up New Migration...")
