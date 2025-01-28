@@ -110,10 +110,10 @@ const getAllRecords = (tableName) => {
 const checkSessionAvailability = (sessionid) => {
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT s.max_seats, COALESCE(COUNT(sr.sessionid), 0) as registration_count
-      FROM sessions s
-      LEFT JOIN session_registrations sr ON sr.sessionid = s.sessionid
-      WHERE s.sessionid = $1
+      SELECT COUNT(*) as registration_count, s.max_seats
+      FROM session_registrations sr
+      JOIN sessions s ON sr.sessionid = s.sessionid
+      WHERE sr.sessionid = $1
       GROUP BY s.max_seats
     `
     pool.query(query, [sessionid], (err, results) => {
@@ -121,14 +121,8 @@ const checkSessionAvailability = (sessionid) => {
         console.error("Error checking session availability:", err)
         reject(err)
       } else {
-        if (results.rows.length > 0) {
-          const { registration_count, max_seats } = results.rows[0]
-          console.log(`Session ID: ${sessionid}, Registration Count: ${registration_count}, Max Seats: ${max_seats}`)
-          resolve(registration_count >= max_seats)
-        } else {
-          console.log(`Session ID: ${sessionid}, Registration Count: 0, Max Seats: 0`)
-          resolve(false)
-        }
+        const { registration_count, max_seats } = results.rows[0] || { registration_count: 0, max_seats: 0 }
+        resolve(registration_count >= max_seats)
       }
     })
   })
@@ -156,6 +150,25 @@ const checkOverlappingRegistrations = (userid, sessionid) => {
   })
 }
 
+const getFeedbackWithUsername = (sessionid) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT f.feedbackid, f.sessionid, f.userid, u.username, f.comment, f.rating, f.created_at
+      FROM feedback f
+      JOIN users u ON f.userid = u.userid
+      WHERE f.sessionid = $1
+    `
+    pool.query(query, [sessionid], (err, results) => {
+      if (err) {
+        console.error("Error retrieving feedback with username:", err)
+        reject(err)
+      } else {
+        resolve(results.rows)
+      }
+    })
+  })
+}
+
 module.exports = {
   createTable,
   checkRecordExists,
@@ -166,4 +179,5 @@ module.exports = {
   getAllRecords,
   checkSessionAvailability,
   checkOverlappingRegistrations,
+  getFeedbackWithUsername,
 }

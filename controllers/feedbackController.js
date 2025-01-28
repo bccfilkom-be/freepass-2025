@@ -1,6 +1,7 @@
 const response = require("../response")
 const { v4: uuidv4 } = require("uuid")
-const { insertRecord, deleteRecord, getAllRecords } = require("../utils/sqlFunctions")
+const { insertRecord, deleteRecord, getAllRecords, getFeedbackWithUsername } = require("../utils/sqlFunctions")
+const { contains } = require("validator")
 
 const leaveFeedback = async (req, res) => {
   const feedbackData = {
@@ -16,7 +17,6 @@ const leaveFeedback = async (req, res) => {
     response(500, "", error, res)
   }
 }
-
 
 const deleteFeedback = async (req, res) => {
   const { feedbackid } = req.params
@@ -38,8 +38,20 @@ const getAllFeedback = async (req, res) => {
   }
 }
 
+const getFeedbackBySession = async (req, res) => {
+  const { sessionid } = req.params
+
+  try {
+    const feedbackList = await getFeedbackWithUsername(sessionid)
+    response(200, feedbackList, "Feedback for session fetched successfully", res)
+  } catch (error) {
+    response(500, "", error, res)
+  }
+}
+
 module.exports = {
   leaveFeedback,
   deleteFeedback,
   getAllFeedback,
+  getFeedbackBySession,
 }
