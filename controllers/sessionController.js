@@ -1,12 +1,15 @@
 const { v4: uuidv4 } = require("uuid")
 const response = require("../response")
-const { insertRecord, updateRecord, deleteRecord, getAllRecords, getRecordById, checkSessionAvailability, checkOverlappingRegistrations } = require("../utils/sqlFunctions")
+const { insertRecord, updateRecord, deleteRecord, getAllRecords, getRecordById, checkSessionAvailability, checkOverlappingRegistrations, createTable } = require("../utils/sqlFunctions")
+const sessionSchema = require("../schemas/sessionSchema")
+const sessionRegistrationSchema = require("../schemas/sessionRegistrationSchema")
 
 const updateSession = async (req, res) => {
   const { sessionid } = req.params
   const updatedData = req.body
 
   try {
+    await createTable(sessionSchema)
     const session = await getRecordById("sessions", "sessionid", sessionid)
     if (session.userid !== req.user.userid) {
       response(403, "", "You can only update your own sessions", res)
@@ -25,6 +28,7 @@ const deleteSession = async (req, res) => {
   const { sessionid } = req.params
 
   try {
+    await createTable(sessionSchema)
     const session = await getRecordById("sessions", "sessionid", sessionid)
     if (session.userid !== req.user.userid) {
       response(403, "", "You can only delete your own sessions", res)
@@ -41,6 +45,7 @@ const deleteSession = async (req, res) => {
 
 const getAllSessions = async (req, res) => {
   try {
+    await createTable(sessionSchema)
     const sessions = await getAllRecords("sessions")
     response(200, sessions, "Sessions fetched successfully", res)
   } catch (error) {
@@ -54,6 +59,7 @@ const registerForSession = async (req, res) => {
   const userid = req.user.userid
 
   try {
+    await createTable(sessionRegistrationSchema)
     const hasOverlap = await checkOverlappingRegistrations(userid, sessionid)
     const isFull = await checkSessionAvailability(sessionid)
 
