@@ -106,5 +106,5 @@ func (v *SessionRepository) GetAllBetwenDate(startDate, endDate time.Time, filte
 }
 
 func (v *SessionRepository) Delete(id uint) error {
-	return v.db.Delete(&domain.Session{}, id).Error
+	return v.db.Unscoped().Delete(&domain.Session{}, id).Error
 }
