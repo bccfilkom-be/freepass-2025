@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken")
+
+
 const authMiddleware = (req, res, next) => {
   const token = req.cookies.token
   try {
@@ -10,4 +12,5 @@ const authMiddleware = (req, res, next) => {
     res.redirect("/signup")
   }
 }
+
 module.exports = authMiddleware

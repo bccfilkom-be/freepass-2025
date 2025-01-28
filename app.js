@@ -7,6 +7,9 @@ const authRoutes = require("./routes/authRoutes")
 const userRoutes = require("./routes/userRoutes")
 const sessionRoutes = require("./routes/sessionRoutes")
 const feedbackRoutes = require("./routes/feedbackRoutes")
+const proposalRoutes = require("./routes/proposalRoutes")
+const eventCoordinatorRoutes = require("./routes/eventCoordinatorRoutes")
+const adminRoutes = require("./routes/adminRoutes")
 const cookiesParser = require("cookie-parser")
 
 const port = process.env.PORT
@@ -20,6 +23,9 @@ app.use("/", authRoutes)
 app.use("/user", userRoutes)
 app.use("/sessions", sessionRoutes)
 app.use("/feedback", feedbackRoutes)
+app.use("/proposals", proposalRoutes)
+app.use("/event-coordinator", eventCoordinatorRoutes)
+app.use("/admin", adminRoutes)
 
 connectDB()
 
