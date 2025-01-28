@@ -114,6 +114,8 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 		SessionStartDate: dates.SessionStart,
 		SessionEndDate:   dates.SessionEnd,
 		MaxSeat:          req.MaxSeat,
+		Status:           constant.STATUS_SESSION_PENDING,
+		RejectedMessage:  "",
 	}
 
 	return v.sessionRepo.Update(data)
@@ -228,6 +230,48 @@ func (v *ProposalUsecase) DeleteProposal(ctx *gin.Context, sessionId uint) error
 	return v.sessionRepo.Delete(sessionId)
 }
 
+func (v *ProposalUsecase) ApproveProposal(sessionId uint) error {
+	session, err := v.sessionRepo.GetById(sessionId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("Proposal not found!")
+		} else {
+			return err
+		}
+	}
+
+	if session.Status != constant.STATUS_SESSION_PENDING {
+		return errors.New("Proposal not found! Either it is already accepted or rejected")
+	}
+
+	return v.sessionRepo.Update(domain.Session{
+		ID:     sessionId,
+		Status: constant.STATUS_SESSION_ACCEPTED,
+	})
+}
+
+func (v *ProposalUsecase) DeclineProposal(sessionId uint, req *dto.DecliendProposalRequest) error {
+	session, err := v.sessionRepo.GetById(sessionId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("Proposal not found!")
+		} else {
+			return err
+		}
+	}
+
+	if session.Status != constant.STATUS_SESSION_PENDING {
+		return errors.New("Proposal not found! Either it is already accepted or rejected")
+	}
+
+	return v.sessionRepo.Update(domain.Session{
+		ID:              sessionId,
+		Status:          constant.STATUS_SESSION_REJECTED,
+		RejectedMessage: req.RejectedMessage,
+	})
+}
+
+// Helper
 func validateDates(dates SessionDates) error {
 	if dates.RegistrationStart.Before(time.Now()) {
 		return errors.New("registration start date should be after today")

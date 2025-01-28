@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"jevvonn/bcc-be-freepass-2025/internal/constant"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
 	"jevvonn/bcc-be-freepass-2025/internal/middleware"
@@ -35,6 +36,11 @@ func NewProposalDelivery(
 	proposalRouter.GET("/:sessionId", middleware.RequireAuth, handler.GetProposalDetail)
 	proposalRouter.PATCH("/:sessionId", middleware.RequireAuth, handler.UpdateSessionProposal)
 	proposalRouter.DELETE("/:sessionId", middleware.RequireAuth, handler.DeleteProposal)
+
+	proposalRouter.PUT("/:sessionId/approve", middleware.RequireAuth,
+		middleware.RequireRoles(constant.ROLE_COORDINATOR), handler.ApproveProposal)
+	proposalRouter.PUT("/:sessionId/decline", middleware.RequireAuth,
+		middleware.RequireRoles(constant.ROLE_COORDINATOR), handler.DeclineProposal)
 }
 
 func (v *ProposalDelivery) CreateSessionProposal(ctx *gin.Context) {
@@ -134,4 +140,51 @@ func (v *ProposalDelivery) DeleteProposal(ctx *gin.Context) {
 	}
 
 	v.response.OK(ctx, nil, "Proposal deleted!", 200)
+}
+
+func (v *ProposalDelivery) ApproveProposal(ctx *gin.Context) {
+	param := ctx.Param("sessionId")
+
+	sessionId, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		return
+	}
+
+	err = v.proposalUsecase.ApproveProposal(uint(sessionId))
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, nil, "Proposal approved!", 200)
+}
+
+func (v *ProposalDelivery) DeclineProposal(ctx *gin.Context) {
+	param := ctx.Param("sessionId")
+
+	sessionId, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		v.response.InternalServerError(ctx, "Invalid type of sessionId!")
+		return
+	}
+
+	var req *dto.DecliendProposalRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	if errorsData, err := v.validator.Validate(req); err != nil {
+		v.response.BadRequest(ctx, errorsData, err.Error())
+		return
+	}
+
+	err = v.proposalUsecase.DeclineProposal(uint(sessionId), req)
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, nil, "Proposal declined!", 200)
 }

@@ -43,3 +43,7 @@ type GetProposalResponse struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }
+
+type DecliendProposalRequest struct {
+	RejectedMessage string `json:"rejected_message" validate:"required"`
+}
