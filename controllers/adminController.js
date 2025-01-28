@@ -1,5 +1,5 @@
 const response = require("../response")
-const { updateRecord, deleteRecord } = require("../utils/sqlFunctions")
+const { updateRecord, deleteRecord, getAllRecords } = require("../utils/sqlFunctions")
 
 const changeUserRoleToEventCoordinator = async (req, res) => {
   const { userid } = req.body
@@ -23,7 +23,17 @@ const removeUser = async (req, res) => {
   }
 }
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await getAllRecords("users")
+    response(200, users, "Users retrieved successfully", res)
+  } catch (error) {
+    response(500, "", error, res)
+  }
+}
+
 module.exports = {
   changeUserRoleToEventCoordinator,
   removeUser,
+  getAllUsers,
 }
