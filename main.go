@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/go-fuego/fuego"
+	"github.com/go-fuego/fuego/option"
+	"github.com/go-fuego/fuego/param"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 	"github.com/litegral/freepass-2025/internal/controller"
@@ -51,7 +53,11 @@ func main() {
 	v1 := fuego.Group(s, "/v1")
 
 	fuego.Post(v1, "/users", userController.CreateUser)
-	fuego.Get(v1, "/verify-email", userController.VerifyEmail)
+	fuego.Get(v1, "/verify-email",
+		userController.VerifyEmail,
+		option.Query("token", "Token for email verification", param.Required()),
+		option.Query("email", "Email for email verification", param.Required()),
+	)
 
 	s.Run()
 }

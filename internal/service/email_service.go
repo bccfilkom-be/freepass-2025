@@ -11,7 +11,7 @@ import (
 
 const (
 	defaultTimeout     = 10 * time.Second
-	linkExpiryMinutes = 15
+	linkExpiryMinutes = 24
 )
 
 type EmailConfig struct {
@@ -129,7 +129,7 @@ func (s *EmailService) SendPasswordResetEmail(ctx context.Context, recipient, to
             <p style="margin: 20px 0;">
                 <a href="%s" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
             </p>
-            <p>This link will expire in <b>%d minutes</b>.</p>
+            <p>This link will expire in <b>%d hours</b>.</p>
             <p>If you did not request a password reset for your Conflux account, please ignore this message.</p>
         </div>
     `, resetLink, linkExpiryMinutes)
