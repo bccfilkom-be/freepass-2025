@@ -7,7 +7,7 @@ import (
 
 type SessionFilter struct {
 	UserID    uint
-	Status    string
+	Status    []string
 	IncludeID []uint
 	ExcludeID []uint
 }

@@ -36,8 +36,8 @@ func (v *SessionRepository) GetAll(filter session.SessionFilter) ([]domain.Sessi
 		query = query.Where("user_id = ?", filter.UserID)
 	}
 
-	if filter.Status != "" {
-		query = query.Where("status = ?", filter.Status)
+	if len(filter.Status) > 0 {
+		query = query.Where("status IN ?", filter.Status)
 	}
 
 	err := query.Preload("User").Find(&data).Error
@@ -57,8 +57,8 @@ func (v *SessionRepository) DateInBetweenSession(startDate, endDate time.Time, f
 		query = query.Where("user_id = ?", filter.UserID)
 	}
 
-	if filter.Status != "" {
-		query = query.Where("status = ?", filter.Status)
+	if len(filter.Status) > 0 {
+		query = query.Where("status IN ?", filter.Status)
 	}
 
 	// Group the OR conditions properly
@@ -95,8 +95,8 @@ func (v *SessionRepository) GetAllBetwenDate(startDate, endDate time.Time, filte
 		query = query.Where("user_id = ?", filter.UserID)
 	}
 
-	if filter.Status != "" {
-		query = query.Where("status = ?", filter.Status)
+	if len(filter.Status) > 0 {
+		query = query.Where("status IN ?", filter.Status)
 	}
 
 	query = query.Where("session_start_date >= ? AND session_end_date <= ?", startDate, endDate)

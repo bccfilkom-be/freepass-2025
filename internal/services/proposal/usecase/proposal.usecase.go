@@ -46,7 +46,6 @@ func (v *ProposalUsecase) CreateProposal(userId uint, req *dto.CreateProposalReq
 	}
 
 	if err := v.sessionRepo.DateInBetweenSession(dates.SessionStart, dates.SessionEnd, session.SessionFilter{
-		Status: constant.STATUS_SESSION_PENDING,
 		UserID: userId,
 	}); err != nil {
 		return err
@@ -97,7 +96,6 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 	}
 
 	if err := v.sessionRepo.DateInBetweenSession(dates.SessionStart, dates.SessionEnd, session.SessionFilter{
-		Status:    constant.STATUS_SESSION_PENDING,
 		UserID:    userId,
 		ExcludeID: []uint{sessionId},
 	}); err != nil {
@@ -115,7 +113,6 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 		SessionEndDate:   dates.SessionEnd,
 		MaxSeat:          req.MaxSeat,
 		Status:           constant.STATUS_SESSION_PENDING,
-		RejectedMessage:  "",
 	}
 
 	return v.sessionRepo.Update(data)
@@ -123,7 +120,7 @@ func (v *ProposalUsecase) UpdateProposal(sessionId, userId uint, req *dto.Update
 
 func (v *ProposalUsecase) GetAllProposal(ctx *gin.Context) ([]dto.GetProposalResponse, error) {
 	filter := session.SessionFilter{
-		Status: constant.STATUS_SESSION_PENDING,
+		Status: []string{constant.STATUS_SESSION_PENDING, constant.STATUS_SESSION_REJECTED},
 	}
 
 	role := ctx.GetString("role")

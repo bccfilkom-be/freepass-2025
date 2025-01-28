@@ -16,22 +16,8 @@ func NewSessionUsecase(sessionRepo session.SessionRepository) session.SessionUse
 }
 
 func (v *SessionUsecase) GetAllSession() ([]dto.GetAllSessionResponse, error) {
-	// userId := ctx.Query("userId")
-	// status := ctx.Query("status")
-
-	// if userId != "" {
-	// 	userId, err := strconv.ParseInt(ctx.Query("userId"), 10, 32)
-	// 	if err == nil {
-	// 		filter.UserID = uint(userId)
-	// 	}
-	// }
-
-	// if status != "" && slices.Contains(constant.ROLE_ARRAY, status) {
-	// 	filter.Status = status
-	// }
-
 	results, err := v.sessionRepo.GetAll(session.SessionFilter{
-		Status: constant.STATUS_SESSION_ACCEPTED,
+		Status: []string{constant.STATUS_SESSION_ACCEPTED},
 	})
 
 	if err != nil {
