@@ -24,3 +24,13 @@ func (r *FeedbackRepository) GetAllBySessionId(sessionId uint) ([]domain.Session
 func (r *FeedbackRepository) Create(data domain.SessionFeedback) error {
 	return r.db.Create(&data).Error
 }
+
+func (r *FeedbackRepository) DeleteById(id, sessionId uint) error {
+	return r.db.Unscoped().Where("id = ?", id).Where("session_id = ?", sessionId).Delete(&domain.SessionFeedback{}).Error
+}
+
+func (r *FeedbackRepository) GetById(id, sessionId uint) (domain.SessionFeedback, error) {
+	var feedback domain.SessionFeedback
+	err := r.db.Preload("User").Where("id = ?", id).Where("session_id = ?", sessionId).First(&feedback).Error
+	return feedback, err
+}

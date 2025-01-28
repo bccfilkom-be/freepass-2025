@@ -9,4 +9,5 @@ import (
 type FeedbackUsecase interface {
 	GetAllSessionFeedback(ctx *gin.Context) ([]dto.GetFeedbackResponse, error)
 	CreateFeedback(ctx *gin.Context, req *dto.CreateFeedbackRequest) error
+	DeleteFeedback(ctx *gin.Context) error
 }

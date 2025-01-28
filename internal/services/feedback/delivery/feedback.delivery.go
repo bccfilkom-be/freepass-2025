@@ -30,6 +30,7 @@ func NewFeedbackDelivery(
 	sessionRoute := handler.router.Group("/session")
 	sessionRoute.GET("/:sessionId/feedback", middleware.RequireAuth, handler.GetAllSessionFeedback)
 	sessionRoute.POST("/:sessionId/feedback", middleware.RequireAuth, handler.CreateFeedback)
+	sessionRoute.DELETE("/:sessionId/feedback/:feedbackId", middleware.RequireAuth, handler.DeleteFeedback)
 }
 
 func (v *FeedbackDelivery) CreateFeedback(ctx *gin.Context) {
@@ -61,4 +62,14 @@ func (v *FeedbackDelivery) GetAllSessionFeedback(ctx *gin.Context) {
 	}
 
 	v.response.OK(ctx, res, "Session feedback found!", 200)
+}
+
+func (v *FeedbackDelivery) DeleteFeedback(ctx *gin.Context) {
+	err := v.feedbackUsecase.DeleteFeedback(ctx)
+	if err != nil {
+		v.response.BadRequest(ctx, nil, err.Error())
+		return
+	}
+
+	v.response.OK(ctx, nil, "Feedback deleted!", 200)
 }

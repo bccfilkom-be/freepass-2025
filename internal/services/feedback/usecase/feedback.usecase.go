@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"jevvonn/bcc-be-freepass-2025/internal/constant"
 	"jevvonn/bcc-be-freepass-2025/internal/helper"
 	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
@@ -109,4 +110,35 @@ func (u *FeedbackUsecase) CreateFeedback(ctx *gin.Context, req *dto.CreateFeedba
 		Rating:    req.Rating,
 	}
 	return u.feedbackRepo.Create(data)
+}
+
+func (u *FeedbackUsecase) DeleteFeedback(ctx *gin.Context) error {
+	userId := ctx.GetUint("userId")
+	paramFeedback := ctx.Param("feedbackId")
+	paramSessionId := ctx.Param("sessionId")
+	role := ctx.GetString("role")
+
+	feedbackId, err := helper.StringToUint(paramFeedback)
+	if err != nil {
+		return err
+	}
+	sessionId, err := helper.StringToUint(paramSessionId)
+	if err != nil {
+		return err
+	}
+
+	feedback, err := u.feedbackRepo.GetById(feedbackId, sessionId)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("Feedback not found!")
+		} else {
+			return err
+		}
+	}
+
+	if feedback.UserID != userId && role != constant.ROLE_COORDINATOR {
+		return errors.New("You are not authorized to delete this feedback!")
+	}
+
+	return u.feedbackRepo.DeleteById(feedbackId, sessionId)
 }
