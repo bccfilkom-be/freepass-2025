@@ -16,6 +16,7 @@ type SessionFeedback struct {
 	User   User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	Content string `gorm:"type:text;not null"`
+	Rating  int    `gorm:"not null"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

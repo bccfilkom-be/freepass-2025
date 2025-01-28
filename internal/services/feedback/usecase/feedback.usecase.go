@@ -64,6 +64,7 @@ func (u *FeedbackUsecase) CreateFeedback(ctx *gin.Context, req *dto.CreateFeedba
 		UserID:    userId,
 		SessionID: sessionId,
 		Content:   req.Content,
+		Rating:    req.Rating,
 	}
 	return u.feedbackRepo.Create(data)
 }
