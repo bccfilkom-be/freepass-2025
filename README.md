@@ -126,6 +126,8 @@ THEN  => System will delete the account from the system
 We want to see your perspective about these problems. You can define various types of entities or actors. One thing for sure, there is no
 true or false statement to define the entities. As long as the results are understandable, then go for it! 🚀
 
+See [Entities and Actors](ENTITIES.md) for more details.
+
 ## **📘** References
 
 You might be overwhelmed by these requirements. Don't worry, here's a list of some tools that you could use (it's not required to use all of them nor any of them):
@@ -168,6 +170,8 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 ## **🧪** API Installation
 
 > Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
+
+[Installation Guide](INSTALLATION.md)
 
 ## **📞** Contact
 
