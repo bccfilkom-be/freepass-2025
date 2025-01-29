@@ -257,8 +257,6 @@ This project provides API documentation for easier testing and integration. You 
 
 ---
 
-This ensures your project is easy to install, set up, and test. 🚀
-
 ## **📞** Contact
 
 Have any questions? You can contact either [Tyo](https://www.instagram.com/nandanatyo/) or [Ilham](https://www.instagram.com/iilham_akbar/).
