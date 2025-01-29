@@ -1,0 +1,3817 @@
+{
+	"info": {
+		"_postman_id": "5ed35b24-feab-4644-a13d-ed85c35d9f3b",
+		"name": "Freepass BCC API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39769515"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Lucia\",\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/auth/register",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Lucia\",\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User registered successfully\",\n    \"user\": {\n        \"id\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\n        \"username\": \"Lucia\",\n        \"email\": \"lucia@example.com\",\n        \"role\": \"user\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": 123,\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"errors\": [\r\n    {\r\n      \"msg\": \"Username must be a string\",\r\n      \"param\": \"username\",\r\n      \"location\": \"body\"\r\n    }\r\n  ]\r\n}\r\n"
+						},
+						{
+							"name": "Duplicate Email",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Amber\",\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"errors\": [\n        {\n            \"msg\": \"Email already in use\",\n            \"param\": \"email\",\n            \"location\": \"body\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Lucia\",\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Internal server error\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/auth/login",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Login successful\",\r\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\r\n}\r\n"
+						},
+						{
+							"name": "User Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"ash@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"error\": \"User not found\"\r\n}\r\n"
+						},
+						{
+							"name": "Invalid Password",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"error\": \"Invalid password\"\r\n}\r\n"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"luciaexample.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"errors\": [\r\n    {\r\n      \"msg\": \"Invalid email format\",\r\n      \"param\": \"email\",\r\n      \"location\": \"body\"\r\n    }\r\n  ]\r\n}\r\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"lucia@example.com\",\r\n  \"password\": \"Str0ngP@assw0rd2\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"error\": \"Internal server error\"\r\n}\r\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Edit Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Luciaaa\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/users/edit-profile/{{userId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"users",
+								"edit-profile",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Edit Profile",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Luciaaa\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/edit-profile/8013964b-07f9-43b8-87cc-4b6b748313af",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"edit-profile",
+										"8013964b-07f9-43b8-87cc-4b6b748313af"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Profile updated successfully\",\n    \"user\": {\n        \"id\": \"{{userId}}\",\n        \"username\": \"Luciaaa\",\n        \"email\": \"lucia@example.com\",\n        \"role\": \"user\"\n    }\n}"
+						},
+						{
+							"name": "User Not Found",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Luciaaa\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/edit-profile/8013964b-07f9-43b8-87cc-4b6b748313ad",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"edit-profile",
+										"8013964b-07f9-43b8-87cc-4b6b748313ad"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"User not found\"\n}\n"
+						},
+						{
+							"name": "Unauthorized Access",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Luciaaa\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/edit-profile/d597d69f-bea7-4951-9ba9-0bc330fd16cd",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"edit-profile",
+										"d597d69f-bea7-4951-9ba9-0bc330fd16cd"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"You are not authorized to perform this action\"\n}\n"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": 123\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/edit-profile/8013964b-07f9-43b8-87cc-4b6b748313af",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"edit-profile",
+										"8013964b-07f9-43b8-87cc-4b6b748313af"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"Username must be a string\",\n      \"param\": \"username\",\n      \"location\": \"body\"\n    }\n  ]\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"Luciaaa\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/edit-profile/8013964b-07f9-43b8-87cc-4b6b748313af",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"edit-profile",
+										"8013964b-07f9-43b8-87cc-4b6b748313af"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Internal server error\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "View Other's Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/users/profile/{{userId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"users",
+								"profile",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/profile/d597d69f-bea7-4951-9ba9-0bc330fd16cd",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"profile",
+										"d597d69f-bea7-4951-9ba9-0bc330fd16cd"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"user\": {\r\n    \"id\": \"d597d69f-bea7-4951-9ba9-0bc330fd16cd\",\r\n    \"username\": \"Amber\",\r\n    \"email\": \"amber@example.com\",\r\n    \"role\": \"user\"\r\n  }\r\n}\r\n"
+						},
+						{
+							"name": "User Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/profile/d597d69f-bea7-4951-9ba9-0bc330fd16ck",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"profile",
+										"d597d69f-bea7-4951-9ba9-0bc330fd16ck"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"User not found\"\r\n}\r\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/profile/d597d69f-bea7-4951-9ba9-0bc330fd16cd",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"profile",
+										"d597d69f-bea7-4951-9ba9-0bc330fd16cd"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"error\": \"Error retrieving user profile\"\r\n}\r\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Sessions",
+			"item": [
+				{
+					"name": "Get All Sessions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/sessions/",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"sessions",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\r\n  {\r\n    \"id\": 1,\r\n    \"title\": \"Session 1\",\r\n    \"description\": \"Description of session 1\",\r\n    \"start_time\": \"2025-01-28T09:00:00Z\",\r\n    \"end_time\": \"2025-01-28T10:00:00Z\",\r\n    \"available_seats\": 10,\r\n    \"user_id\": \"d597d69f-bea7-4951-9ba9-0bc330fd16cd\"\r\n  }\r\n]\r\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										""
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Failed to retrieve sessions\"\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Leave Feedback",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n    \"feedback\": \"This session was very fun!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/sessions/{{sessionId}}/feedback",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"sessions",
+								"{{sessionId}}",
+								"feedback"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n    \"feedback\": \"This session was very fun!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Feedback successfully submitted\",\r\n  \"newFeedback\": {\r\n    \"id\": 1,\r\n    \"session_id\": 1,\r\n    \"user_id\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n    \"feedback\": \"This session was very fun!\"\r\n  }\r\n}\r\n"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n    \"feedback\": \"This session was very fun!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/xxx/feedback",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"xxx",
+										"feedback"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"errors\": [\r\n    {\r\n      \"msg\": \"Session ID must be an integer\",\r\n      \"param\": \"id\" \r\n    }\r\n  ]\r\n}\r\n"
+						},
+						{
+							"name": "Session Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n    \"feedback\": \"This session was very fun!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/3/feedback",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"3",
+										"feedback"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Session not found\"\r\n}\r\n"
+						},
+						{
+							"name": "User Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313ak\",\r\n    \"feedback\": \"This session was very fun!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"User not found\"\r\n}\r\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n    \"feedback\": \"This session was very fun!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Failed to leave feedback\"\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Register for Session",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/sessions/{{sessionId}}/register",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"sessions",
+								"{{sessionId}}",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Registration successful\"\n}\n"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/xxx/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"xxx",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"Session ID must be an integer\",\n      \"param\": \"id\"\n    }\n  ]\n}\n"
+						},
+						{
+							"name": "Session Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/3/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"3",
+										"register"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Session not found\"\n}\n"
+						},
+						{
+							"name": "No Seats Available",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"No seats available\"\n}\n"
+						},
+						{
+							"name": "Already Registered",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Already registered for this session\"\n}\n"
+						},
+						{
+							"name": "Time Conflict",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Already registered for another session in this time period\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"register"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to register for session\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "Edit Session",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Session Title\",\r\n  \"description\": \"Updated session description\",\r\n  \"startTime\": \"2025-01-31T10:00:00.000Z\",\r\n  \"endTime\": \"2025-01-31T12:00:00.000Z\",\r\n  \"availableSeats\": 50\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/sessions/{{sessionId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"sessions",
+								"{{sessionId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Session Title\",\r\n  \"description\": \"Updated session description\",\r\n  \"startTime\": \"2025-01-31T10:00:00.000Z\",\r\n  \"endTime\": \"2025-01-31T12:00:00.000Z\",\r\n  \"availableSeats\": 50\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Session updated successfully\"\n}"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Session Title\",\r\n  \"description\": \"Updated session description\",\r\n  \"startTime\": \"2025-01-31T10:00:00.000Z\",\r\n  \"endTime\": \"2025-01-31T12:00:00.000Z\",\r\n  \"availableSeats\": 50\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/xxx",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"xxx"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"Session ID must be an integer\",\n      \"param\": \"id\"\n    }\n  ]\n}\n"
+						},
+						{
+							"name": "Session Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Session Title\",\r\n  \"description\": \"Updated session description\",\r\n  \"startTime\": \"2025-01-31T10:00:00.000Z\",\r\n  \"endTime\": \"2025-01-31T12:00:00.000Z\",\r\n  \"availableSeats\": 50\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Session not found\"\n}\n"
+						},
+						{
+							"name": "Unauthorized Access",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Session Title\",\r\n  \"description\": \"Updated session description\",\r\n  \"startTime\": \"2025-01-31T10:00:00.000Z\",\r\n  \"endTime\": \"2025-01-31T12:00:00.000Z\",\r\n  \"availableSeats\": 50\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"You are not authorized to edit this session\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Session Title\",\r\n  \"description\": \"Updated session description\",\r\n  \"startTime\": \"2025-01-31T10:00:00.000Z\",\r\n  \"endTime\": \"2025-01-31T12:00:00.000Z\",\r\n  \"availableSeats\": 50\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to edit session\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "Delete Session",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/sessions/{{sessionId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"sessions",
+								"{{sessionId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Session deleted successfully\"\r\n}\r\n"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/xxx",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"xxx"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"errors\": [\r\n    {\r\n      \"msg\": \"Session ID must be an integer\",\r\n      \"param\": \"id\"\r\n    }\r\n  ]\r\n}\r\n"
+						},
+						{
+							"name": "Session Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Session not found\"\r\n}\r\n"
+						},
+						{
+							"name": "Unathorized Access",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"You are not authorized to delete this session\"\r\n}\r\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Failed to delete session\"\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Delete Feedback",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/sessions/{{sessionId}}/feedback/{{feedbackId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"sessions",
+								"{{sessionId}}",
+								"feedback",
+								"{{feedbackId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Feedback deleted successfully\"\n}"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback/xxx",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback",
+										"xxx"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"Feedback ID must be an integer\",\n      \"param\": \"feedbackId\"\n    }\n  ]\n}\n"
+						},
+						{
+							"name": "Feedback Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback",
+										"3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Feedback not found\"\n}\n"
+						},
+						{
+							"name": "Unathorized Access",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback",
+										"1"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"You are not authorized to delete this feedback\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/sessions/1/feedback/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"sessions",
+										"1",
+										"feedback",
+										"1"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to delete feedback\"\n}\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Session Proposals",
+			"item": [
+				{
+					"name": "Create Proposal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Proposal Title\",\r\n  \"description\": \"This is a session proposal description.\",\r\n  \"startTime\": \"2025-01-30T16:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T18:00:00.000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"session-proposals",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Proposal Title\",\r\n  \"description\": \"This is a session proposal description.\",\r\n  \"startTime\": \"2025-01-30T16:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T18:00:00.000Z\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Proposal created successfully\",\r\n  \"newProposal\": {\r\n    \"id\": 1,\r\n    \"user_id\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n    \"title\": \"Proposal Title\",\r\n    \"description\": \"This is a session proposal description.\",\r\n    \"start_time\": \"2025-01-30T16:00:00.000Z\",\r\n    \"end_time\": \"2025-01-30T18:00:00.000Z\",\r\n    \"status\": \"pending\",\r\n    \"available_seats\": 20\r\n  }\r\n}\r\n"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"Proposal Title\",\r\n  \"description\": \"This is a session proposal description.\",\r\n  \"startTime\": \"2025-01-30T16:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T18:00:00.000Z\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										""
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"errors\": [\r\n    {\r\n      \"msg\": \"User ID is required\",\r\n      \"param\": \"userId\",\r\n      \"location\": \"body\"\r\n    }\r\n  ]\r\n}\r\n"
+						},
+						{
+							"name": "Time Conflict",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Proposal Title\",\r\n  \"description\": \"This is a session proposal description.\",\r\n  \"startTime\": \"2025-01-30T16:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T18:00:00.000Z\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										""
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"You already have a proposal in this time period\"\r\n}\r\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Proposal Title\",\r\n  \"description\": \"This is a session proposal description.\",\r\n  \"startTime\": \"2025-01-30T16:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T18:00:00.000Z\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										""
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Failed to create proposal\"\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Edit Proposal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Proposal Title\",\r\n  \"description\": \"This is an updated session proposal description.\",\r\n  \"startTime\": \"2025-01-30T14:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T16:00:00.000Z\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/{{proposalId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"session-proposals",
+								"{{proposalId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Proposal Title\",\r\n  \"description\": \"This is an updated session proposal description.\",\r\n  \"startTime\": \"2025-01-30T14:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T16:00:00.000Z\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/1",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Proposal updated successfully\",\n    \"proposal\": {\n        \"id\": 1,\n        \"user_id\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\n        \"title\": \"Updated Proposal Title\",\n        \"description\": \"This is an updated session proposal description.\",\n        \"start_time\": \"2025-01-30T14:00:00.000Z\",\n        \"end_time\": \"2025-01-30T16:00:00.000Z\",\n        \"status\": \"pending\",\n        \"available_seats\": 20\n    }\n}"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Proposal Title\",\r\n  \"description\": \"This is an updated session proposal description.\",\r\n  \"startTime\": \"2025-01-30T14:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T16:00:00.000Z\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/xxx",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"xxx"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"Session proposal ID must be an integer\",\n      \"param\": \"id\"\n    }\n  ]\n}"
+						},
+						{
+							"name": "Session Proposal Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Proposal Title\",\r\n  \"description\": \"This is an updated session proposal description.\",\r\n  \"startTime\": \"2025-01-30T14:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T16:00:00.000Z\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/3",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Proposal not found\"\n}\n"
+						},
+						{
+							"name": "Unauthorized Access",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"d597d69f-bea7-4951-9ba9-0bc330fd16cd\",\r\n  \"title\": \"Updated Proposal Title\",\r\n  \"description\": \"This is an updated session proposal description.\",\r\n  \"startTime\": \"2025-01-30T14:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T16:00:00.000Z\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/1",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"You are not authorized to edit this proposal\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\r\n  \"title\": \"Updated Proposal Title\",\r\n  \"description\": \"This is an updated session proposal description.\",\r\n  \"startTime\": \"2025-01-30T14:00:00.000Z\",\r\n  \"endTime\": \"2025-01-30T16:00:00.000Z\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/1",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to edit proposal\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "Delete Proposal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzZjZkYWUwLWVhZjktNGQxMi1hZjNkLTRhMmUwYzg3ZjM5YiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3ODk4NjcwLCJleHAiOjE3Mzc5ODUwNzB9.e-Liau-t-CklwRFtN2q7JQUT2gDKrgGjd7o0KoyTq8A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/{{proposalId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"session-proposals",
+								"{{proposalId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/1",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Proposal deleted successfully\"\n}"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/1",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"User ID must be a UUID\",\n      \"param\": \"userId\"\n    }\n  ]\n}"
+						},
+						{
+							"name": "Session Proposal Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/3",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Proposal not found\"\n}\n"
+						},
+						{
+							"name": "Unauthorized Access",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/1",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"You are not authorized to delete this proposal\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://lcalhost:3000/api/session-proposals/1",
+									"protocol": "http",
+									"host": [
+										"lcalhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to delete proposal\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "Get All Proposals",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI4ZDZjMWU0LTdlNmItNGI3Zi05ZjhjLTVlNmM3YjJlMWI0YiIsInJvbGUiOiJjb29yZGluYXRvciIsImlhdCI6MTczODA0ODc2MywiZXhwIjoxNzM4MTM1MTYzfQ._pyCy-N3UC4Gi6afr1NvEgcq5x-S2bEr06IMDIP6BUs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"session-proposals",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"user_id\": \"8013964b-07f9-43b8-87cc-4b6b748313af\",\n        \"title\": \"Proposal Title\",\n        \"description\": \"This is a session proposal description.\",\n        \"start_time\": \"2025-01-30T16:00:00.000Z\",\n        \"end_time\": \"2025-01-30T18:00:00.000Z\",\n        \"status\": \"pending\",\n        \"available_seats\": 20\n    }\n]"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										""
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to retrieve proposals\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "Accept Proposal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI4ZDZjMWU0LTdlNmItNGI3Zi05ZjhjLTVlNmM3YjJlMWI0YiIsInJvbGUiOiJjb29yZGluYXRvciIsImlhdCI6MTczODA0ODc2MywiZXhwIjoxNzM4MTM1MTYzfQ._pyCy-N3UC4Gi6afr1NvEgcq5x-S2bEr06IMDIP6BUs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/{{proposalId}}/accept",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"session-proposals",
+								"{{proposalId}}",
+								"accept"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/1/accept",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1",
+										"accept"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Proposal accepted and session created\",\r\n  \"newSession\": {\r\n    \"id\": 1,\r\n    \"title\": \"Proposal Title\",\r\n    \"description\": \"This is a session proposal description.\",\r\n    \"start_time\": \"2025-01-30T16:00:00.000Z\",\r\n    \"end_time\": \"2025-01-30T18:00:00.000Z\",\r\n    \"available_seats\": 20,\r\n    \"user_id\": \"8013964b-07f9-43b8-87cc-4b6b748313af\"\r\n  }\r\n}\r\n"
+						},
+						{
+							"name": "Session Proposal Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/1/accept",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1",
+										"accept"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Proposal not found\"\r\n}\r\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/session-proposals/1/accept",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"session-proposals",
+										"1",
+										"accept"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\r\n  \"message\": \"Failed to accept proposal and create session\"\r\n}\r\n"
+						}
+					]
+				},
+				{
+					"name": "Reject Proposal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI4ZDZjMWU0LTdlNmItNGI3Zi05ZjhjLTVlNmM3YjJlMWI0YiIsInJvbGUiOiJjb29yZGluYXRvciIsImlhdCI6MTczODA0ODc2MywiZXhwIjoxNzM4MTM1MTYzfQ._pyCy-N3UC4Gi6afr1NvEgcq5x-S2bEr06IMDIP6BUs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/{{proposalId}}/reject",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"session-proposals",
+								"{{proposalId}}",
+								"reject"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/{{proposalId}}/reject",
+									"protocol": "{{schema}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"api",
+										"session-proposals",
+										"{{proposalId}}",
+										"reject"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Proposal rejected\",\n    \"proposal\": {\n        \"id\": 1,\n        \"status\": \"rejected\"\n    }\n}"
+						},
+						{
+							"name": "Session Proposal Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/{{proposalId}}/reject",
+									"protocol": "{{schema}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"api",
+										"session-proposals",
+										"{{proposalId}}",
+										"reject"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Proposal not found\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{schema}}://{{host}}:{{port}}/api/session-proposals/{{proposalId}}/reject",
+									"protocol": "{{schema}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"api",
+										"session-proposals",
+										"{{proposalId}}",
+										"reject"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to reject proposal\"\n}\n"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Add Event Coordinator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk3NzEzZjM5LThhOGMtNGY0Yi1hMjljLWRkOTFmZjliZjI4YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODEyMTg3OCwiZXhwIjoxNzM4MjA4Mjc4fQ.a9WU7FEauCozUWZoJbf4uzTWYqFGLijqPvBuv_SvSLU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}//{{host}}:{{port}}/api/admin/add-coordinator/{{userId}}",
+							"host": [
+								"{{schema}}"
+							],
+							"path": [
+								"",
+								"{{host}}:{{port}}",
+								"api",
+								"admin",
+								"add-coordinator",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add Event Coordinator",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http//localhost:3000/api/admin/add-coordinator/8013964b-07f9-43b8-87cc-4b6b748313af",
+									"host": [
+										"http"
+									],
+									"path": [
+										"",
+										"localhost:3000",
+										"api",
+										"admin",
+										"add-coordinator",
+										"8013964b-07f9-43b8-87cc-4b6b748313af"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User is now an event coordinator\",\n    \"user\": {\n        \"id\": \"8013964b-07f9-43b8-87cc-4b6b748313afs\",\n        \"role\": \"coordinator\",\n        \"name\": \"Lucia\"\n    }\n}"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http//localhost:3000/api/admin/add-coordinator/1",
+									"host": [
+										"http"
+									],
+									"path": [
+										"",
+										"localhost:3000",
+										"api",
+										"admin",
+										"add-coordinator",
+										"1"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"User ID must be a UUID\",\n      \"param\": \"userId\",\n      \"location\": \"params\"\n    }\n  ]\n}\n"
+						},
+						{
+							"name": "User Not Found",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http//localhost:3000/api/admin/add-coordinator/8013964b-07f9-43b8-87cc-4b6b748313ak",
+									"host": [
+										"http"
+									],
+									"path": [
+										"",
+										"localhost:3000",
+										"api",
+										"admin",
+										"add-coordinator",
+										"8013964b-07f9-43b8-87cc-4b6b748313ak"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"User not found\"\n}\n"
+						},
+						{
+							"name": "Already Event Coordinator",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http//localhost:3000/api/admin/add-coordinator/8013964b-07f9-43b8-87cc-4b6b748313af",
+									"host": [
+										"http"
+									],
+									"path": [
+										"",
+										"localhost:3000",
+										"api",
+										"admin",
+										"add-coordinator",
+										"8013964b-07f9-43b8-87cc-4b6b748313af"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"User is already an event coordinator\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http//localhost:3000/api/admin/add-coordinator/8013964b-07f9-43b8-87cc-4b6b748313af",
+									"host": [
+										"http"
+									],
+									"path": [
+										"",
+										"localhost:3000",
+										"api",
+										"admin",
+										"add-coordinator",
+										"8013964b-07f9-43b8-87cc-4b6b748313af"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to update user role\"\n}\n"
+						}
+					]
+				},
+				{
+					"name": "Delete User/Event Coordinator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk3NzEzZjM5LThhOGMtNGY0Yi1hMjljLWRkOTFmZjliZjI4YyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczODEyMTg3OCwiZXhwIjoxNzM4MjA4Mjc4fQ.a9WU7FEauCozUWZoJbf4uzTWYqFGLijqPvBuv_SvSLU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{schema}}://{{host}}:{{port}}/api/admin/delete-user/{{userId}}",
+							"protocol": "{{schema}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"admin",
+								"delete-user",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/admin/delete-user/8013964b-07f9-43b8-87cc-4b6b748313af",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"delete-user",
+										"8013964b-07f9-43b8-87cc-4b6b748313af"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User deleted successfully\"\n}"
+						},
+						{
+							"name": "Validation Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/admin/delete-user/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"delete-user",
+										"1"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"errors\": [\n    {\n      \"msg\": \"User ID must be a UUID\",\n      \"param\": \"userId\",\n      \"location\": \"params\"\n    }\n  ]\n}\n"
+						},
+						{
+							"name": "User Not Found",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/admin/delete-user/8013964b-07f9-43b8-87cc-4b6b748313ak",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"delete-user",
+										"8013964b-07f9-43b8-87cc-4b6b748313ak"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"User not found\"\n}\n"
+						},
+						{
+							"name": "Can't Delete Other Admin",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/admin/delete-user/b8d6c1e4-7e6b-4b7f-9f8c-5e6c7b2e1b4b",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"delete-user",
+										"b8d6c1e4-7e6b-4b7f-9f8c-5e6c7b2e1b4b"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Cannot delete other admins\"\n}\n"
+						},
+						{
+							"name": "Internal Server Error",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/admin/delete-user/b8d6c1e4-7e6b-4b7f-9f8c-5e6c7b2e1b4b",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"delete-user",
+										"b8d6c1e4-7e6b-4b7f-9f8c-5e6c7b2e1b4b"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Failed to delete user\"\n}\n"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
