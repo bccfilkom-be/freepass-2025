@@ -17,8 +17,8 @@ type ResponseHandler interface {
 
 type JSONResponseModel struct {
 	Message string      `json:"message"`
-	Success bool        `json:"success"`
-	Data    interface{} `json:"data"`
+	Data    interface{} `json:"data,omitempty"`
+	Status  string      `json:"status"`
 }
 
 func NewResponseHandler() ResponseHandler {
@@ -28,33 +28,36 @@ func NewResponseHandler() ResponseHandler {
 func (r *JSONResponseModel) OK(ctx *gin.Context, data interface{}, message string, code int) {
 	ctx.JSON(code, JSONResponseModel{
 		Message: message,
-		Success: true,
 		Data:    data,
+		Status:  "success",
 	})
 }
 
 func (r *JSONResponseModel) BadRequest(ctx *gin.Context, data interface{}, message string) {
 	ctx.JSON(http.StatusBadRequest, JSONResponseModel{
 		Message: message,
-		Success: false,
 		Data:    data,
+		Status:  "error",
 	})
 }
 
 func (r *JSONResponseModel) InternalServerError(ctx *gin.Context, message string) {
 	ctx.JSON(http.StatusInternalServerError, JSONResponseModel{
 		Message: fmt.Sprintf("Internal Server Error: %s", message),
+		Status:  "error",
 	})
 }
 
 func (r *JSONResponseModel) Forbidden(ctx *gin.Context, message string) {
 	ctx.JSON(http.StatusForbidden, JSONResponseModel{
 		Message: fmt.Sprintf("Forbidden: %s", message),
+		Status:  "error",
 	})
 }
 
 func (r *JSONResponseModel) NotFound(ctx *gin.Context) {
 	ctx.JSON(http.StatusNotFound, JSONResponseModel{
 		Message: "Not Found!",
+		Status:  "error",
 	})
 }

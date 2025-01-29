@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"jevvonn/bcc-be-freepass-2025/docs"
 	"jevvonn/bcc-be-freepass-2025/internal/config"
 	"jevvonn/bcc-be-freepass-2025/internal/database"
 	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
@@ -26,6 +27,9 @@ import (
 	user_repository "jevvonn/bcc-be-freepass-2025/internal/services/user/repository"
 
 	"github.com/gin-gonic/gin"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewHTTPServer() {
@@ -38,6 +42,10 @@ func NewHTTPServer() {
 	db := database.NewDatabase()
 	validator := validator.NewValidator()
 	response := response.NewResponseHandler()
+
+	// Documentation Swagger
+	docs.SwaggerInfo.Title = "BCC BE FreePass 2025"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Repository
 	userRepo := user_repository.NewUserRepository(db)

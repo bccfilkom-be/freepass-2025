@@ -30,6 +30,18 @@ func NewAuthDelivery(router *gin.Engine, authUsecase auth.AuthUsecase, response 
 	authRouter.POST("/sign-in", handler.SignIn)
 }
 
+// @title 			Sign Up New User
+//
+//	@Tags			Auth
+//	@Summary		Sign Up New User
+//	@Description	Sign Up New User
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		dto.SignUpRequest	true	"Sign Up Request"
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//	@Router			/api/auth/sign-up [post]
 func (v *AuthDelivery) SignUp(ctx *gin.Context) {
 	var req *dto.SignUpRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -50,6 +62,18 @@ func (v *AuthDelivery) SignUp(ctx *gin.Context) {
 	v.response.OK(ctx, nil, "User Created", http.StatusCreated)
 }
 
+// @title 			Sign In User
+//
+//	@Tags			Auth
+//	@Summary		Sign In User
+//	@Description	Sign In User
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		dto.SignInRequest	true	"Sign In Request"
+//	@Success		200		{object}	response.JSONResponseModel{data=dto.SignInResponse} "User Logged In and JWT Token Generated"
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//	@Router			/api/auth/sign-in [post]
 func (v *AuthDelivery) SignIn(ctx *gin.Context) {
 	var req *dto.SignInRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
