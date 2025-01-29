@@ -1,0 +1,95 @@
+package api
+
+import (
+	"fmt"
+	"jevvonn/bcc-be-freepass-2025/docs"
+	"jevvonn/bcc-be-freepass-2025/internal/config"
+	"jevvonn/bcc-be-freepass-2025/internal/database"
+	"jevvonn/bcc-be-freepass-2025/internal/helper/response"
+	"jevvonn/bcc-be-freepass-2025/internal/helper/validator"
+	auth_delivery "jevvonn/bcc-be-freepass-2025/internal/services/auth/delivery"
+	feedback_delivery "jevvonn/bcc-be-freepass-2025/internal/services/feedback/delivery"
+	proposal_delivery "jevvonn/bcc-be-freepass-2025/internal/services/proposal/delivery"
+	registration_delivery "jevvonn/bcc-be-freepass-2025/internal/services/registration/delivery"
+	session_delivery "jevvonn/bcc-be-freepass-2025/internal/services/session/delivery"
+	user_delivery "jevvonn/bcc-be-freepass-2025/internal/services/user/delivery"
+	"log"
+
+	auth_usecase "jevvonn/bcc-be-freepass-2025/internal/services/auth/usecase"
+	feedback_usecase "jevvonn/bcc-be-freepass-2025/internal/services/feedback/usecase"
+	proposal_usecase "jevvonn/bcc-be-freepass-2025/internal/services/proposal/usecase"
+	registration_usecase "jevvonn/bcc-be-freepass-2025/internal/services/registration/usecase"
+	session_usecase "jevvonn/bcc-be-freepass-2025/internal/services/session/usecase"
+	user_usecase "jevvonn/bcc-be-freepass-2025/internal/services/user/usecase"
+
+	feedback_repository "jevvonn/bcc-be-freepass-2025/internal/services/feedback/repository"
+	registration_repository "jevvonn/bcc-be-freepass-2025/internal/services/registration/repository"
+	session_repository "jevvonn/bcc-be-freepass-2025/internal/services/session/repository"
+	user_repository "jevvonn/bcc-be-freepass-2025/internal/services/user/repository"
+
+	"github.com/gin-gonic/gin"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+)
+
+func NewHTTPServer() {
+	config := config.GetConfig()
+	router := gin.Default()
+
+	host := config.GetString("host")
+	port := config.GetString("port")
+
+	db := database.NewDatabase()
+	validator := validator.NewValidator()
+	response := response.NewResponseHandler()
+
+	// Documentation Swagger
+	// @securityDefinitions.apikey BearerAuth
+	// @in header
+	// @name Authorization
+	docs.SwaggerInfo.Title = "BCC BE FreePass 2025"
+	docs.SwaggerInfo.Description = `This is a documentation for Session Conference Management System - BCC BE FreePass 2025 
+	Created By: Jevon Mozart Christian Bano
+	Github Repo: https://github.com/jevvonn/bcc-be-freepass-2025/tree/jevon-mozart
+	`
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	// Repository
+	userRepo := user_repository.NewUserRepository(db)
+	sessionRepo := session_repository.NewSessionRepository(db)
+	registrationRepo := registration_repository.NewRegistrationRepository(db, sessionRepo)
+	feedbackRepo := feedback_repository.NewFeedbackRepository(db)
+
+	// Usecase
+	authUsecase := auth_usecase.NewAuthUsecase(userRepo)
+	userUsecase := user_usecase.NewUserUsecase(userRepo)
+	sessionUsecase := session_usecase.NewSessionUsecase(sessionRepo)
+	proposalUsecase := proposal_usecase.NewProposalUsecase(sessionRepo)
+	registrationUsecase := registration_usecase.NewRegistrationUsecase(registrationRepo, sessionRepo)
+	feedbackUsecase := feedback_usecase.NewFeedbackUsecase(registrationRepo, sessionRepo, feedbackRepo)
+	adminUsecase := user_usecase.NewAdminUsecase(userRepo)
+
+	// Delivery
+	auth_delivery.NewAuthDelivery(router, authUsecase, response, validator)
+	user_delivery.NewUserDelivery(router, userUsecase, response, validator)
+	session_delivery.NewSessionDelivery(router, sessionUsecase, response, validator)
+	proposal_delivery.NewProposalDelivery(router, proposalUsecase, response, validator)
+	registration_delivery.NewRegistrationDelivery(router, response, registrationUsecase, validator)
+	feedback_delivery.NewFeedbackDelivery(router, response, feedbackUsecase, validator)
+	user_delivery.NewAdminDelivery(router, adminUsecase, response, validator)
+
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.Redirect(301, "/docs/index.html")
+	})
+
+	router.NoRoute(func(ctx *gin.Context) {
+		response.NotFound(ctx)
+	})
+
+	fmt.Printf("Server is running on %s:%s", host, port)
+	err := router.Run(fmt.Sprintf("%s:%s", host, port))
+	if err != nil {
+		log.Fatal(err)
+	}
+}
