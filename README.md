@@ -181,11 +181,9 @@ Ensure you have the following installed before running the application:
 ### **2️⃣ Clone the Repository**
 
 ```bash
-git clone https://github.com/yourusername/freepass-bcc.git
+git clone https://github.com/Ablebil/freepass-bcc.git
 cd freepass-bcc
 ```
-
-> Replace `yourusername` with your GitHub account.
 
 ---
 
