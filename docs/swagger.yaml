@@ -27,6 +27,17 @@ definitions:
     - name
     - password
     type: object
+  dto.UpdateUserRoleRequest:
+    properties:
+      role:
+        enum:
+        - ADMIN
+        - COORDINATOR
+        - USER
+        type: string
+    required:
+    - role
+    type: object
   response.JSONResponseModel:
     properties:
       data: {}
@@ -172,6 +183,58 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete User
+      tags:
+      - User
+  /api/user/{id}/update-role:
+    put:
+      consumes:
+      - application/json
+      description: Update Role User. Only Admin can update role user.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Role
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update Role User
       tags:
       - User
 securityDefinitions:

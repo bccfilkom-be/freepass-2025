@@ -66,6 +66,22 @@ func (v *AdminDelivery) DeleteUser(ctx *gin.Context) {
 	v.response.OK(ctx, nil, "User deleted!", 200)
 }
 
+// @title 			Update Role User
+//
+//	@Tags			User
+//	@Summary		Update Role User
+//	@Description	Update Role User. Only Admin can update role user.
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int true	"User ID"
+//	@Param			request		body		dto.UpdateUserRoleRequest	true	"User Role"
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/user/{id}/update-role [put]
 func (v *AdminDelivery) UpdateRole(ctx *gin.Context) {
 	var req dto.UpdateUserRoleRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
