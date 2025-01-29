@@ -154,6 +154,11 @@ func (s *SessionService) ListSessions(ctx context.Context, userID int32) ([]mode
 
 	var result []model.SessionWithDetails
 	for _, session := range sessions {
+		// Skip non-accepted sessions
+		if session.Status != "accepted" {
+			continue
+		}
+
 		// Get session details including proposer info
 		details, err := s.queries.GetSessionByID(ctx, session.ID)
 		if err != nil {
