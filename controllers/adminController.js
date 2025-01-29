@@ -1,14 +1,13 @@
 const response = require("../response")
-const { insertRecord, deleteRecord, getAllRecords, createTable } = require("../utils/sqlFunctions")
+const { deleteRecord, getAllRecords, createTable, updateRecord } = require("../utils/sqlFunctions")
 const userSchema = require("../schemas/userSchema")
 
-const addEventCoordinator = async (req, res) => {
-  const coordinatorData = req.body
-
+const changeUserRoleToEventCoordinator = async (req, res) => {
+  const { userid } = req.body
   try {
     await createTable(userSchema)
-    const newCoordinator = await insertRecord("users", coordinatorData)
-    response(201, newCoordinator, "Event coordinator added successfully", res)
+    await updateRecord("users", "userid", userid, { role: 'event_coordinator' })
+    response(200, "", "User role changed to event coordinator successfully", res)
   } catch (error) {
     response(500, "", error, res)
   }
@@ -37,7 +36,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
-  addEventCoordinator,
+  changeUserRoleToEventCoordinator,
   removeUser,
   getAllUsers,
 }
