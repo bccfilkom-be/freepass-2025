@@ -167,7 +167,97 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 
 ## **🧪** API Installation
 
-> Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
+### **1️⃣ Prerequisites**
+
+Ensure you have the following installed before running the application:
+
+- **Node.js** (Recommended: **Node.js 18+**)
+- **PostgreSQL** (Ensure the database service is running)
+- **NPM** or **Yarn**
+- **Git**
+
+---
+
+### **2️⃣ Clone the Repository**
+
+```bash
+git clone https://github.com/yourusername/freepass-bcc.git
+cd freepass-bcc
+```
+
+> Replace `yourusername` with your GitHub account.
+
+---
+
+### **3️⃣ Install Dependencies**
+
+Run the following command to install all required dependencies:
+
+```bash
+npm install
+```
+
+---
+
+### **4️⃣ Configure Environment Variables**
+
+Create a `.env` file in the project root by copying the provided `.env.example` file and setting up your database and application settings:
+
+```env
+DB_USERNAME=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+DB_HOST=localhost
+DB_DIALECT=postgres
+JWT_SECRET=your_jwt_secret
+```
+
+> **Make sure PostgreSQL is running and a database matching your configuration exists.**  
+> You can adjust the `DB_HOST` and `DB_PORT` if needed, based on your local or remote PostgreSQL setup.
+
+---
+
+### **5️⃣ Set Up the Database (Migrations & Seeding)**
+
+Run the following command to initialize the database:
+
+```bash
+npm run db:setup
+```
+
+> This will create the database, apply migrations, and seed initial data.
+
+---
+
+### **6️⃣ Start the Server**
+
+For development mode, run:
+
+```bash
+npm run dev
+```
+
+> The API will be available at `http://localhost:3000` (depending on your app configuration).
+
+---
+
+### **7️⃣ Test the API with Postman**
+
+- Import the provided **Postman Collection** (`Freepass_BCC_API.postman_collection.json`).
+- Set up the required environment variables in Postman.
+- Test all available API endpoints.
+
+---
+
+### **🎯 API Documentation**
+
+This project provides API documentation for easier testing and integration. You can import the Postman collection using the link below:
+
+- **Postman Collection:** [`Freepass_BCC_API.postman_collection.json`](./Freepass_BCC_API.postman_collection.json)
+
+---
+
+This ensures your project is easy to install, set up, and test. 🚀
 
 ## **📞** Contact
 
