@@ -29,12 +29,14 @@ func NewUserDelivery(
 		router, userUsecase, response, validator,
 	}
 
+	apiRouter := router.Group("/api")
+
 	// Profile Routing
-	router.GET("/profile", middleware.RequireAuth, handler.GetUserProfile)
-	router.PATCH("/profile", middleware.RequireAuth, handler.UpdateUserProfile)
+	apiRouter.GET("/profile", middleware.RequireAuth, handler.GetUserProfile)
+	apiRouter.PATCH("/profile", middleware.RequireAuth, handler.UpdateUserProfile)
 
 	// User Routing
-	userRouter := router.Group("/api/user")
+	userRouter := apiRouter.Group("/user")
 	userRouter.GET("/:id", middleware.RequireAuth, handler.GetUserDetail)
 }
 
