@@ -268,7 +268,7 @@ cd bcc-be-freepass-2025
 3. Install golang dependencies
 
 ```bash
-go get .
+go download
 ```
 
 4. Copy the `.env.example` file to `.env`
