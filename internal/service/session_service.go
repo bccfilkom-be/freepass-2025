@@ -8,6 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/litegral/freepass-2025/internal/lib/config"
 	"github.com/litegral/freepass-2025/internal/lib/db"
 	"github.com/litegral/freepass-2025/internal/model"
@@ -307,6 +308,10 @@ func (s *SessionService) CreateFeedback(ctx context.Context, sessionID int32, us
 		Comment:   comment,
 	})
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return model.SessionFeedbackResponse{}, errors.New(config.ErrDuplicateFeedback)
+		}
 		return model.SessionFeedbackResponse{}, err
 	}
 

@@ -185,6 +185,9 @@ func (c *SessionController) CreateFeedback(ctx fuego.ContextWithBody[model.Sessi
 	// Create feedback
 	response, err := c.sessionService.CreateFeedback(ctx.Context(), int32(sessionID), int32(claims.UserID), feedback.Comment)
 	if err != nil {
+		if err.Error() == config.ErrDuplicateFeedback {
+			return model.SessionFeedbackResponse{}, fuego.ConflictError{Title: err.Error()}
+		}
 		return model.SessionFeedbackResponse{}, fuego.BadRequestError{Title: err.Error()}
 	}
 
