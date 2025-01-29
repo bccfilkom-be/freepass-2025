@@ -1,4 +1,44 @@
 definitions:
+  dto.GetAllSessionResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      max_seat:
+        type: integer
+      registration_end_date:
+        type: string
+      registration_start_date:
+        type: string
+      session_end_date:
+        type: string
+      session_start_date:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/dto.GetUserDetailResponse'
+    type: object
+  dto.GetUserDetailResponse:
+    properties:
+      bio:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
   dto.SignInRequest:
     properties:
       email:
@@ -26,6 +66,31 @@ definitions:
     - email
     - name
     - password
+    type: object
+  dto.UpdateSessionRequest:
+    properties:
+      description:
+        type: string
+      max_seat:
+        type: integer
+      registration_end_date:
+        type: string
+      registration_start_date:
+        type: string
+      session_end_date:
+        type: string
+      session_start_date:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - max_seat
+    - registration_end_date
+    - registration_start_date
+    - session_end_date
+    - session_start_date
+    - title
     type: object
   dto.UpdateUserProfileRequest:
     properties:
@@ -234,6 +299,146 @@ paths:
       summary: Update Profile User
       tags:
       - Profile
+  /api/session:
+    get:
+      consumes:
+      - application/json
+      description: Get All Session
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.GetAllSessionResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get All Session
+      tags:
+      - Session
+  /api/session/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Session. Only It's own User session or Event Coordinator
+        can delete.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Session
+      tags:
+      - Session
+    patch:
+      consumes:
+      - application/json
+      description: Update Session
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Session
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update Session
+      tags:
+      - Session
   /api/user/{id}:
     delete:
       consumes:

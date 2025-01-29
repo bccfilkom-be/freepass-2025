@@ -34,6 +34,20 @@ func NewSessionDelivery(
 	sessionRouter.DELETE("/:sessionId", middleware.RequireAuth, handler.DeleteSession)
 }
 
+// @title 			Get All Session
+//
+//	@Tags			Session
+//	@Summary		Get All Session
+//	@Description	Get All Session
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.JSONResponseModel{data=[]dto.GetAllSessionResponse}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session [get]
 func (v *SessionDelivery) GetAllSession(ctx *gin.Context) {
 	res, err := v.sessionUsecase.GetAllSession(ctx)
 	if err != nil {
@@ -44,6 +58,22 @@ func (v *SessionDelivery) GetAllSession(ctx *gin.Context) {
 	v.response.OK(ctx, res, "Sessions found!", 200)
 }
 
+// @title 			Update Session
+//
+//	@Tags			Session
+//	@Summary		Update Session
+//	@Description	Update Session
+//	@Accept			json
+//	@Produce		json
+//	@Param			id			path		int	true	"Session ID"
+//	@Param			request body dto.UpdateSessionRequest true "Update Session"
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session/{id} [patch]
 func (v *SessionDelivery) UpdateSession(ctx *gin.Context) {
 	var req *dto.UpdateSessionRequest
 
@@ -65,6 +95,21 @@ func (v *SessionDelivery) UpdateSession(ctx *gin.Context) {
 	v.response.OK(ctx, nil, "Session updated!", 200)
 }
 
+// @title 			Delete Session
+//
+//	@Tags			Session
+//	@Summary		Delete Session
+//	@Description	Delete Session. Only It's own User session or Event Coordinator can delete.
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int true	"Session ID"
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session/{id} [delete]
 func (v *SessionDelivery) DeleteSession(ctx *gin.Context) {
 	param := ctx.Param("sessionId")
 
