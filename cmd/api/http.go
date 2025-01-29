@@ -44,6 +44,9 @@ func NewHTTPServer() {
 	response := response.NewResponseHandler()
 
 	// Documentation Swagger
+	// @securityDefinitions.apikey BearerAuth
+	// @in header
+	// @name Authorization
 	docs.SwaggerInfo.Title = "BCC BE FreePass 2025"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
