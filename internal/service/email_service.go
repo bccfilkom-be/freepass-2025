@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	defaultTimeout     = 10 * time.Second
+	defaultTimeout    = 10 * time.Second
 	linkExpiryMinutes = 24
 )
 

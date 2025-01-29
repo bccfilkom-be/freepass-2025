@@ -172,6 +172,55 @@ func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
 	return err
 }
 
+const getAllUsers = `-- name: GetAllUsers :many
+SELECT id, email, full_name, profile_pict_url, affiliation, role, is_verified, verified_at, created_at, updated_at FROM users
+`
+
+type GetAllUsersRow struct {
+	ID             int32
+	Email          string
+	FullName       pgtype.Text
+	ProfilePictUrl pgtype.Text
+	Affiliation    pgtype.Text
+	Role           UserRole
+	IsVerified     bool
+	VerifiedAt     pgtype.Timestamptz
+	CreatedAt      pgtype.Timestamptz
+	UpdatedAt      pgtype.Timestamptz
+}
+
+// Admin Operations
+func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
+	rows, err := q.db.Query(ctx, getAllUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllUsersRow
+	for rows.Next() {
+		var i GetAllUsersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.FullName,
+			&i.ProfilePictUrl,
+			&i.Affiliation,
+			&i.Role,
+			&i.IsVerified,
+			&i.VerifiedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getConferenceConfig = `-- name: GetConferenceConfig :one
 SELECT id, registration_start, registration_end, session_proposal_start, session_proposal_end FROM conference_config
 ORDER BY id DESC
@@ -218,7 +267,7 @@ const getSessionByID = `-- name: GetSessionByID :one
 SELECT s.id, s.title, s.description, s.start_time, s.end_time, s.room, s.status, s.seating_capacity, s.proposer_id, s.created_at, s.updated_at, s.is_deleted, u.full_name AS proposer_name, u.affiliation AS proposer_affiliation
 FROM sessions s
 JOIN users u ON s.proposer_id = u.id
-WHERE s.id = $1
+WHERE s.id = $1 AND s.is_deleted = FALSE
 `
 
 type GetSessionByIDRow struct {
@@ -475,6 +524,7 @@ func (q *Queries) ListSessionProposals(ctx context.Context) ([]ListSessionPropos
 
 const listSessions = `-- name: ListSessions :many
 SELECT id, title, description, start_time, end_time, room, status, seating_capacity, proposer_id, created_at, updated_at, is_deleted FROM sessions
+WHERE is_deleted = FALSE
 ORDER BY start_time
 `
 
@@ -808,7 +858,6 @@ type UpdateUserRoleParams struct {
 	Role UserRole
 }
 
-// Admin Operations
 func (q *Queries) UpdateUserRole(ctx context.Context, arg UpdateUserRoleParams) (User, error) {
 	row := q.db.QueryRow(ctx, updateUserRole, arg.ID, arg.Role)
 	var i User

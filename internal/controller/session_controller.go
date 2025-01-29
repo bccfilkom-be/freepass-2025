@@ -209,4 +209,4 @@ func (c *SessionController) GetUserProposals(ctx fuego.ContextNoBody) ([]model.S
 	}
 
 	return proposals, nil
-} 
+}

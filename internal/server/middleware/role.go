@@ -28,4 +28,4 @@ func RequireRole(role string) func(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 		})
 	}
-} 
+}

@@ -84,4 +84,4 @@ func (c *CoordinatorController) RemoveFeedback(ctx fuego.ContextNoBody) (any, er
 	}
 
 	return nil, nil
-} 
+}

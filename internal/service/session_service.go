@@ -336,7 +336,7 @@ func (s *SessionService) RegisterForSession(ctx context.Context, sessionID int32
 		UserID:    userID,
 		SessionID: sessionID,
 	})
-	
+
 	return err
 }
 
@@ -379,12 +379,12 @@ func (s *SessionService) CreateFeedback(ctx context.Context, sessionID int32, us
 
 	return model.SessionFeedbackResponse{
 		ID:                int(feedback.ID),
-		UserID:           int(feedback.UserID),
-		SessionID:        int(feedback.SessionID),
-		Comment:          feedback.Comment,
-		CreatedAt:        feedback.CreatedAt.Time,
-		UserName:         user.FullName.String,
-		Affiliation:      user.Affiliation.String,
+		UserID:            int(feedback.UserID),
+		SessionID:         int(feedback.SessionID),
+		Comment:           feedback.Comment,
+		CreatedAt:         feedback.CreatedAt.Time,
+		UserName:          user.FullName.String,
+		Affiliation:       user.Affiliation.String,
 		ProfilePictureUrl: user.ProfilePictUrl.String,
 	}, nil
 }
@@ -395,12 +395,12 @@ func convertDBFeedbackToModel(feedback []db.ListSessionFeedbackRow) []model.Sess
 	for i, f := range feedback {
 		result[i] = model.SessionFeedbackResponse{
 			ID:                int(f.ID),
-			UserID:           int(f.UserID),
-			SessionID:        int(f.SessionID),
-			Comment:          f.Comment,
-			CreatedAt:        f.CreatedAt.Time,
-			UserName:         f.FullName.String,
-			Affiliation:      f.Affiliation.String,
+			UserID:            int(f.UserID),
+			SessionID:         int(f.SessionID),
+			Comment:           f.Comment,
+			CreatedAt:         f.CreatedAt.Time,
+			UserName:          f.FullName.String,
+			Affiliation:       f.Affiliation.String,
 			ProfilePictureUrl: f.ProfilePictUrl.String,
 		}
 	}

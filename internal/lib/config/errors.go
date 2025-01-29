@@ -17,7 +17,7 @@ var (
 	ErrUnauthorizedSessionDel = "unauthorized to delete this session"
 	ErrOnlyPendingDelete      = "can only delete pending sessions"
 	ErrSessionNotFound        = "session not found"
-	ErrDuplicateFeedback = "user has already submitted feedback for this session"
+	ErrDuplicateFeedback      = "user has already submitted feedback for this session"
 
 	// Coordinator errors
 	ErrInvalidSessionStatus    = "invalid status: must be 'accepted' or 'rejected'"

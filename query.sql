@@ -36,10 +36,11 @@ RETURNING *;
 SELECT s.*, u.full_name AS proposer_name, u.affiliation AS proposer_affiliation
 FROM sessions s
 JOIN users u ON s.proposer_id = u.id
-WHERE s.id = $1;
+WHERE s.id = $1 AND s.is_deleted = FALSE;
 
 -- name: ListSessions :many
 SELECT * FROM sessions
+WHERE is_deleted = FALSE
 ORDER BY start_time;
 
 -- name: SoftDeleteSession :exec
@@ -119,6 +120,9 @@ SELECT * FROM email_verification_tokens
 WHERE token = $1;
 
 -- Admin Operations
+-- name: GetAllUsers :many
+SELECT id, email, full_name, profile_pict_url, affiliation, role, is_verified, verified_at, created_at, updated_at FROM users;
+
 -- name: UpdateUserRole :one
 UPDATE users
 SET role = $2
