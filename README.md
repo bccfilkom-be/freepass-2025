@@ -239,7 +239,7 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/your-username/freepass-2025.git
+   git clone https://github.com/gilanghuda/freepass-2025.git
    cd freepass-2025
    ```
 
