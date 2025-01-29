@@ -180,7 +180,7 @@ const docTemplate = `{
             }
         },
         "/api/user/{id}": {
-            "post": {
+            "delete": {
                 "security": [
                     {
                         "BearerAuth": []

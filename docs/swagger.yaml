@@ -129,7 +129,7 @@ paths:
       tags:
       - Auth
   /api/user/{id}:
-    post:
+    delete:
       consumes:
       - application/json
       description: Delete User. Only Admin can delete user.

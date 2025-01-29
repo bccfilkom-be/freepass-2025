@@ -2,13 +2,13 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 	"jevvonn/bcc-be-freepass-2025/internal/helper"
 	jwt_helper "jevvonn/bcc-be-freepass-2025/internal/helper/jwt"
 	"jevvonn/bcc-be-freepass-2025/internal/models/domain"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/auth"
 	"jevvonn/bcc-be-freepass-2025/internal/services/user"
-	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -54,11 +54,10 @@ func (v *AuthUsecase) SignIn(req *dto.SignInRequest) (dto.SignInResponse, error)
 	})
 
 	if err != nil {
-		log.Fatal(err)
 		return dto.SignInResponse{}, err
 	}
 
 	return dto.SignInResponse{
-		Token: tokenString,
+		Token: fmt.Sprintf("Bearer %s", tokenString),
 	}, nil
 }

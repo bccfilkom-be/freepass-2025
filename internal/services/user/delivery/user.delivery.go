@@ -7,7 +7,6 @@ import (
 	"jevvonn/bcc-be-freepass-2025/internal/middleware"
 	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
 	"jevvonn/bcc-be-freepass-2025/internal/services/user"
-	"log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -84,8 +83,6 @@ func (v *UserDelivery) UpdateUserProfile(ctx *gin.Context) {
 	userId, _ := ctx.Get("userId")
 	err := v.userUsecase.UpdateUserProfile(userId.(uint), req)
 	if err != nil {
-		log.Fatal(err)
-
 		v.response.BadRequest(ctx, nil, err.Error())
 		return
 	}

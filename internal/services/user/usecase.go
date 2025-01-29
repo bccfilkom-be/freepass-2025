@@ -1,6 +1,10 @@
 package user
 
-import "jevvonn/bcc-be-freepass-2025/internal/models/dto"
+import (
+	"jevvonn/bcc-be-freepass-2025/internal/models/dto"
+
+	"github.com/gin-gonic/gin"
+)
 
 type UserUsecase interface {
 	GetUserDetail(userId uint) (dto.GetUserDetailResponse, error)
@@ -9,6 +13,6 @@ type UserUsecase interface {
 }
 
 type AdminUsecase interface {
-	DeleteUser(userId uint) error
+	DeleteUser(ctx *gin.Context, userId uint) error
 	UpdateRole(userId uint, data *dto.UpdateUserRoleRequest) error
 }

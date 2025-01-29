@@ -34,6 +34,21 @@ func NewAdminDelivery(
 	userRouter.PUT("/:id/update-role", middleware.RequireAuth, middleware.RequireRoles(constant.ROLE_ADMIN), handler.UpdateRole)
 }
 
+// @title 			Delete User
+//
+//	@Tags			User
+//	@Summary		Delete User
+//	@Description	Delete User. Only Admin can delete user.
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int true	"User ID"
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/user/{id} [delete]
 func (v *AdminDelivery) DeleteUser(ctx *gin.Context) {
 	param := ctx.Param("id")
 	userId, err := helper.StringToUint(param)
@@ -42,7 +57,7 @@ func (v *AdminDelivery) DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	err = v.userUsecase.DeleteUser(userId)
+	err = v.userUsecase.DeleteUser(ctx, userId)
 	if err != nil {
 		v.response.BadRequest(ctx, nil, err.Error())
 		return
