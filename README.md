@@ -123,8 +123,75 @@ THEN  => System will delete the account from the system
 
 ## **👪** Entities and Actors
 
-We want to see your perspective about these problems. You can define various types of entities or actors. One thing for sure, there is no
-true or false statement to define the entities. As long as the results are understandable, then go for it! 🚀
+### Entities
+
+1. **User**
+   - `userid`: Unique identifier for the user
+   - `username`: Username of the user
+   - `email`: Email address of the user
+   - `password`: Hashed password of the user
+   - `role`: Role of the user (e.g., user, event_coordinator, admin)
+   - `created_at`: Timestamp when the user was created
+
+2. **Session**
+   - `sessionid`: Unique identifier for the session
+   - `title`: Title of the session
+   - `description`: Description of the session
+   - `speaker`: Speaker of the session
+   - `start_time`: Start time of the session
+   - `end_time`: End time of the session
+   - `max_seats`: Maximum number of seats available for the session
+   - `created_by`: User who created the session
+   - `created_at`: Timestamp when the session was created
+
+3. **Session Proposal**
+   - `proposalid`: Unique identifier for the session proposal
+   - `title`: Title of the proposed session
+   - `description`: Description of the proposed session
+   - `speaker`: Speaker of the proposed session
+   - `start_time`: Proposed start time of the session
+   - `end_time`: Proposed end time of the session
+   - `max_seats`: Maximum number of seats for the proposed session
+   - `status`: Status of the proposal (e.g., pending, accepted, rejected)
+   - `userid`: User who proposed the session
+   - `proposed_at`: Timestamp when the proposal was created
+
+4. **Feedback**
+   - `feedbackid`: Unique identifier for the feedback
+   - `sessionid`: Session for which the feedback is given
+   - `userid`: User who gave the feedback
+   - `comment`: Comment provided by the user
+   - `rating`: Rating provided by the user (1-5)
+   - `created_at`: Timestamp when the feedback was created
+
+5. **Session Registration**
+   - `registrationid`: Unique identifier for the session registration
+   - `sessionid`: Session for which the user registered
+   - `userid`: User who registered for the session
+   - `registered_at`: Timestamp when the registration was created
+
+### Actors
+
+1. **User**
+   - Can register an account
+   - Can log in and log out
+   - Can edit their profile
+   - Can view all conference sessions
+   - Can leave feedback on sessions
+   - Can view other users' profiles
+   - Can register for sessions if seats are available
+   - Can create, edit, and delete their session proposals
+   - Can edit and delete their sessions
+
+2. **Event Coordinator**
+   - Can view all session proposals
+   - Can accept or reject session proposals
+   - Can remove sessions
+   - Can remove user feedback
+
+3. **Admin**
+   - Can add new event coordinators
+   - Can remove users and event coordinators
 
 ## **📘** References
 
@@ -165,9 +232,46 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 3. Finish all service implementations
 4. Write the installation guide of your back-end service in the section below
 
+## **🧪** API Documentation
+[Api documentation](https://documenter.getpostman.com/view/37017335/2sAYQiBTfu)
+
 ## **🧪** API Installation
 
-> Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/your-username/freepass-2025.git
+   cd freepass-2025
+   ```
+
+2. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+
+3. **Set up environment variables:**
+   Create a `.env` file in the root directory and add the following:
+   ```env
+   PORT=3001
+   JWT_SECRET=your_jwt_secret
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   DB_HOST=your_db_host
+   DB_PORT=5432
+   DB_DATABASE=your_db_name
+   ```
+
+4. **Run the database migrations:**
+   Ensure your PostgreSQL database is running and execute the necessary SQL scripts to create the tables.
+
+5. **Start the server:**
+   ```sh
+   node app.js
+   ```
+
+6. **Access the API:**
+   Open your browser or API client (e.g., Postman, Insomnia) and navigate to `http://localhost:3001`.
+
+
 
 ## **📞** Contact
 
