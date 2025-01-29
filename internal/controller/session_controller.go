@@ -192,4 +192,21 @@ func (c *SessionController) CreateFeedback(ctx fuego.ContextWithBody[model.Sessi
 	}
 
 	return response, nil
+}
+
+// GetUserProposals handles retrieving all session proposals for a user
+func (c *SessionController) GetUserProposals(ctx fuego.ContextNoBody) ([]model.SessionWithDetails, error) {
+	// Get user claims from context
+	claims, ok := ctx.Value(jwt.ClaimsContextKey).(*jwt.Claims)
+	if !ok {
+		return nil, fuego.UnauthorizedError{Title: "Invalid token claims"}
+	}
+
+	// Get user proposals
+	proposals, err := c.sessionService.GetUserProposals(ctx.Context(), int32(claims.UserID))
+	if err != nil {
+		return nil, fuego.InternalServerError{Title: err.Error()}
+	}
+
+	return proposals, nil
 } 

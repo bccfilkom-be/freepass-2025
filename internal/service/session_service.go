@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/litegral/freepass-2025/internal/lib/config"
 	"github.com/litegral/freepass-2025/internal/lib/db"
 	"github.com/litegral/freepass-2025/internal/model"
@@ -35,7 +35,7 @@ func (s *SessionService) CreateProposal(ctx context.Context, userID int32, propo
 
 	// Check for existing proposals in the current conference cycle
 	for _, session := range sessions {
-		if session.ProposerID.Int32 == userID && session.Status == "pending" {
+		if session.ProposerID.Int32 == userID && session.Status == "pending" && !session.IsDeleted.Bool {
 			return model.Session{}, errors.New(config.ErrPendingProposalExists)
 		}
 	}
@@ -105,6 +105,50 @@ func (s *SessionService) UpdateProposal(ctx context.Context, userID int32, sessi
 	}
 
 	return convertDBSessionToModel(updatedSession), nil
+}
+
+// GetUserProposals retrieves all session proposals submitted by a user
+func (s *SessionService) GetUserProposals(ctx context.Context, userID int32) ([]model.SessionWithDetails, error) {
+	// Get all sessions
+	sessions, err := s.queries.ListSessions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []model.SessionWithDetails
+	for _, session := range sessions {
+		// Skip deleted sessions and sessions not proposed by the user
+		if session.IsDeleted.Bool || session.ProposerID.Int32 != userID {
+			continue
+		}
+
+		// Get session details including proposer info
+		details, err := s.queries.GetSessionByID(ctx, session.ID)
+		if err != nil {
+			continue
+		}
+
+		// Get feedback for the session if it's accepted
+		var feedback []db.ListSessionFeedbackRow
+		if session.Status == "accepted" {
+			feedback, err = s.queries.ListSessionFeedback(ctx, session.ID)
+			if err != nil {
+				continue
+			}
+		}
+
+		// Convert to model
+		sessionDetails := model.SessionWithDetails{
+			Session:             convertDBSessionToModel(session),
+			ProposerName:        details.ProposerName.String,
+			ProposerAffiliation: details.ProposerAffiliation.String,
+			Feedback:            convertDBFeedbackToModel(feedback),
+		}
+
+		result = append(result, sessionDetails)
+	}
+
+	return result, nil
 }
 
 // DeleteProposal deletes an existing session proposal
