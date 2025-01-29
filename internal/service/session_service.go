@@ -260,6 +260,15 @@ func (s *SessionService) RegisterForSession(ctx context.Context, sessionID int32
 		return errors.New("session is full")
 	}
 
+	// Check if user is already registered
+	_, err = s.queries.GetRegistration(ctx, db.GetRegistrationParams{
+		UserID:    userID,
+		SessionID: sessionID,
+	})
+	if err == nil {
+		return errors.New("already registered for the session")
+	}
+
 	// Create registration
 	_, err = s.queries.RegisterForSession(ctx, db.RegisterForSessionParams{
 		UserID:    userID,
