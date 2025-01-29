@@ -15,7 +15,7 @@ const generateAccessToken = (userid) => {
 }
 
 const register = async (req, res) => {
-  const { username, email, password } = req.body 
+  const { username, email, password, role } = req.body 
   if (!email || !password) {
     response(400, "", "email or password field cant be empty", res)
     return
@@ -31,9 +31,10 @@ const register = async (req, res) => {
     username,
     email,
     password: hashedPassword,
+    role: role || 'user',
     created_at: new Date(),
   }
-  
+
   try {
     await createTable(userSchema) 
     const userAlreadyExists = await checkRecordExists("users", "email", email) 
@@ -56,7 +57,6 @@ const login = async (req, res) => {
   }
 
   try {
-    await createTable(userSchema)
     const existingUser = await checkRecordExists("users", "email", email) 
 
     if (existingUser) {
@@ -91,7 +91,7 @@ const login = async (req, res) => {
 const logout = async  (req, res) => {
   try {
     res.clearCookie("token")
-    res.redirect("/login")
+    response(200, "", "user logged out successfully", res)
   } catch (error) {
     response(400, "", error, res)
   }

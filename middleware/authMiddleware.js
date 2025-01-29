@@ -8,8 +8,8 @@ const authMiddleware = (req, res, next) => {
     req.user = user
     next()
   } catch (err) {
+    console.log(err)
     res.clearCookie("token")
-    res.redirect("/signup")
   }
 }
 
