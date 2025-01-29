@@ -278,12 +278,14 @@ cp env.example.yml env.yml
 Migration and Seed are important to create the database schema and fill the database with initial data.
 
 1. Run the migration
+   Migration will be erase all the data in the database and create the schema based on the migration files. So make sure you have backup your data before running this command unless it's initial migration.
 
 ```bash
 task db:migrate
 ```
 
 2. Run the seeding
+   It is recommended to run the seeding after fresh migration.
 
 ```bash
 task db:seed
