@@ -11,21 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const countPendingProposalsByUser = `-- name: CountPendingProposalsByUser :one
-SELECT COUNT(*) 
-FROM sessions 
-WHERE proposer_id = $1 
-AND status = 'pending' 
-AND is_deleted = FALSE
-`
-
-func (q *Queries) CountPendingProposalsByUser(ctx context.Context, proposerID pgtype.Int4) (int64, error) {
-	row := q.db.QueryRow(ctx, countPendingProposalsByUser, proposerID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
 const countSessionRegistrations = `-- name: CountSessionRegistrations :one
 SELECT COUNT(*) FROM session_registrations
 WHERE session_id = $1
@@ -380,21 +365,22 @@ func (q *Queries) ListPendingProposals(ctx context.Context) ([]Session, error) {
 }
 
 const listSessionFeedback = `-- name: ListSessionFeedback :many
-SELECT f.id, f.user_id, f.session_id, f.comment, f.created_at, f.is_deleted, u.full_name, u.affiliation
+SELECT f.id, f.user_id, f.session_id, f.comment, f.created_at, f.is_deleted, u.full_name, u.affiliation, u.profile_pict_url
 FROM feedback f
 JOIN users u ON f.user_id = u.id
 WHERE f.session_id = $1 AND f.is_deleted = FALSE
 `
 
 type ListSessionFeedbackRow struct {
-	ID          int32
-	UserID      int32
-	SessionID   int32
-	Comment     string
-	CreatedAt   pgtype.Timestamptz
-	IsDeleted   pgtype.Bool
-	FullName    pgtype.Text
-	Affiliation pgtype.Text
+	ID             int32
+	UserID         int32
+	SessionID      int32
+	Comment        string
+	CreatedAt      pgtype.Timestamptz
+	IsDeleted      pgtype.Bool
+	FullName       pgtype.Text
+	Affiliation    pgtype.Text
+	ProfilePictUrl pgtype.Text
 }
 
 func (q *Queries) ListSessionFeedback(ctx context.Context, sessionID int32) ([]ListSessionFeedbackRow, error) {
@@ -415,6 +401,7 @@ func (q *Queries) ListSessionFeedback(ctx context.Context, sessionID int32) ([]L
 			&i.IsDeleted,
 			&i.FullName,
 			&i.Affiliation,
+			&i.ProfilePictUrl,
 		); err != nil {
 			return nil, err
 		}

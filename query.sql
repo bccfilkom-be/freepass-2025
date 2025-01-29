@@ -73,7 +73,7 @@ VALUES ($1, $2, $3)
 RETURNING *;
 
 -- name: ListSessionFeedback :many
-SELECT f.*, u.full_name, u.affiliation
+SELECT f.*, u.full_name, u.affiliation, u.profile_pict_url
 FROM feedback f
 JOIN users u ON f.user_id = u.id
 WHERE f.session_id = $1 AND f.is_deleted = FALSE;

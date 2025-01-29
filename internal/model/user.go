@@ -7,6 +7,7 @@ type User struct {
 	Email       string    `json:"email"`
 	Role        string    `json:"role"`
 	FullName    string    `json:"full_name"`
+	ProfilePictureUrl string `json:"profile_picture_url"`
 	Affiliation string    `json:"affiliation"`
 	IsVerified  bool      `json:"is_verified"`
 	VerifiedAt  time.Time `json:"verified_at"`

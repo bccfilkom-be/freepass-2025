@@ -39,20 +39,21 @@ type SessionFeedback struct {
 }
 
 type SessionFeedbackResponse struct {
-	ID          int       `json:"id"`
-	UserID      int       `json:"user_id"`
-	SessionID   int       `json:"session_id"`
-	Comment     string    `json:"comment"`
-	CreatedAt   time.Time `json:"created_at"`
-	UserName    string    `json:"user_name"`
-	Affiliation string    `json:"affiliation"`
+	ID                int       `json:"id"`
+	UserID            int       `json:"user_id"`
+	SessionID         int       `json:"session_id"`
+	Comment           string    `json:"comment"`
+	CreatedAt         time.Time `json:"created_at"`
+	UserName          string    `json:"user_name"`
+	Affiliation       string    `json:"affiliation"`
+	ProfilePictureUrl string    `json:"profile_picture_url"`
 }
 
 type SessionWithDetails struct {
 	Session
-	ProposerName      string                  `json:"proposer_name"`
-	ProposerAffiliation string                `json:"proposer_affiliation"`
-	Feedback         []SessionFeedbackResponse `json:"feedback,omitempty"`
-	IsRegistered     bool                      `json:"is_registered"`
-	AvailableSeats   int                       `json:"available_seats"`
-} 
+	ProposerName        string                    `json:"proposer_name"`
+	ProposerAffiliation string                    `json:"proposer_affiliation"`
+	Feedback            []SessionFeedbackResponse `json:"feedback,omitempty"`
+	IsRegistered        bool                      `json:"is_registered"`
+	AvailableSeats      int                       `json:"available_seats"`
+}

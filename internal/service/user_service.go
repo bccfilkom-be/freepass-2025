@@ -7,8 +7,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/litegral/freepass-2025/internal/lib"
-	"github.com/litegral/freepass-2025/internal/lib/db"
 	c "github.com/litegral/freepass-2025/internal/lib/config"
+	"github.com/litegral/freepass-2025/internal/lib/db"
 	"github.com/litegral/freepass-2025/internal/lib/jwt"
 	"github.com/litegral/freepass-2025/internal/model"
 	"golang.org/x/crypto/bcrypt"
@@ -185,18 +185,19 @@ func (s *UserService) GetProfile(ctx context.Context, userID int32) (model.User,
 		if errors.Is(err, sql.ErrNoRows) {
 			return model.User{}, errors.New(c.ErrUserNotFound)
 		}
-		return model.User{}, err 
+		return model.User{}, err
 	}
 
 	return model.User{
-		ID:          int(user.ID),
-		Email:       user.Email,
-		Role:        string(user.Role),
-		FullName:    user.FullName.String,
-		Affiliation: user.Affiliation.String,
-		IsVerified:  user.IsVerified,
-		VerifiedAt:  user.VerifiedAt.Time,
-		CreatedAt:   user.CreatedAt.Time,
-		UpdatedAt:   user.UpdatedAt.Time,
+		ID:                int(user.ID),
+		Email:             user.Email,
+		Role:              string(user.Role),
+		ProfilePictureUrl: user.ProfilePictUrl.String,
+		FullName:          user.FullName.String,
+		Affiliation:       user.Affiliation.String,
+		IsVerified:        user.IsVerified,
+		VerifiedAt:        user.VerifiedAt.Time,
+		CreatedAt:         user.CreatedAt.Time,
+		UpdatedAt:         user.UpdatedAt.Time,
 	}, nil
 }
