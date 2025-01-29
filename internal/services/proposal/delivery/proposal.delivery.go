@@ -29,7 +29,7 @@ func NewProposalDelivery(
 		router, proposalUsecase, response, validator,
 	}
 
-	proposalRouter := router.Group("/proposal")
+	proposalRouter := router.Group("/api/proposal")
 	proposalRouter.GET("/", middleware.RequireAuth, handler.GetAllProposal)
 	proposalRouter.POST("/", middleware.RequireAuth, handler.CreateSessionProposal)
 

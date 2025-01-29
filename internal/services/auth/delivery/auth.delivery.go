@@ -25,7 +25,7 @@ func NewAuthDelivery(router *gin.Engine, authUsecase auth.AuthUsecase, response 
 		validator,
 	}
 
-	authRouter := router.Group("/auth")
+	authRouter := router.Group("/api/auth")
 	authRouter.POST("/sign-up", handler.SignUp)
 	authRouter.POST("/sign-in", handler.SignIn)
 }

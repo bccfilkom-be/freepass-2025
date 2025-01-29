@@ -34,7 +34,7 @@ func NewUserDelivery(
 	router.PATCH("/profile", middleware.RequireAuth, handler.UpdateUserProfile)
 
 	// User Routing
-	userRouter := router.Group("/user")
+	userRouter := router.Group("/api/user")
 	userRouter.GET("/:id", middleware.RequireAuth, handler.GetUserDetail)
 }
 

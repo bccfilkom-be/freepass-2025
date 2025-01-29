@@ -29,7 +29,7 @@ func NewAdminDelivery(
 		router, userUsecase, response, validator,
 	}
 
-	userRouter := router.Group("/user")
+	userRouter := router.Group("/api/user")
 	userRouter.DELETE("/:id", middleware.RequireAuth, middleware.RequireRoles(constant.ROLE_ADMIN), handler.DeleteUser)
 	userRouter.PUT("/:id/update-role", middleware.RequireAuth, middleware.RequireRoles(constant.ROLE_ADMIN), handler.UpdateRole)
 }

@@ -27,7 +27,7 @@ func NewRegistrationDelivery(
 		router, response, registrationUsecase, validator,
 	}
 
-	sessionRouter := router.Group("/session")
+	sessionRouter := router.Group("/api/session")
 	sessionRouter.GET("/registered", middleware.RequireAuth, handler.GetAllRegisteredSession)
 	sessionRouter.POST("/:sessionId/register", middleware.RequireAuth, handler.RegisterSession)
 }

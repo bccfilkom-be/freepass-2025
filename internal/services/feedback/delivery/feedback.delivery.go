@@ -27,7 +27,7 @@ func NewFeedbackDelivery(
 		router, response, feedbackUsecase, validator,
 	}
 
-	sessionRoute := handler.router.Group("/session")
+	sessionRoute := handler.router.Group("/api/session")
 	sessionRoute.GET("/:sessionId/feedback", middleware.RequireAuth, handler.GetAllSessionFeedback)
 	sessionRoute.POST("/:sessionId/feedback", middleware.RequireAuth, handler.CreateFeedback)
 	sessionRoute.DELETE("/:sessionId/feedback/:feedbackId", middleware.RequireAuth, handler.DeleteFeedback)

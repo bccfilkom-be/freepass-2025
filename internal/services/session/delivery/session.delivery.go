@@ -28,7 +28,7 @@ func NewSessionDelivery(
 		router, sessionUsecase, response, validator,
 	}
 
-	sessionRouter := router.Group("/session")
+	sessionRouter := router.Group("/api/session")
 	sessionRouter.GET("/", middleware.RequireAuth, handler.GetAllSession)
 	sessionRouter.PATCH("/:sessionId", middleware.RequireAuth, handler.UpdateSession)
 	sessionRouter.DELETE("/:sessionId", middleware.RequireAuth, handler.DeleteSession)
