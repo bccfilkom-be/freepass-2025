@@ -167,7 +167,20 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 
 ## **🧪** API Installation
 
-> Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
+> This is how to run the service in Linux 
+
+Make sure you have these installed:
+1. Java 21
+2. PostgreSQL
+3. Maven
+
+__Running__
+1. Clone the repository
+2. Go to the project folder
+3. Execute the Bash script
+```
+./run.sh
+```
 
 ## **📞** Contact
 
