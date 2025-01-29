@@ -48,7 +48,11 @@ func NewHTTPServer() {
 	// @in header
 	// @name Authorization
 	docs.SwaggerInfo.Title = "BCC BE FreePass 2025"
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	docs.SwaggerInfo.Description = `This is a documentation for Session Conference Management System - BCC BE FreePass 2025 
+	Created By: Jevon Mozart Christian Bano
+	Github Repo: https://github.com/jevvonn/bcc-be-freepass-2025/tree/jevon-mozart
+	`
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// Repository
 	userRepo := user_repository.NewUserRepository(db)
