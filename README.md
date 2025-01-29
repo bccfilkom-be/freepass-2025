@@ -126,6 +126,62 @@ THEN  => System will delete the account from the system
 We want to see your perspective about these problems. You can define various types of entities or actors. One thing for sure, there is no
 true or false statement to define the entities. As long as the results are understandable, then go for it! 🚀
 
+### **Entities**
+
+```
+User: Represents individuals interacting with the conference system.
+Attributes:
+- id (Primary Key)
+- name
+- email
+- password
+- bio
+- role
+- created_at
+- updated_at
+
+Session:Represents conference sessions that users can register for.
+Attributes:
+- id (Primary Key)
+- user_id (Foreign Key)
+- title
+- description
+- registration_start_date
+- registration_end_date
+- session_start_date
+- session_end_date
+- max_seat
+- status
+- rejected_message
+- created_at
+- updated_at
+
+Session Registration: Represents the registration of users for sessions.
+Attributes:
+- id (Primary Key)
+- user_id (Foreign Key)
+- session_id (Foreign Key)
+- created_at
+- updated_at
+
+Session Feedback: Stores feedback submitted by users about sessions.
+Attributes:
+- id (Primary Key)
+- user_id (Foreign Key)
+- session_id (Foreign Key)
+- content
+- created_at
+- updated_at
+```
+
+### **Actors**
+
+```
+User: Represents who interact with the system. The user who can manage their session proposals, feedback, and registration.
+Event Coordinator: Represents the event coordinator who can manage user session proposals, active session and feedback.
+Admin: Represents the system administrator who has the highest level of access and can manage users, event coordinators, and system settings.
+```
+
 ## **📘** References
 
 You might be overwhelmed by these requirements. Don't worry, here's a list of some tools that you could use (it's not required to use all of them nor any of them):
@@ -169,6 +225,86 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 
 > Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
 
+### Prequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- You have installed the latest version of [Golang](https://go.dev/) at least `1.23.2`
+- You have installed the latest version of [TaskFile](https://taskfile.dev/)
+- You have installed the latest version of **`MySQL`** server either using Docker or local installation or XAMPP or other tools.
+
+Check your Golang version by running this command:
+
+```bash
+go version
+```
+
+Ensure you have downloaded the latest version of [TaskFile](https://taskfile.dev/)
+
+```bash
+go install github.com/go-task/task/v3/cmd/task@latest
+```
+
+### First Time Initialization
+
+1. Clone this repository
+
+```bash
+git clone --branch jevon-mozart https://github.com/jevvonn/bcc-be-freepass-2025.git
+```
+
+2. Change directory to the project root
+
+```bash
+cd bcc-be-freepass-2025
+```
+
+3. Install golang dependencies
+
+```bash
+go get .
+```
+
+4. Copy the `.env.example` file to `.env`
+
+```bash
+cp env.example.yml env.yml
+```
+
+5. Fill the `.env` file with your configuration. Especially the database configuration.
+
+### Migration and Seeding
+
+Migration and Seed are important to create the database schema and fill the database with initial data.
+
+1. Run the migration
+
+```bash
+task db:migrate
+```
+
+2. Run the seeding
+
+```bash
+task db:seed
+```
+
+### Running the Server
+
+To run the server, you can use the following command:
+
+```bash
+task run
+```
+
+### Documentation
+
+You can access the API documentation by visiting this URL:
+
+```bash
+http://localhost:3001/docs/index.html
+```
+
 ## **📞** Contact
 
 Have any questions? You can contact either [Tyo](https://www.instagram.com/nandanatyo/) or [Ilham](https://www.instagram.com/iilham_akbar/).
@@ -182,3 +318,7 @@ Please follow the instructions on the [Contributing guide](CONTRIBUTING.md).
 > This is not the only way to join us.
 >
 > **But, this is the _one and only way_ to instantly pass.**
+
+```
+
+```
