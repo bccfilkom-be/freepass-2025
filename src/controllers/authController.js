@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { validationResult } = require("express-validator");
+const { validationResult, matchedData } = require("express-validator");
 const { User } = require("../models");
 
 exports.register = async (req, res) => {
@@ -10,9 +10,7 @@ exports.register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const {
-    body: { username, email, password, role },
-  } = req;
+  const { username, email, password, role } = matchedData(req);
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -44,9 +42,7 @@ exports.login = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const {
-    body: { email, password },
-  } = req;
+  const { email, password } = matchedData(req);
 
   try {
     const user = await User.findOne({ where: { email } });

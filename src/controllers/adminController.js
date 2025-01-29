@@ -1,9 +1,13 @@
 const { User } = require("../models");
+const { validationResult, matchedData } = require("express-validator");
 
 exports.addEventCoordinator = async (req, res) => {
-  const {
-    params: { userId },
-  } = req;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { userId } = matchedData(req);
 
   try {
     const user = await User.findByPk(userId);
@@ -29,8 +33,13 @@ exports.addEventCoordinator = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { userId } = matchedData(req);
   const {
-    params: { userId },
     user: { role },
   } = req;
 

@@ -1,10 +1,14 @@
 const { Session, SessionProposal } = require("../models");
 const { Op } = require("sequelize");
+const { validationResult, matchedData } = require("express-validator");
 
 exports.createProposal = async (req, res) => {
-  const {
-    body: { userId, title, description, startTime, endTime },
-  } = req;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { userId, title, description, startTime, endTime } = matchedData(req);
 
   try {
     const existingProposal = await SessionProposal.findOne({
@@ -39,10 +43,13 @@ exports.createProposal = async (req, res) => {
 };
 
 exports.editProposal = async (req, res) => {
-  const {
-    params: { id },
-    body: { userId, title, description, startTime, endTime },
-  } = req;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id, userId, title, description, startTime, endTime } =
+    matchedData(req);
 
   try {
     const proposal = await SessionProposal.findByPk(id);
@@ -72,10 +79,12 @@ exports.editProposal = async (req, res) => {
 };
 
 exports.deleteProposal = async (req, res) => {
-  const {
-    params: { id },
-    body: { userId },
-  } = req;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id, userId } = matchedData(req);
 
   try {
     const proposal = await SessionProposal.findByPk(id);
@@ -83,6 +92,8 @@ exports.deleteProposal = async (req, res) => {
     if (!proposal) {
       return res.status(404).json({ message: "Proposal not found" });
     }
+
+    console.log(proposal.user_id, userId);
 
     if (proposal.user_id !== userId) {
       return res
@@ -109,9 +120,12 @@ exports.getAllProposals = async (_req, res) => {
 };
 
 exports.acceptProposal = async (req, res) => {
-  const {
-    params: { id },
-  } = req;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id } = matchedData(req);
 
   try {
     const proposal = await SessionProposal.findByPk(id);
@@ -142,9 +156,12 @@ exports.acceptProposal = async (req, res) => {
 };
 
 exports.rejectProposal = async (req, res) => {
-  const {
-    params: { id },
-  } = req;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id } = matchedData(req);
 
   try {
     const proposal = await SessionProposal.findByPk(id);

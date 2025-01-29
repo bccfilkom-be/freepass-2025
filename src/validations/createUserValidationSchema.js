@@ -1,6 +1,6 @@
 const { User } = require("../models");
 
-const createUserValidationSchema = (isUpdate = false) => {
+const createUserValidationSchema = (isUpdate = false, allowRole = false) => {
   return {
     username: {
       in: ["body"],
@@ -36,8 +36,19 @@ const createUserValidationSchema = (isUpdate = false) => {
       },
       optional: isUpdate,
     },
+    ...(allowRole && {
+      role: {
+        in: ["body"],
+        isIn: {
+          options: [["user", "admin"]],
+          errorMessage: "Invalid role provided",
+        },
+        optional: true,
+      },
+    }),
   };
 };
 
-exports.userValidationSchema = createUserValidationSchema();
-exports.updateUserValidationSchema = createUserValidationSchema(true);
+module.exports = {
+  createUserValidationSchema,
+};

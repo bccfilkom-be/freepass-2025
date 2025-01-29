@@ -1,13 +1,18 @@
 const { Router } = require("express");
 const { register, login } = require("../controllers/authController.js");
 const {
-  userValidationSchema,
+  createUserValidationSchema,
 } = require("../validations/createUserValidationSchema.js");
 const { body, checkSchema } = require("express-validator");
 
 const router = Router();
 
-router.post("/register", checkSchema(userValidationSchema), register);
+router.post(
+  "/register",
+  checkSchema(createUserValidationSchema(false, true)),
+  register
+);
+
 router.post(
   "/login",
   [

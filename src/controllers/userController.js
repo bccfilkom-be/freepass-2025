@@ -1,5 +1,5 @@
 const { User } = require("../models");
-const { validationResult } = require("express-validator");
+const { validationResult, matchedData } = require("express-validator");
 const bcrypt = require("bcrypt");
 
 exports.editProfile = async (req, res) => {
@@ -10,8 +10,9 @@ exports.editProfile = async (req, res) => {
 
   const {
     params: { id },
-    body: { username, email, password },
   } = req;
+
+  const { username, email, password } = matchedData(req);
 
   try {
     const user = await User.findByPk(id);
