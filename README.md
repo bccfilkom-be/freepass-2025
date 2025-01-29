@@ -123,8 +123,62 @@ THEN  => System will delete the account from the system
 
 ## **👪** Entities and Actors
 
-We want to see your perspective about these problems. You can define various types of entities or actors. One thing for sure, there is no
-true or false statement to define the entities. As long as the results are understandable, then go for it! 🚀
+## Entities ##
+User : Individuals who interact with the system. They have several roles such as “user”, “event coordinator”, and “admin”.
+
+Atribut :
+- id
+- name
+- email
+- password
+- role : user | event_coordinator | admin
+- created_at
+- updated_at
+
+Session : Represents a conference sessions.
+
+Atribut : 
+- id
+- title
+- description
+- author
+- start_time
+- end_time
+- capacity
+- participants
+- created_at
+- updated_at
+
+Proposal : Represents a conference session proposals.
+
+Atribut : 
+- id
+- author
+- title
+- description
+- status : pending | accepted | rejected
+- created_at
+- updated_at
+
+Feedback : Represents a conference session feedbacks
+
+Atribut :
+- id
+- commenter
+- session_id
+- feedback
+- created_at
+- updated_at
+
+Session Registration : Represents a conference session registrations.
+
+Atribut :
+- id
+- user_id
+- session_id
+- registration_at
+- created_at
+- updated_at
 
 ## **📘** References
 
@@ -165,9 +219,34 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 3. Finish all service implementations
 4. Write the installation guide of your back-end service in the section below
 
+
 ## **🧪** API Installation
 
 > Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
+
+**Running**
+1. Cloning repository from github to your local computer
+2. Download composer
+3. Go to the cloned project folder
+4. Install all project dependencies
+```
+composer install
+```
+5. Edit the .env file and configure database connection settings like DB_CONNECTION, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+6. Run database migration
+```
+php artisan migrate
+```
+7. Run the local server
+8. Open the postman app and enter the API URL
+```
+http://freepass-2025.test/Konferensi_BCC/public/api/
+```
+
+
+## **📃** API Documentation
+https://documenter.getpostman.com/view/41537989/2sAYQiBnvY
+
 
 ## **📞** Contact
 
