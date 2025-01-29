@@ -13,6 +13,7 @@ import (
 	registration_delivery "jevvonn/bcc-be-freepass-2025/internal/services/registration/delivery"
 	session_delivery "jevvonn/bcc-be-freepass-2025/internal/services/session/delivery"
 	user_delivery "jevvonn/bcc-be-freepass-2025/internal/services/user/delivery"
+	"log"
 
 	auth_usecase "jevvonn/bcc-be-freepass-2025/internal/services/auth/usecase"
 	feedback_usecase "jevvonn/bcc-be-freepass-2025/internal/services/feedback/usecase"
@@ -81,5 +82,10 @@ func NewHTTPServer() {
 	router.NoRoute(func(ctx *gin.Context) {
 		response.NotFound(ctx)
 	})
-	router.Run(fmt.Sprintf("%s:%s", host, port))
+
+	fmt.Printf("Server is running on %s:%s", host, port)
+	err := router.Run(fmt.Sprintf("%s:%s", host, port))
+	if err != nil {
+		log.Fatal(err)
+	}
 }
