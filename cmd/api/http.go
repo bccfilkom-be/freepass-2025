@@ -79,6 +79,10 @@ func NewHTTPServer() {
 	feedback_delivery.NewFeedbackDelivery(router, response, feedbackUsecase, validator)
 	user_delivery.NewAdminDelivery(router, adminUsecase, response, validator)
 
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.Redirect(301, "/docs/index.html")
+	})
+
 	router.NoRoute(func(ctx *gin.Context) {
 		response.NotFound(ctx)
 	})
