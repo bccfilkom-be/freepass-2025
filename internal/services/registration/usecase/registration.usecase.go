@@ -42,15 +42,6 @@ func (v *RegistrationUsecase) RegisterSession(userId, sessionId uint) error {
 		return errors.New("Registration already closed!")
 	}
 
-	registeredSeat, err := v.registrationRepo.CountRegisteredSeat(sessionId)
-	if err != nil {
-		return err
-	}
-
-	if registeredSeat >= session.MaxSeat {
-		return errors.New("Session seats are already full!")
-	}
-
 	_, err = v.registrationRepo.GetBySessionId(sessionId)
 	if err == nil {
 		return errors.New("Session already registered!")

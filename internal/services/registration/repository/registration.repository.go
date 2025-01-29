@@ -26,10 +26,30 @@ func (v *RegistrationRepository) GetAllRegisteredSession(userId uint) ([]domain.
 }
 
 func (v *RegistrationRepository) Create(userId, sessionId uint) error {
-	return v.db.Create(&domain.SessionRegistration{
-		UserID:    userId,
-		SessionID: sessionId,
-	}).Error
+	return v.db.Transaction(func(tx *gorm.DB) error {
+		session, err := v.sessionRepo.GetById(sessionId)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return errors.New("Session not found!")
+			} else {
+				return err
+			}
+		}
+
+		registeredSeat, err := v.CountRegisteredSeat(sessionId)
+		if err != nil {
+			return err
+		}
+
+		if registeredSeat >= session.MaxSeat {
+			return errors.New("Session seats are already full!")
+		}
+
+		return v.db.Create(&domain.SessionRegistration{
+			UserID:    userId,
+			SessionID: sessionId,
+		}).Error
+	})
 }
 
 func (v *RegistrationRepository) GetBySessionId(sessionId uint) (domain.SessionRegistration, error) {
