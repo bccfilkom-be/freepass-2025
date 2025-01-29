@@ -30,7 +30,7 @@ const deleteSession = async (req, res) => {
   try {
     await createTable(sessionSchema)
     const session = await getRecordById("sessions", "sessionid", sessionid)
-    if (session.userid !== req.user.userid) {
+    if (session.created_by !== req.user.userid) {
       response(403, "", "You can only delete your own sessions", res)
       return
     }
