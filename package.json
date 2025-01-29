@@ -8,7 +8,9 @@
     "dev": "nodemon src/app.js",
     "db:create": "npx sequelize-cli db:create --config config/config.js",
     "db:migrate": "npx sequelize-cli db:migrate --config config/config.js",
-    "db:seed": "npx sequelize-cli db:seed:all --config config/config.js"
+    "db:seed:user": "npx sequelize-cli db:seed --seed seeders/20250128023105-demo-user.js --config config/config.js",
+    "db:seed:session": "npx sequelize-cli db:seed --seed seeders/20250126131742-demo-session.js --config config/config.js",
+    "db:setup": "npm run db:create && npm run db:migrate && npm run db:seed:user && npm run db:seed:session"
   },
   "keywords": [],
   "author": "",
