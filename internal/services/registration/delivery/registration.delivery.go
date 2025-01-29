@@ -32,6 +32,20 @@ func NewRegistrationDelivery(
 	sessionRouter.POST("/:sessionId/register", middleware.RequireAuth, handler.RegisterSession)
 }
 
+// @title 			Get All Registered Session
+//
+//	@Tags			Session Registration
+//	@Summary		Get All Registered Session
+//	@Description	Get All Registered Session
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.JSONResponseModel{data=[]dto.GetSessionRegistrationResponse}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session/registered [get]
 func (v *RegistrationDelivery) GetAllRegisteredSession(ctx *gin.Context) {
 	userId := ctx.GetUint("userId")
 
@@ -44,6 +58,23 @@ func (v *RegistrationDelivery) GetAllRegisteredSession(ctx *gin.Context) {
 	v.response.OK(ctx, sessions, "Registered sessions", 200)
 }
 
+// @title 			Register Into Session
+//
+//	@Tags			Session Registration
+//	@Summary		Register Into Session
+//	@Description	Register Into Session
+//	@Accept			json
+//	@Produce		json
+//
+// @Param 			id path int true "Session ID"
+//
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session/{id}/register [post]
 func (v *RegistrationDelivery) RegisterSession(ctx *gin.Context) {
 	userId := ctx.GetUint("userId")
 	param := ctx.Param("sessionId")

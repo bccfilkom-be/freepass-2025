@@ -94,6 +94,19 @@ definitions:
       user:
         $ref: '#/definitions/dto.GetUserDetailResponse'
     type: object
+  dto.GetSessionRegistrationResponse:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      session:
+        $ref: '#/definitions/dto.GetAllSessionResponse'
+      session_id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   dto.GetUserDetailResponse:
     properties:
       bio:
@@ -889,6 +902,94 @@ paths:
       summary: Update Session
       tags:
       - Session
+  /api/session/{id}/register:
+    post:
+      consumes:
+      - application/json
+      description: Register Into Session
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Register Into Session
+      tags:
+      - Session Registration
+  /api/session/registered:
+    get:
+      consumes:
+      - application/json
+      description: Get All Registered Session
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.GetSessionRegistrationResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get All Registered Session
+      tags:
+      - Session Registration
   /api/user/{id}:
     delete:
       consumes:
