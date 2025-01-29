@@ -58,6 +58,11 @@ CREATE TABLE feedback (
     is_deleted BOOLEAN DEFAULT FALSE
 );
 
+-- Create partial unique index for active feedback
+CREATE UNIQUE INDEX unique_user_session_feedback 
+ON feedback (user_id, session_id) 
+WHERE is_deleted = FALSE;
+
 CREATE TABLE conference_config (
     id SERIAL PRIMARY KEY,
     registration_start TIMESTAMPTZ NOT NULL,
