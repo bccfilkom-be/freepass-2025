@@ -62,7 +62,15 @@ func (v *SessionDelivery) GetAllSession(ctx *gin.Context) {
 //
 //	@Tags			Session
 //	@Summary		Update Session
-//	@Description	Update Session
+//
+// @Description **Update Session**. Only It's own User session or Event Coordinator can update.
+// @Description
+// @Description All date-time fields must follow the ISO 8601 format:
+// @Description
+// @Description **Date Format (ISO 8601):** (YYYY-MM-DD)T(HH:MM:SS)Z
+// @Description Example: 2025-02-15T12:00:00Z
+// @Description
+//
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		int	true	"Session ID"

@@ -174,7 +174,7 @@ func (v *ProposalUsecase) GetProposalDetail(ctx *gin.Context, sessionId uint) (d
 		return dto.GetProposalResponse{}, errors.New("You are not authorized to view this proposal!")
 	}
 
-	if session.Status != constant.STATUS_SESSION_PENDING {
+	if session.Status == constant.STATUS_SESSION_ACCEPTED {
 		return dto.GetProposalResponse{}, errors.New("Proposal not found!")
 	}
 

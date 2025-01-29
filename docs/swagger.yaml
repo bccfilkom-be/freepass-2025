@@ -1,4 +1,45 @@
 definitions:
+  dto.CreateProposalRequest:
+    properties:
+      description:
+        example: A conference focused on the latest advancements in technology and
+          innovation.
+        type: string
+      max_seat:
+        example: 100
+        type: integer
+      registration_end_date:
+        example: "2025-02-15T12:00:00Z"
+        type: string
+      registration_start_date:
+        example: "2025-02-01T09:00:00Z"
+        type: string
+      session_end_date:
+        example: "2025-02-25T17:00:00Z"
+        type: string
+      session_start_date:
+        example: "2025-02-25T12:00:00Z"
+        type: string
+      title:
+        example: Tech Innovations Conference 2025
+        type: string
+    required:
+    - description
+    - max_seat
+    - registration_end_date
+    - registration_start_date
+    - session_end_date
+    - session_start_date
+    - title
+    type: object
+  dto.DecliendProposalRequest:
+    properties:
+      rejected_message:
+        example: The title is not clear.
+        type: string
+    required:
+    - rejected_message
+    type: object
   dto.GetAllSessionResponse:
     properties:
       created_at:
@@ -16,6 +57,35 @@ definitions:
       session_end_date:
         type: string
       session_start_date:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/dto.GetUserDetailResponse'
+    type: object
+  dto.GetProposalResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      max_seat:
+        type: integer
+      registration_end_date:
+        type: string
+      registration_start_date:
+        type: string
+      rejected_message:
+        type: string
+      session_end_date:
+        type: string
+      session_start_date:
+        type: string
+      status:
         type: string
       title:
         type: string
@@ -66,6 +136,39 @@ definitions:
     - email
     - name
     - password
+    type: object
+  dto.UpdateProposalRequest:
+    properties:
+      description:
+        example: A conference focused on the latest advancements in technology and
+          innovation.
+        type: string
+      max_seat:
+        example: 50
+        type: integer
+      registration_end_date:
+        example: "2026-02-15T12:00:00Z"
+        type: string
+      registration_start_date:
+        example: "2026-02-01T09:00:00Z"
+        type: string
+      session_end_date:
+        example: "2026-02-25T17:00:00Z"
+        type: string
+      session_start_date:
+        example: "2026-02-25T12:00:00Z"
+        type: string
+      title:
+        example: Tech Innovations Conference 2026
+        type: string
+    required:
+    - description
+    - max_seat
+    - registration_end_date
+    - registration_start_date
+    - session_end_date
+    - session_start_date
+    - title
     type: object
   dto.UpdateSessionRequest:
     properties:
@@ -299,6 +402,347 @@ paths:
       summary: Update Profile User
       tags:
       - Profile
+  /api/proposal:
+    get:
+      consumes:
+      - application/json
+      description: Get All Session Proposal
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.GetProposalResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get All Session Proposal
+      tags:
+      - Session Proposal
+    post:
+      consumes:
+      - application/json
+      description: |
+        **Create New Session Proposal**
+
+        All date-time fields must follow the ISO 8601 format:
+
+        **Date Format (ISO 8601):** (YYYY-MM-DD)T(HH:MM:SS)Z
+        Example: 2025-02-15T12:00:00Z
+      parameters:
+      - description: Create Session Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProposalRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Create New Session Proposal
+      tags:
+      - Session Proposal
+  /api/proposal/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Session Proposal. Only It's own User session proposal can
+        delete.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.GetProposalResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Session Proposal
+      tags:
+      - Session Proposal
+    get:
+      consumes:
+      - application/json
+      description: Get Detail Session Proposal
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.GetProposalResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get Detail Session Proposal
+      tags:
+      - Session Proposal
+    patch:
+      consumes:
+      - application/json
+      description: |
+        Update Session Proposal
+
+        All date-time fields must follow the ISO 8601 format:
+
+        **Date Format (ISO 8601):** (YYYY-MM-DD)T(HH:MM:SS)Z
+        Example: 2025-02-15T12:00:00Z
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Session Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProposalRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update Session Proposal
+      tags:
+      - Session Proposal
+  /api/proposal/{id}/approve:
+    put:
+      consumes:
+      - application/json
+      description: Approve Session Proposal. Only Event Coordinator can approve.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Approve Session Proposal
+      tags:
+      - Session Proposal
+  /api/proposal/{id}/decline:
+    put:
+      consumes:
+      - application/json
+      description: Decline Session Proposal. Only Event Coordinator can decline.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Decline Proposal Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DecliendProposalRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Decline Session Proposal
+      tags:
+      - Session Proposal
   /api/session:
     get:
       consumes:
@@ -391,7 +835,13 @@ paths:
     patch:
       consumes:
       - application/json
-      description: Update Session
+      description: |
+        **Update Session**. Only It's own User session or Event Coordinator can update.
+
+        All date-time fields must follow the ISO 8601 format:
+
+        **Date Format (ISO 8601):** (YYYY-MM-DD)T(HH:MM:SS)Z
+        Example: 2025-02-15T12:00:00Z
       parameters:
       - description: Session ID
         in: path
