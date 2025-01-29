@@ -1,4 +1,131 @@
-# BCC University
+# Astungkara API
+
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)]()
+[![Go Report Card](https://goreportcard.com/badge/github.com/nathakusuma/astungkara)]()
+
+Astungkara API is a robust conference management system built for BCC Free Pass Challenge. The system provides a
+comprehensive set of features for users, event coordinators, and administrators to manage conference sessions,
+registrations, feedback, and more. The API is built using Go and Fiber, with PostgreSQL as the database and Redis for
+temporary data storage.
+
+## 🌟 Features
+
+- Complete user authentication and profile management with OTP email verification
+- Conference session management and registration
+- Seat availability tracking
+- Session proposal system with coordinator approval workflow
+- Feedback management system
+- Role-based access control (User, Event Coordinator, Admin)
+- API documentation with Swagger
+- System monitoring with Prometheus and Grafana
+- High test coverage (100% for service layer)
+
+## 🚀 Tech Stack
+
+### Core
+
+- **Language:** Go
+- **Framework:** Fiber
+- **Database:** PostgreSQL
+- **Temporary Data Storage:** Redis
+- **Web Server:** NGINX
+
+### Libraries
+
+- SQLX for database operations
+- JWT for authentication
+- go-playground/validator for input validation
+- Zerolog for logging
+- Viper for configuration management
+- Testify for testing
+- Gomail for email notifications
+
+### DevOps
+
+- Docker & Docker Compose
+- Prometheus & Grafana for monitoring
+- GNU Make for build automation
+
+## 🛠 Installation
+
+### Prerequisites
+
+- Internet connection
+- Docker and Docker Compose
+- GNU Make
+- Git
+
+### Setup Steps
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/nathakusuma/astungkara.git
+   cd astungkara
+   git checkout i-putu-natha-kusuma
+   ```
+
+2. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env file with your configuration
+   ```
+
+3. Start the application:
+   ```bash
+   make run
+   ```
+
+4. (Optional) Seed the database with test data:
+   ```bash
+   make seed-up dev
+   ```
+
+## 📚 Documentation
+
+- API Documentation: `https://[HOSTNAME]/swagger`
+- Monitoring Dashboard: `https://[HOSTNAME]/grafana`
+
+## 🌐 Deployment
+
+The API is deployed and accessible at:
+
+```
+https://astungkara.nathakusuma.com
+```
+
+## 🔒 Security
+
+- Email verification with OTP
+- JWT-based authentication
+- Access & refresh token system
+- Role-based access control
+- Input validation
+- Secure password hashing
+
+## 🔍 Monitoring
+
+The system includes comprehensive monitoring:
+
+- Real-time metrics with Prometheus
+- Visualized dashboards with Grafana
+- Performance monitoring
+- Error tracking
+- Resource utilization metrics
+
+## 👥 Authors
+
+- I Putu Natha Kusuma
+
+## 🙏 Acknowledgments
+
+- Basic Computing Community for the opportunity
+
+---
+
+Built with ❤️ for Basic Computing Community
+
+
+---
 
 ### ⚠️⚠️⚠️
 

@@ -1,0 +1,1965 @@
+openapi: 3.1.0
+info:
+  title: Astungkara
+  version: '1.0.0'
+
+servers:
+  - url: "https://astungkara.nathakusuma.com/api/v1"
+    description: Production server
+  - url: "http://localhost/api/v1"
+    description: Local development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserRole:
+      type: string
+      enum: [ user, admin, event_coordinator ]
+
+    User:
+      type: object
+      properties:
+        id:
+          type: [ "string", "null" ]
+          format: uuid
+        name:
+          type: [ "string", "null" ]
+          examples:
+            - "Natha Kusuma"
+        email:
+          type: [ "string", "null" ]
+          format: email
+        role:
+          oneOf:
+            - $ref: '#/components/schemas/UserRole'
+            - type: "null"
+          examples:
+            - "user"
+        bio:
+          type: [ "string", "null" ]
+          examples:
+            - "Seorang programmer pemula yang sedang belajar backend"
+        created_at:
+          type: [ "string", "null" ]
+          format: date-time
+        updated_at:
+          type: [ "string", "null" ]
+          format: date-time
+
+    UserMinimal:
+      type: object
+      properties:
+        id:
+          type: [ "string", "null" ]
+          format: uuid
+        name:
+          type: [ "string", "null" ]
+          examples:
+            - "Natha Kusuma"
+        role:
+          oneOf:
+            - $ref: '#/components/schemas/UserRole'
+            - type: "null"
+          examples:
+            - "user"
+        bio:
+          type: [ "string", "null" ]
+          examples:
+            - "Seorang programmer pemula yang sedang belajar backend"
+
+    ConferenceStatus:
+      type: string
+      enum: [ pending, approved, rejected ]
+      examples:
+        - "approved"
+
+    Conference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          examples:
+            - "Konferensi Programmer Backend"
+        description:
+          type: string
+          examples:
+            - "Membahas masalah backend terkini"
+        speaker_name:
+          type: string
+          examples:
+            - "Yoga Raditya Nala"
+        speaker_title:
+          type: string
+          examples:
+            - "Sepuh backend"
+        target_audience:
+          type: string
+          examples:
+            - "Junior Backend Developer di Malang Raya"
+        prerequisites:
+          type: [ string, "null" ]
+          examples:
+            - "Memiliki pemahaman dasar tentang bahasa pemrograman Go"
+        seats:
+          type: integer
+          minimum: 1
+          examples:
+            - 10
+        starts_at:
+          type: string
+          format: date-time
+          examples:
+            - "2025-01-28T01:04:40+07:00"
+        ends_at:
+          type: string
+          format: date-time
+          examples:
+            - "2025-01-29T01:04:40+07:00"
+        host:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+              examples:
+                - "Natha Kusuma"
+        status:
+          $ref: '#/components/schemas/ConferenceStatus'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        seats_taken:
+          type: [ integer, "null" ]
+          examples:
+            - 0
+
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "01948fd8-612f-401b-8068-003cda23b7fa"
+        comment:
+          type: string
+          minLength: 3
+          maxLength: 1000
+          example: "Great introduction to the topic. The speaker was very knowledgeable and engaging."
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-22T21:08:30.12715Z"
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+              example: "Natha Kusuma"
+
+    Pagination:
+      type: object
+      properties:
+        has_more:
+          type: boolean
+          description: Indicates if there are more items available
+          examples:
+            - true
+        first_id:
+          type: string
+          format: uuid
+          description: ID of the first item in the current page
+          examples:
+            - "0194831b-9072-4090-803e-ffb74d52eb5c"
+        last_id:
+          type: string
+          format: uuid
+          description: ID of the last item in the current page
+          examples:
+            - "019497b5-0072-404b-804a-371d9a961ac6"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: [ "string", "null" ]
+          description: Error message
+        detail:
+          type: [ "object", "null" ]
+          description: Additional error details
+        error_code:
+          type: [ "string", "null" ]
+          description: Error code identifier
+        trace_id:
+          type: [ "string", "null" ]
+          format: uuid
+          description: Unique trace ID for error tracking
+
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "There are invalid fields in your request. Please check and try again"
+            detail:
+              - email:
+                  tag: "required"
+                  param: ""
+                  translation: "Email is a required field"
+            error_code: "VALIDATION_ERROR"
+
+    AuthenticationError:
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            noBearerToken:
+              summary: No Bearer Token
+              value:
+                message: "You're not logged in. Please login first."
+                error_code: "NO_BEARER_TOKEN"
+            invalidBearerToken:
+              summary: Invalid Bearer Token
+              value:
+                message: "Your auth session is invalid. Please renew your auth session."
+                error_code: "INVALID_BEARER_TOKEN"
+
+    InvalidRefreshToken:
+      description: Invalid refresh token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "Auth session is invalid. Please login again."
+            error_code: "INVALID_REFRESH_TOKEN"
+
+    InvalidOTP:
+      description: Invalid OTP
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "Invalid OTP. Please try again or request a new OTP."
+            error_code: "INVALID_OTP"
+
+    CredentialsNotMatch:
+      description: Invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "Credentials do not match. Please try again."
+            error_code: "CREDENTIALS_NOT_MATCH"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "Data not found."
+            error_code: "NOT_FOUND"
+
+    FailParseRequest:
+      description: Failed to parse request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "Failed to parse request. Please check your request format."
+            error_code: "FAIL_PARSE_REQUEST"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "Something went wrong in our server. Please try again later."
+            error_code: "INTERNAL_SERVER_ERROR"
+            trace_id: "652e0a03-1c0a-404a-ac47-685d7ecb22d8"
+
+    ForbiddenRole:
+      description: Forbidden - User role not allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "You're not allowed to access this resource."
+            error_code: "FORBIDDEN_ROLE"
+
+    EmailAlreadyRegistered:
+      description: Conflict - Email already registered
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            message: "Email already registered. Please login or use another email."
+            error_code: "EMAIL_ALREADY_REGISTERED"
+
+tags:
+  - name: Auth
+    description: Authentication and authorization operations
+  - name: Users
+    description: User management operations
+  - name: Conferences
+    description: Conference management operations
+  - name: Registrations
+    description: Conference registration operations
+  - name: Feedbacks
+    description: Conference feedback operations
+
+paths:
+  /auth/register/otp:
+    post:
+      tags:
+        - Auth
+      summary: Request OTP Register User
+      operationId: requestOTPRegisterUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 320
+      responses:
+        '204':
+          description: Success - OTP sent successfully
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '409':
+          $ref: '#/components/responses/EmailAlreadyRegistered'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/register/otp/check:
+    post:
+      tags:
+        - Auth
+      summary: Check OTP Register User
+      operationId: checkOTPRegisterUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+              properties:
+                email:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+                  examples:
+                    - "123456"
+      responses:
+        '204':
+          description: Success - OTP verification successful
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/InvalidOTP'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register User
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+                - name
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 320
+                otp:
+                  type: string
+                  examples:
+                    - "123456"
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                  pattern: "^[\x00-\x7F]*$"  # ASCII characters only
+                  examples:
+                    - "Natha Kusuma"
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 72
+                  pattern: "^[\x00-\x7F]*$"  # ASCII characters only
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
+                properties:
+                  access_token:
+                    type: string
+                    examples:
+                      - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                  refresh_token:
+                    type: string
+                    examples:
+                      - "zvXQxgxN2pQD4kci41lhnkwfXKAXtt2l"
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/InvalidOTP'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login User
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  pattern: "^[\x00-\x7F]*$"  # ASCII characters only
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
+                properties:
+                  access_token:
+                    type: string
+                    examples:
+                      - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                  refresh_token:
+                    type: string
+                    examples:
+                      - "zvXQxgxN2pQD4kci41lhnkwfXKAXtt2l"
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/CredentialsNotMatch'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "User not found. Please register first."
+                error_code: "NOT_FOUND"
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Refresh Access Token
+      operationId: refreshAccessToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  examples:
+                    - "zvXQxgxN2pQD4kci41lhnkwfXKAXtt2l"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
+                properties:
+                  access_token:
+                    type: string
+                    examples:
+                      - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                  refresh_token:
+                    type: string
+                    examples:
+                      - "zvXQxgxN2pQD4kci41lhnkwfXKAXtt2l"
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/InvalidRefreshToken'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout User
+      operationId: logoutUser
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '204':
+          description: Success - User logged out successfully
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/reset-password/otp:
+    post:
+      tags:
+        - Auth
+      summary: Request OTP Reset Password
+      operationId: requestOTPResetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '204':
+          description: Success - OTP sent successfully
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Reset Password
+      operationId: resetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+                - new_password
+              properties:
+                email:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+                  examples:
+                    - "123456"
+                new_password:
+                  type: string
+                  minLength: 8
+                  maxLength: 72
+                  pattern: "^[\x00-\x7F]*$"  # ASCII characters only
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - refresh_token
+                  - user
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/InvalidOTP'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create New User
+      description: Creates a new user. Only available to users with admin role.
+      operationId: createUser
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - role
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                  pattern: "^[\\x00-\\x7F]*$"  # ASCII characters only
+                  examples:
+                    - "Mas Event Coordinator 1"
+                email:
+                  type: string
+                  format: email
+                  maxLength: 320
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 72
+                  pattern: "^[\\x00-\\x7F]*$"  # ASCII characters only
+                role:
+                  type: string
+                  enum: [ event_coordinator, user ]
+                  examples:
+                    - "event_coordinator"
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user
+                properties:
+                  user:
+                    type: object
+                    required:
+                      - id
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          $ref: '#/components/responses/ForbiddenRole'
+        '409':
+          $ref: '#/components/responses/EmailAlreadyRegistered'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get Current User Profile
+      operationId: getUserMe
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Users
+      summary: Update User Profile
+      description: Update the current user's profile. This method allows partial updates.
+      operationId: updateUserMe
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: [ string, "null" ]
+                  minLength: 3
+                  maxLength: 100
+                  pattern: "^[\x00-\x7F]*$"  # ASCII characters only
+                  examples:
+                    - "Natha Kusuma :)"
+                bio:
+                  type: [ string, "null" ]
+                  maxLength: 500
+                  examples:
+                    - "Seorang programmer pemula yang sedang belajar backend"
+      responses:
+        '204':
+          description: Success - User profile updated successfully
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get User by ID
+      operationId: getUserById
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "01949e48-9f6b-796b-9611-3c9025493233"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserMinimal'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Users
+      summary: Delete User
+      description: Deletes a user. Only available to users with admin role.
+      operationId: deleteUser
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "01949e48-9f6b-796b-9611-3c9025493233"
+      responses:
+        '204':
+          description: Success - User deleted successfully
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          $ref: '#/components/responses/ForbiddenRole'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /conferences:
+    post:
+      tags:
+        - Conferences
+      summary: Create a conference proposal
+      description: Create a new conference proposal. Available to users with user role.
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - speaker_name
+                - speaker_title
+                - target_audience
+                - seats
+                - starts_at
+                - ends_at
+              properties:
+                title:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                  examples:
+                    - "Konferensi Programmer Backend"
+                description:
+                  type: string
+                  minLength: 3
+                  maxLength: 1000
+                  examples:
+                    - "Membahas masalah backend terkini"
+                speaker_name:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                  examples:
+                    - "Yoga Raditya Nala"
+                speaker_title:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                  examples:
+                    - "Sepuh backend"
+                target_audience:
+                  type: string
+                  minLength: 3
+                  maxLength: 255
+                  examples:
+                    - "Junior Backend Developer di Malang Raya"
+                prerequisites:
+                  type: [ string, "null" ]
+                  maxLength: 255
+                  examples:
+                    - "Memiliki pemahaman dasar tentang bahasa pemrograman Go"
+                seats:
+                  type: integer
+                  minimum: 1
+                  examples:
+                    - 10
+                starts_at:
+                  type: string
+                  format: date-time
+                  examples:
+                    - "2025-01-28T01:04:40+07:00"
+                ends_at:
+                  type: string
+                  format: date-time
+                  examples:
+                    - "2025-01-28T01:06:40+07:00"
+      responses:
+        '201':
+          description: Conference proposal created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conference:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          $ref: '#/components/responses/ForbiddenRole'
+        '409':
+          description: Conflict - User has active proposal or time window conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                userHasActiveProposal:
+                  summary: User has active proposal
+                  value:
+                    message: "You already have an active proposal. Please wait until it's accepted or delete it."
+                    detail:
+                      conference:
+                        id: "0194a3d7-b697-7e92-95c8-2517c197bcec"
+                        title: "Konferensi Programmer Backend"
+                        status: "pending"
+                        created_at: "2025-01-26T18:20:10.776315Z"
+                    error_code: "USER_HAS_ACTIVE_PROPOSAL"
+                timeWindowConflict:
+                  summary: Time window conflict
+                  value:
+                    message: "There's already a conference in the same time window. Please choose another time window."
+                    detail:
+                      conferences:
+                        - id: "0194831b-9072-4090-803e-ffb74d52eb5c"
+                          title: "Future Conference 1"
+                          starts_at: "2025-02-01T09:46:49.330992Z"
+                          ends_at: "2025-02-01T11:46:49.330992Z"
+                    error_code: "TIME_WINDOW_CONFLICT"
+        '422':
+          description: Validation error or time-related error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validationError:
+                  summary: Validation error
+                  value:
+                    message: "There are invalid fields in your request. Please check and try again"
+                    detail:
+                      - title:
+                          tag: "required"
+                          param: ""
+                          translation: "Title is a required field"
+                    error_code: "VALIDATION_ERROR"
+                timeAlreadyPassed:
+                  summary: Time already passed
+                  value:
+                    message: "Time has already passed. Please use future time."
+                    error_code: "TIME_ALREADY_PASSED"
+                endTimeBeforeStart:
+                  summary: End time before start
+                  value:
+                    message: "End time is before start time. Please use correct time."
+                    error_code: "END_TIME_BEFORE_START"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Conferences
+      summary: Get conferences by query
+      description: Get conferences based on query parameters. Available to all roles.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: after_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Get conferences after this ID
+          example: "019497b5-0072-404b-804a-371d9a961ac6"
+        - name: before_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Get conferences before this ID
+          example: "0194831b-9072-4090-803e-ffb74d52eb5c"
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+          description: Number of conferences to return
+          example: 5
+        - name: host_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by host ID
+          example: "01940ca9-4c72-40fd-8072-75882240bcc3"
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ pending, approved, rejected ]
+          description: Filter by conference status
+          example: "approved"
+        - name: starts_before
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter conferences starting before this time
+          example: "2025-03-25T09:46:49.330992Z"
+        - name: starts_after
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter conferences starting after this time
+          example: "2025-02-01T09:46:49.330992Z"
+        - name: include_past
+          in: query
+          schema:
+            type: boolean
+          description: Include past conferences
+          example: false
+        - name: order_by
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ created_at, starts_at ]
+          description: Field to order by
+          example: "starts_at"
+        - name: order
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ asc, desc ]
+          description: Sort order
+          example: "asc"
+        - name: title
+          in: query
+          schema:
+            type: string
+          description: Filter by conference title
+          example: "backend"
+      responses:
+        '200':
+          description: Successfully retrieved conferences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conferences:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conference'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Cannot access other user's unapproved conferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "You're not allowed to access this resource."
+                error_code: "FORBIDDEN_USER"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /conferences/{id}:
+    get:
+      tags:
+        - Conferences
+      summary: Get conference by ID
+      description: Get a conference by its ID. Available to all roles.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conference ID
+      responses:
+        '200':
+          description: Successfully retrieved conference
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conference:
+                    $ref: '#/components/schemas/Conference'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '403':
+          description: Forbidden - Host is other user and is not approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "You're not allowed to access this resource."
+                error_code: "FORBIDDEN_USER"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Conferences
+      summary: Edit conference details
+      description: Update an existing conference's details. Available to users with user role. This method allows partial updates.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conference ID
+          example: "01948d68-4872-4007-8096-517b5e9bf6c2"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: [ string, "null" ]
+                  minLength: 3
+                  maxLength: 100
+                  examples:
+                    - "Konferensi Programmer Backend Part 3"
+                description:
+                  type: [ string, "null" ]
+                  minLength: 3
+                  maxLength: 1000
+                  examples:
+                    - "Membahas teknologi backend terkini"
+                speaker_name:
+                  type: [ string, "null" ]
+                  minLength: 3
+                  maxLength: 100
+                  examples:
+                    - "Christopher Robin Tanugroho"
+                speaker_title:
+                  type: [ string, "null" ]
+                  minLength: 3
+                  maxLength: 100
+                  examples:
+                    - "The real sepuh of para sepuh"
+                target_audience:
+                  type: [ string, "null" ]
+                  minLength: 3
+                  maxLength: 255
+                  examples:
+                    - "Senior Backend Developer di Malang"
+                prerequisites:
+                  type: [ string, "null" ]
+                  maxLength: 255
+                  examples:
+                    - "Memiliki pemahaman mendalam tentang bahasa pemrograman Go"
+                seats:
+                  type: [ integer, "null" ]
+                  minimum: 1
+                  examples:
+                    - 10
+                starts_at:
+                  type: [ string, "null" ]
+                  format: date-time
+                  examples:
+                    - "2025-02-01T10:50:00.000000Z"
+                ends_at:
+                  type: [ string, "null" ]
+                  format: date-time
+                  examples:
+                    - "2025-02-01T14:45:00.000000Z"
+      responses:
+        '204':
+          description: Conference successfully updated
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          description: Forbidden - User not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbiddenUser:
+                  summary: Forbidden User
+                  value:
+                    message: "You're not allowed to access this resource."
+                    error_code: "FORBIDDEN_USER"
+                forbiddenRole:
+                  summary: Forbidden Role
+                  value:
+                    message: "You're not allowed to access this resource."
+                    error_code: "FORBIDDEN_ROLE"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Time window conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "There's already a conference in the same time window. Please choose another time window."
+                detail:
+                  conferences:
+                    - id: "0194831b-9072-4090-803e-ffb74d52eb5c"
+                      title: "Description for future conference 1"
+                      starts_at: "2025-02-01T09:46:49.330992Z"
+                      ends_at: "2025-02-01T11:46:49.330992Z"
+                error_code: "TIME_WINDOW_CONFLICT"
+        '422':
+          description: Validation or business rule error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                updateApprovedTimeWindow:
+                  summary: Update Approved Time Window
+                  value:
+                    message: "You're not allowed to update an approved conference time window."
+                    error_code: "UPDATE_APPROVED_TIME_WINDOW"
+                updateNotPendingConference:
+                  summary: Update Not Pending Conference
+                  value:
+                    message: "You're not allowed to update a conference that is not pending"
+                    error_code: "UPDATE_NOT_PENDING_CONFERENCE"
+                timeAlreadyPassed:
+                  summary: Time Already Passed
+                  value:
+                    message: "Time has already passed. Please use future time."
+                    error_code: "TIME_ALREADY_PASSED"
+                endTimeBeforeStart:
+                  summary: End Time Before Start
+                  value:
+                    message: "End time is before start time. Please use correct time."
+                    error_code: "END_TIME_BEFORE_START"
+                updatePastConference:
+                  summary: Update Past Conference
+                  value:
+                    message: "You're not allowed to update a past conference."
+                    error_code: "UPDATE_PAST_CONFERENCE"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Conferences
+      summary: Delete conference
+      description: Delete an existing conference. Available to users with user and event_coordinator roles.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conference ID
+          example: "01948d68-4872-4007-8096-517b5e9bf6c2"
+      responses:
+        '204':
+          description: Conference successfully deleted
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          description: Forbidden - User not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbiddenUser:
+                  summary: Not Author or Event Coordinator
+                  value:
+                    message: "You're not allowed to access this resource."
+                    error_code: "FORBIDDEN_USER"
+                forbiddenRole:
+                  summary: Forbidden Role
+                  value:
+                    message: "You're not allowed to access this resource."
+                    error_code: "FORBIDDEN_ROLE"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /conferences/{id}/status:
+    patch:
+      tags:
+        - Conferences
+      summary: Update conference status
+      description: Update the status of an existing conference. Available to users with event_coordinator role. This method allows partial updates.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Conference ID
+          example: "01948d68-4872-4007-8096-517b5e9bf6c2"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/ConferenceStatus'
+      responses:
+        '204':
+          description: Conference status successfully updated
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          description: Forbidden - User role not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "You're not allowed to access this resource."
+                error_code: "FORBIDDEN_ROLE"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Time window conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "There's already a conference in the same time window. Please choose another time window."
+                detail:
+                  conferences:
+                    - id: "0194831b-9072-4090-803e-ffb74d52eb5c"
+                      title: "Description for future conference 1"
+                      starts_at: "2025-02-01T09:46:49.330992Z"
+                      ends_at: "2025-02-01T11:46:49.330992Z"
+                error_code: "TIME_WINDOW_CONFLICT"
+        '422':
+          description: Validation or business rule error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validationError:
+                  summary: Validation Error
+                  value:
+                    message: "There are invalid fields in your request. Please check and try again"
+                    detail:
+                      - status:
+                          tag: "required"
+                          param: ""
+                          translation: "Status is a required field"
+                    error_code: "VALIDATION_ERROR"
+                updatePastConferenceStatus:
+                  summary: Update Past Conference Status
+                  value:
+                    message: "You're only allowed to change past conference status from pending to rejected."
+                    error_code: "UPDATE_PAST_CONFERENCE_STATUS"
+                updateNotPendingConference:
+                  summary: Update Not Pending Conference
+                  value:
+                    message: "You're not allowed to update a conference that is not pending"
+                    error_code: "UPDATE_NOT_PENDING_CONFERENCE"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /registrations:
+    post:
+      tags:
+        - Registrations
+      summary: Register for a conference
+      description: Register for a conference. Available to users with user role.
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - conference_id
+              properties:
+                conference_id:
+                  type: string
+                  format: uuid
+                  example: "0194890f-f8d4-406c-804d-1c007a44e144"
+      responses:
+        '200':
+          description: Successfully registered for conference
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notRoleUser:
+                  summary: Not Role User
+                  value:
+                    message: "You're not allowed to access this resource."
+                    error_code: "FORBIDDEN_ROLE"
+                hostRegisterOwn:
+                  summary: Host Register Own Conference
+                  value:
+                    message: "You're not allowed to register to your own conference."
+                    error_code: "HOST_CANNOT_REGISTER"
+                conferenceNotApproved:
+                  summary: Conference Not Approved
+                  value:
+                    message: "You're not allowed to access this resource."
+                    error_code: "FORBIDDEN_USER"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                alreadyRegistered:
+                  summary: Already Registered
+                  value:
+                    message: "You're already registered to this conference."
+                    error_code: "USER_ALREADY_REGISTERED_TO_CONFERENCE"
+                fullSeat:
+                  summary: Full Seat
+                  value:
+                    message: "Conference is full. You're not allowed to register anymore."
+                    error_code: "CONFERENCE_FULL"
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                conferenceEnded:
+                  summary: Conference Ended
+                  value:
+                    message: "Conference has ended. You're not allowed to register anymore."
+                    error_code: "CONFERENCE_ENDED"
+                validation:
+                  summary: Validation Error
+                  value:
+                    message: "There are invalid fields in your request. Please check and try again"
+                    detail:
+                      - conference_id:
+                          tag: "required"
+                          param: ""
+                          translation: "ConferenceID is a required field"
+                    error_code: "VALIDATION_ERROR"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /registrations/conferences/{id}:
+    get:
+      tags:
+        - Registrations
+      summary: Get registered users for a conference
+      description: Get registered users for a conference. Available to all roles. For users with user role, only their hosted conferences are allowed.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "01945590-60d4-4062-80a2-2effbfa127fe"
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+          example: 10
+        - name: after_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: before_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully retrieved registered users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+              example:
+                users:
+                  - id: "019412d4-a354-4068-809e-6545dcf6aca7"
+                    name: "User 2"
+                  - id: "0194130b-91d4-4095-80e2-5af8f28930e0"
+                    name: "User 3"
+                pagination:
+                  has_more: false
+                  first_id: "019412d4-a354-4068-809e-6545dcf6aca7"
+                  last_id: "0194130b-91d4-4095-80e2-5af8f28930e0"
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation:
+                  summary: Validation Error
+                  value:
+                    message: "There are invalid fields in your request. Please check and try again"
+                    detail:
+                      - limit:
+                          tag: "required"
+                          param: ""
+                          translation: "Limit is a required field"
+                    error_code: "VALIDATION_ERROR"
+                invalidPagination:
+                  summary: Invalid Pagination
+                  value:
+                    message: "Cannot use after_id and before_id at the same time."
+                    error_code: "INVALID_PAGINATION"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /registrations/users/{id}:
+    get:
+      tags:
+        - Registrations
+      summary: Get registered conferences for a user
+      description: Get registered conferences for a user. Available to all roles. For users with user role, only their own id is allowed.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "019412d4-a354-4068-809e-6545dcf6aca9"
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+          example: 10
+        - name: include_past
+          in: query
+          required: false
+          schema:
+            type: boolean
+          example: true
+        - name: after_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: before_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully retrieved registered conferences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conferences:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conference'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: "You're not allowed to access this resource."
+                error_code: "FORBIDDEN_USER"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation:
+                  summary: Validation Error
+                  value:
+                    message: "There are invalid fields in your request. Please check and try again"
+                    detail:
+                      - limit:
+                          tag: "required"
+                          param: ""
+                          translation: "Limit is a required field"
+                    error_code: "VALIDATION_ERROR"
+                invalidPagination:
+                  summary: Invalid Pagination
+                  value:
+                    message: "Cannot use after_id and before_id at the same time."
+                    error_code: "INVALID_PAGINATION"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /feedbacks:
+    post:
+      tags:
+        - Feedbacks
+      summary: Create a feedback for a conference
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - conference_id
+                - comment
+              properties:
+                conference_id:
+                  type: string
+                  format: uuid
+                comment:
+                  type: string
+                  minLength: 3
+                  maxLength: 1000
+            example:
+              conference_id: "019470f2-392f-40c6-80d1-36af32ea8dfd"
+              comment: "Great conference! The speaker was very knowledgeable."
+      responses:
+        '201':
+          description: Feedback created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedback:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+              example:
+                feedback:
+                  id: "0194aed0-3af0-763d-a53f-4b087159fede"
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          description: Forbidden - Various cases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notRegistered:
+                  summary: User not registered to conference
+                  value:
+                    message: "You're not registered to this conference."
+                    error_code: "USER_NOT_REGISTERED_TO_CONFERENCE"
+                hostFeedback:
+                  summary: Host attempting to give feedback
+                  value:
+                    message: "Host is not allowed to give feedback to their own conference."
+                    error_code: "HOST_CANNOT_GIVE_FEEDBACK"
+        '422':
+          description: Validation or business rule error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validationError:
+                  summary: Validation Error
+                  value:
+                    message: "There are invalid fields in your request. Please check and try again"
+                    detail:
+                      - comment:
+                          tag: "required"
+                          param: ""
+                          translation: "Comment is a required field"
+                    error_code: "VALIDATION_ERROR"
+                notEnded:
+                  summary: Conference not ended
+                  value:
+                    message: "Conference has not ended yet. You're not allowed to give feedback."
+                    error_code: "CONFERENCE_NOT_ENDED"
+                feedbackAlreadyGiven:
+                  summary: Feedback already given
+                  value:
+                    message: "You already gave feedback to this conference."
+                    error_code: "FEEDBACK_ALREADY_GIVEN"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /feedbacks/conferences/{conference_id}:
+    get:
+      tags:
+        - Feedbacks
+      summary: Get feedbacks for a specific conference
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: conference_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: after_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: before_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+      responses:
+        '200':
+          description: List of feedbacks retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedbacks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Feedback'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+              example:
+                feedbacks:
+                  - id: "01948fd8-612f-401b-8068-003cda23b7fa"
+                    comment: "Great introduction to the topic. The speaker was very knowledgeable and engaging."
+                    created_at: "2025-01-22T21:08:30.12715Z"
+                    user:
+                      id: "0194143f-c12f-4032-80c4-18dcb3ba427e"
+                      name: "User 1"
+                pagination:
+                  has_more: false
+                  first_id: "01948fd8-612f-401b-8068-003cda23b7fa"
+                  last_id: "01949046-3e2f-408c-80ee-62be2a1f74ed"
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /feedbacks/{feedback_id}:
+    delete:
+      tags:
+        - Feedbacks
+      summary: Delete a specific feedback
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: feedback_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Feedback deleted successfully
+        '400':
+          $ref: '#/components/responses/FailParseRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          $ref: '#/components/responses/ForbiddenRole'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
