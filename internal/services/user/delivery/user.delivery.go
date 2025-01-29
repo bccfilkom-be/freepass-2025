@@ -39,6 +39,20 @@ func NewUserDelivery(
 	userRouter.GET("/:id", middleware.RequireAuth, handler.GetUserDetail)
 }
 
+// @title 			Get Profile User
+//
+//	@Tags			Profile
+//	@Summary		Get Profile User
+//	@Description	Get Profile User
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/profile [get]
 func (v *UserDelivery) GetUserProfile(ctx *gin.Context) {
 	userId, _ := ctx.Get("userId")
 
@@ -51,6 +65,21 @@ func (v *UserDelivery) GetUserProfile(ctx *gin.Context) {
 	v.response.OK(ctx, response, "User profile found!", 200)
 }
 
+// @title 			Get User Detail
+//
+//	@Tags			User
+//	@Summary		Get User Detail
+//	@Description	Get User Detail
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int true	"User ID"
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/user/{id} [get]
 func (v *UserDelivery) GetUserDetail(ctx *gin.Context) {
 	param := ctx.Param("id")
 	userId, err := helper.StringToUint(param)
@@ -68,6 +97,21 @@ func (v *UserDelivery) GetUserDetail(ctx *gin.Context) {
 	v.response.OK(ctx, response, "User detail found!", 200)
 }
 
+// @title 			Update Profile User
+//
+//	@Tags			Profile
+//	@Summary		Update Profile User
+//	@Description	Update Profile User
+//	@Accept			json
+//	@Produce		json
+//	@Param			request body dto.UpdateUserProfileRequest true "Update Profile User"
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/profile [patch]
 func (v *UserDelivery) UpdateUserProfile(ctx *gin.Context) {
 	var req *dto.UpdateUserProfileRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

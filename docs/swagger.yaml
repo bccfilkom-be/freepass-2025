@@ -27,6 +27,15 @@ definitions:
     - name
     - password
     type: object
+  dto.UpdateUserProfileRequest:
+    properties:
+      bio:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
   dto.UpdateUserRoleRequest:
     properties:
       role:
@@ -139,6 +148,92 @@ paths:
       summary: Sign Up New User
       tags:
       - Auth
+  /api/profile:
+    get:
+      consumes:
+      - application/json
+      description: Get Profile User
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get Profile User
+      tags:
+      - Profile
+    patch:
+      consumes:
+      - application/json
+      description: Update Profile User
+      parameters:
+      - description: Update Profile User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update Profile User
+      tags:
+      - Profile
   /api/user/{id}:
     delete:
       consumes:
@@ -183,6 +278,51 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete User
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Get User Detail
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get User Detail
       tags:
       - User
   /api/user/{id}/update-role:
