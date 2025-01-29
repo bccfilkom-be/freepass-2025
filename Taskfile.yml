@@ -1,0 +1,19 @@
+version: "3"
+
+tasks:
+  run:
+    cmds:
+      - go run cmd/app/main.go
+    silent: true
+  docs:init:
+    cmds:
+      - swag init -g cmd/api/http.go -o docs
+    silent: true
+  db:migrate:
+    cmds:
+      - go run internal/database/migration/migration.go
+    silent: true
+  db:seed:
+    cmds:
+      - go run internal/database/seeder/seeder.go
+    silent: true
