@@ -245,6 +245,12 @@ Ensure you have downloaded the latest version of [TaskFile](https://taskfile.dev
 go install github.com/go-task/task/v3/cmd/task@latest
 ```
 
+Chek your TaskFile version by running this command:
+
+```bash
+task --version
+```
+
 ### First Time Initialization
 
 1. Clone this repository
