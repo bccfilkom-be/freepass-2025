@@ -226,13 +226,19 @@ func (s *SessionService) ListSessions(ctx context.Context, userID int32) ([]mode
 			isRegistered = reg.ID > 0
 		}
 
+		// Get available seats
+		availableSeats, err := s.queries.CountSessionRegistrations(ctx, session.ID)
+		if err != nil {
+			return nil, err
+		}
+
 		// Convert to model
 		sessionDetails := model.SessionWithDetails{
 			Session:             convertDBSessionToModel(session),
 			ProposerName:        details.ProposerName.String,
 			ProposerAffiliation: details.ProposerAffiliation.String,
 			IsRegistered:        isRegistered,
-			AvailableSeats:      int(session.SeatingCapacity),
+			AvailableSeats:      int(session.SeatingCapacity - int32(availableSeats)),
 			Feedback:            convertDBFeedbackToModel(feedback),
 		}
 
@@ -266,13 +272,19 @@ func (s *SessionService) GetSession(ctx context.Context, sessionID int32, userID
 		isRegistered = reg.ID > 0
 	}
 
+	// Get available seats
+	availableSeats, err := s.queries.CountSessionRegistrations(ctx, sessionID)
+	if err != nil {
+		return model.SessionWithDetails{}, err
+	}
+
 	return model.SessionWithDetails{
 		Session:             convertSessionRowToModel(session),
 		ProposerName:        session.ProposerName.String,
 		ProposerAffiliation: session.ProposerAffiliation.String,
 		Feedback:            convertDBFeedbackToModel(feedback),
 		IsRegistered:        isRegistered,
-		AvailableSeats:      int(session.SeatingCapacity),
+		AvailableSeats:      int(session.SeatingCapacity - int32(availableSeats)),
 	}, nil
 }
 
