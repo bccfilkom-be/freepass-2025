@@ -125,7 +125,62 @@ THEN  => System will delete the account from the system
 
 We want to see your perspective about these problems. You can define various types of entities or actors. One thing for sure, there is no
 true or false statement to define the entities. As long as the results are understandable, then go for it! 🚀
+```
+(Entities)
+User : Represents an individuals who interact with the system. User have different roles. Attributes include
+- user_id
+- name
+- email
+- password
+- address
+- created_at
+- updated_at
+- role_id 
 
+Role : Represent the role that user have. Attributes include :
+- role_id
+- role_name
+
+Session : Represent the conference that user can register to. Attributes include :
+- session_id
+- title
+- description
+- session_owner
+- time_slot
+- max_seats
+- available_seats
+- created_at
+- updated_at
+- proposal_id
+
+Session Registration : Represent session that user already register to. Attributes include :
+- registration_id
+- timestamp
+- session_id
+- user_id
+
+Session Proposal : Represent a proposal of a session made by user. Attributes include :
+- proposal_id
+- title
+- description
+- time_slot
+- status
+- created_at
+- updated_at
+- user_id
+
+Feedback : Represent a feedback made by user on session. Attributes include :
+- feedback_id
+- comment
+- created_at
+- session_id
+- user_id
+
+(Actor)
+- User : An individuals who interact with the system. User can have a different role
+- Event Coordinator : A user who can manage session and feedback of the user.
+- Admin : A user who manage reguler user and event coordinator
+```
 ## **📘** References
 
 You might be overwhelmed by these requirements. Don't worry, here's a list of some tools that you could use (it's not required to use all of them nor any of them):
@@ -168,6 +223,31 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 ## **🧪** API Installation
 
 > Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
+
+## Running the code
+Before you begin, ensure you have the following installed on your machine
+1. Go
+2. Gin
+3. Gorm
+4. MariaDB
+
+Here are the step :
+1. Make sure your MariaDB/MySQL is configured correctly
+2. Clone this repository or download manually
+3. Navigate to the project directory
+```
+cd freepass-2025\cmd\app
+```
+4. Install Gin and GORM
+```
+go get -u github.com/gin-gonic/gin
+go get -u gorm.io/gorm
+```
+5. Configure your credential and databse configuration in your .env
+6. Start the application
+```
+go run main.go
+```
 
 ## **📞** Contact
 
