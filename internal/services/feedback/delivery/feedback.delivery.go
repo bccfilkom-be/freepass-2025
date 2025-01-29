@@ -33,6 +33,24 @@ func NewFeedbackDelivery(
 	sessionRoute.DELETE("/:sessionId/feedback/:feedbackId", middleware.RequireAuth, handler.DeleteFeedback)
 }
 
+// @title 			Create Session Feedback
+//
+//	@Tags			Session Feedback
+//	@Summary		Create Session Feedback
+//	@Description	Create Session Feedback
+//	@Accept			json
+//	@Produce		json
+//
+// @Param id path int true "Session ID"
+// @Param request body dto.CreateFeedbackRequest true "Create Feedback Request"
+//
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session/{id}/feedback [post]
 func (v *FeedbackDelivery) CreateFeedback(ctx *gin.Context) {
 	var req dto.CreateFeedbackRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -54,6 +72,23 @@ func (v *FeedbackDelivery) CreateFeedback(ctx *gin.Context) {
 	v.response.OK(ctx, nil, "Feedback Created!", 201)
 }
 
+// @title 			Get Session Feedback
+//
+//	@Tags			Session Feedback
+//	@Summary		Get Session Feedback
+//	@Description	Get Session Feedback
+//	@Accept			json
+//	@Produce		json
+//
+// @Param id path int true "Session ID"
+//
+//	@Success		200		{object}	response.JSONResponseModel{data=[]dto.GetFeedbackResponse}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session/{id}/feedback [get]
 func (v *FeedbackDelivery) GetAllSessionFeedback(ctx *gin.Context) {
 	res, err := v.feedbackUsecase.GetAllSessionFeedback(ctx)
 	if err != nil {
@@ -64,6 +99,24 @@ func (v *FeedbackDelivery) GetAllSessionFeedback(ctx *gin.Context) {
 	v.response.OK(ctx, res, "Session feedback found!", 200)
 }
 
+// @title 			Delete Feedback
+//
+//	@Tags			Session Feedback
+//	@Summary		Delete Feedback
+//	@Description	Delete Feedback.  Only It's own User or Event Coordinator session feedback can delete
+//	@Accept			json
+//	@Produce		json
+//
+// @Param sessionId path int true "Session ID"
+// @Param feedbackId path int true "Feedback ID"
+//
+//	@Success		200		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		400		{object}	response.JSONResponseModel{data=nil}
+//	@Failure		500		{object}	response.JSONResponseModel{data=nil}
+//
+// @Security BearerAuth
+//
+//	@Router			/api/session/{sessionId}/feedback/{feedbackId} [delete]
 func (v *FeedbackDelivery) DeleteFeedback(ctx *gin.Context) {
 	err := v.feedbackUsecase.DeleteFeedback(ctx)
 	if err != nil {

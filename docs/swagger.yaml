@@ -1,4 +1,16 @@
 definitions:
+  dto.CreateFeedbackRequest:
+    properties:
+      content:
+        type: string
+      rating:
+        maximum: 5
+        minimum: 1
+        type: integer
+    required:
+    - content
+    - rating
+    type: object
   dto.CreateProposalRequest:
     properties:
       description:
@@ -60,6 +72,21 @@ definitions:
         type: string
       title:
         type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/dto.GetUserDetailResponse'
+    type: object
+  dto.GetFeedbackResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      rating:
+        type: integer
       updated_at:
         type: string
       user:
@@ -902,6 +929,105 @@ paths:
       summary: Update Session
       tags:
       - Session
+  /api/session/{id}/feedback:
+    get:
+      consumes:
+      - application/json
+      description: Get Session Feedback
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.GetFeedbackResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get Session Feedback
+      tags:
+      - Session Feedback
+    post:
+      consumes:
+      - application/json
+      description: Create Session Feedback
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Create Feedback Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateFeedbackRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Create Session Feedback
+      tags:
+      - Session Feedback
   /api/session/{id}/register:
     post:
       consumes:
@@ -948,6 +1074,58 @@ paths:
       summary: Register Into Session
       tags:
       - Session Registration
+  /api/session/{sessionId}/feedback/{feedbackId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Feedback.  Only It's own User or Event Coordinator session
+        feedback can delete
+      parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: integer
+      - description: Feedback ID
+        in: path
+        name: feedbackId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JSONResponseModel'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Feedback
+      tags:
+      - Session Feedback
   /api/session/registered:
     get:
       consumes:
