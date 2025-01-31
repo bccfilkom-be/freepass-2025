@@ -8,6 +8,15 @@ echo
 
 echo "Generating application.properties..."
 
+DIR="src/main/resources"
+
+if [ ! -d "$DIR" ]; then
+    mkdir -p "$DIR"
+    echo "Created directory: $DIR"
+fi
+
+echo "Configuration written to $DIR/application.properties"
+
 cat <<EOL > src/main/resources/application.properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/$dbname
 spring.datasource.username=$dbuser
