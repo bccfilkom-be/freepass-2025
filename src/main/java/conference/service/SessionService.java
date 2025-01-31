@@ -18,17 +18,16 @@ public class SessionService {
         this.sessionRepository = sessionRepository;
     }
 
-    // View all sessions
     public List<Session> viewAllSessions() {
         return sessionRepository.findAll();
     }
 
     public boolean editSession(Long sessionId, String title, String description, LocalDateTime startTime, LocalDateTime endTime, Integer maxSeats){
-        if (sessionRepository.existsById(sessionId)){
+        if (!sessionRepository.existsById(sessionId) || endTime.isBefore(startTime)){
             return false;
         } else {
-            sessionRepository.editSession(title, description, startTime, endTime, maxSeats, sessionId);
-            return true;
+            int val = sessionRepository.editSession(title, description, startTime, endTime, maxSeats, sessionId);
+            return val == 1;
         }
     }
 

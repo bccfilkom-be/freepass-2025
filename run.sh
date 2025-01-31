@@ -37,7 +37,7 @@ if [ "$DB_EXISTS" != "1" ]; then
              password VARCHAR(255) NOT NULL,
              email VARCHAR(100) NOT NULL UNIQUE,
              full_name VARCHAR(100),
-             role_id INT DEFAULT 1 REFERENCES roles(role_id) ON DELETE CASCADE
+             role_id INT DEFAULT 3 REFERENCES roles(role_id) ON DELETE CASCADE
          );
 
          CREATE TABLE sessions (
@@ -80,8 +80,8 @@ if [ "$DB_EXISTS" != "1" ]; then
 
          INSERT INTO roles (role_name) VALUES
          ('Admin'),
-         ('Instructor'),
-         ('Student');
+         ('Coordinator'),
+         ('User');
 
          INSERT INTO users (username, password, email, full_name, role_id) VALUES
          ('admin_user', 'adminpass123', 'admin@example.com', 'Admin User', 1),

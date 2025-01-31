@@ -1,6 +1,6 @@
 package conference.dto;
 
-public class registerForSessionRequest {
+public class RegisterForSessionRequest {
     private Long userId;
     private Long sessionId;
 

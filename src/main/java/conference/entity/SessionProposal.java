@@ -39,11 +39,34 @@ public class SessionProposal {
         this.status = status;
     }
 
+    public SessionProposal() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public LocalDateTime getStartTime() {
         return startTime;
     }
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

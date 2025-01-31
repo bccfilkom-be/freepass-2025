@@ -1,46 +1,41 @@
 package conference.controller;
 
-import conference.entity.User;
-import conference.service.AuthService;
-import conference.service.UserService;
 import conference.dto.UserDto;
+import conference.dto.EditProfileRequest;
+import conference.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
-    private final AuthService authService;
 
-    public UserController(UserService userService, AuthService authService) {
+    @Autowired
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.authService = authService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDto userDTO) {
-        User user = authService.registerUser(userDTO);
-        return ResponseEntity.ok(user);
+    @GetMapping("/profile/{username}")
+    public ResponseEntity<?> viewProfile(@PathVariable("username") String username) {
+        UserDto userProfile = userService.viewProfile(username);
+        if (userProfile != null) {
+            return ResponseEntity.ok(userProfile);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestParam String username, @RequestParam String password) {
-        String token = authService.login(username, password);
-        return ResponseEntity.ok(token);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateProfile(@PathVariable Long id, @RequestBody UserDto userDTO) {
-        User updatedUser = userService.updateUser(id, userDTO);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    @PutMapping("/profile")
+    public ResponseEntity<?> editProfile (@RequestBody EditProfileRequest editProfileRequest) {
+        boolean updated = userService.editProfile(editProfileRequest.getPrevUsername(), editProfileRequest.getNewEmail(), editProfileRequest.getNewFullName(), editProfileRequest.getNewUsername());
+        if (updated) {
+            return ResponseEntity.ok("Profile updated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email or username already exists or the user does not exist.");
+        }
     }
 }
